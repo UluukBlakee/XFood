@@ -15,6 +15,9 @@ namespace XFood.Database.Models
         public DbSet<Criterion> Criteria { get; set; }
         public DbSet<CategoryFactor> CategoryFactors { get; set; }
         public DbSet<CriticalFactor> CriticalFactors { get; set; }
+        public DbSet<Appeal> Appeals { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<OpportunitySchedule> OpportunitySchedules { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
     }
     //public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<XFoodContext>
