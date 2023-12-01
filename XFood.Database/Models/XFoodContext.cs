@@ -11,6 +11,10 @@ namespace XFood.Database.Models
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Pizzeria> Pizzerias { get; set; }
+        public DbSet<CheckList> CheckLists { get; set; }
+        public DbSet<Criterion> Criteria { get; set; }
+        public DbSet<CategoryFactor> CategoryFactors { get; set; }
+        public DbSet<CriticalFactor> CriticalFactors { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
     }
     //public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<XFoodContext>
