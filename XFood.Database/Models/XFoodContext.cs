@@ -10,6 +10,7 @@ namespace XFood.Database.Models
     public class XFoodContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Pizzeria> Pizzerias { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
     }
     //public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<XFoodContext>
