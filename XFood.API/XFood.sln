@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFood.API", "XFood.API.csproj", "{E74A4506-C848-4961-A879-8E06A7D660CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFood.MVC", "..\XFood.MVC\XFood.MVC.csproj", "{89597596-77E4-47A5-86A0-7891A4F2422B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFood.Data", "..\XFood.Database\XFood.Data.csproj", "{C42D9418-6E1B-4A4B-8F73-07DCBC3ACFB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E74A4506-C848-4961-A879-8E06A7D660CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E74A4506-C848-4961-A879-8E06A7D660CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E74A4506-C848-4961-A879-8E06A7D660CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E74A4506-C848-4961-A879-8E06A7D660CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89597596-77E4-47A5-86A0-7891A4F2422B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89597596-77E4-47A5-86A0-7891A4F2422B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89597596-77E4-47A5-86A0-7891A4F2422B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89597596-77E4-47A5-86A0-7891A4F2422B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C42D9418-6E1B-4A4B-8F73-07DCBC3ACFB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C42D9418-6E1B-4A4B-8F73-07DCBC3ACFB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C42D9418-6E1B-4A4B-8F73-07DCBC3ACFB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C42D9418-6E1B-4A4B-8F73-07DCBC3ACFB8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5877DCCF-02F1-4808-BCD7-AC6BA8BFCBD0}
+	EndGlobalSection
+EndGlobal
