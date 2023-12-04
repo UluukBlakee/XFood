@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFood.MVC", "src\XFood.MVC\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFood.Data", "src\XFood.Database\XFood.Data.csproj", "{C42D9418-6E1B-4A4B-8F73-07DCBC3ACFB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xFood.Infrastructure", "xFood.Infrastructure\xFood.Infrastructure.csproj", "{B3C6F39C-7258-41F8-A92A-15EC382089C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xFood.Infrastructure", "src\xFood.Infrastructure\xFood.Infrastructure.csproj", "{B3C6F39C-7258-41F8-A92A-15EC382089C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
