@@ -1,6 +1,6 @@
 ﻿namespace xFood.Infrastructure;
 
-public interface IQueryHandler
+public interface IQueryHandler<in TQuery, TQueryResult>
 {
-    
+    Task<TQueryResult> Handle(TQuery query, CancellationToken cancellation);
 }
