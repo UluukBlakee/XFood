@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.25">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,6 +17,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\XFood.Database\XFood.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Account" />
   </ItemGroup>
 
 </Project>

@@ -20,15 +20,4 @@ namespace XFood.Database.Models
         public DbSet<OpportunitySchedule> OpportunitySchedules { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
     }
-    //public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<XFoodContext>
-    //{
-    //    public XFoodContext CreateDbContext(string[] args)
-    //    {
-    //        IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../MyCookingMaster.API/appsettings.json").Build();
-    //        var builder = new DbContextOptionsBuilder<XFoodContext>();
-    //        var connectionString = configuration.GetConnectionString("DatabaseConnection");
-    //        builder.UseSqlServer(connectionString);
-    //        return new XFoodContext(builder.Options);
-    //    }
-    //}
 }
