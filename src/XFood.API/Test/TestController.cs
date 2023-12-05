@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using XFood.API.Test.Queries;
+using XFood.API.Test.Queries.GetTestData;
 using xFood.Infrastructure;
 
 namespace XFood.API.Test;

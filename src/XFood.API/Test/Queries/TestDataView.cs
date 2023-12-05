@@ -1,4 +1,4 @@
-﻿namespace XFood.API.Test;
+﻿namespace XFood.API.Test.Queries;
 
 public class TestDataView
 {
