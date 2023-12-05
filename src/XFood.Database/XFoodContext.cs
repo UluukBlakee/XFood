@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using XFood.Data.Models;
 
-namespace XFood.Database.Models
+namespace XFood.Data
 {
     public class XFoodContext : IdentityDbContext<User, IdentityRole<int>, int>
     {

@@ -8,6 +8,20 @@ namespace XFood.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var corsPolicy = "_xFoodWebCors";
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: corsPolicy,
+                    policy =>
+                    {
+                        policy
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
+
             builder.Services.AddControllers();
             
             builder.Services.RegisterDataServices(builder.Configuration)
@@ -17,6 +31,7 @@ namespace XFood.API
                 .AddSwaggerGen();
 
             var app = builder.Build();
+            app.UseCors(corsPolicy);
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

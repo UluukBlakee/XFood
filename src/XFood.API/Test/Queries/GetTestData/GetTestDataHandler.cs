@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using xFood.Infrastructure;
 
-namespace XFood.API.Test.Queries;
+namespace XFood.API.Test.Queries.GetTestData;
 
 public class GetTestDataHandler : IQueryHandler<GetTestDataRequest, Result<GetTestDataResponse>>
 {
