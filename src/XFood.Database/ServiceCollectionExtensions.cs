@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using XFood.Data.Models;
 
 namespace XFood.Data
 {
@@ -11,6 +13,9 @@ namespace XFood.Data
         {
             services.AddDbContext<XFoodContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            services.AddDefaultIdentity<User>()
+.AddEntityFrameworkStores<XFoodContext>();
+
             return services;
         }
     }

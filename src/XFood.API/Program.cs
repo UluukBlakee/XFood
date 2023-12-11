@@ -1,5 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using xFood.Infrastructure;
 using XFood.API.Configuration.Application;
 using XFood.Data;
+using XFood.Data.Models;
 
 namespace XFood.API
 {
@@ -10,6 +16,12 @@ namespace XFood.API
             var builder = WebApplication.CreateBuilder(args);
 
             var corsPolicy = "_xFoodWebCors";
+            IConfigurationSection jWTSettingsSection = builder.Configuration.GetSection(nameof(JWTSettings));
+            builder.Services.Configure<JWTSettings>(jWTSettingsSection);
+            var jWTOptions = new JWTSettings();
+            builder.Configuration.GetSection(nameof(JWTSettings)).Bind(jWTOptions);
+
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(name: corsPolicy,
@@ -23,9 +35,25 @@ namespace XFood.API
             });
 
             builder.Services.AddControllers();
-            
+
             builder.Services.RegisterDataServices(builder.Configuration)
-                .ConfigureApplication();
+                    .ConfigureApplication();
+
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+                        {
+                            options.TokenValidationParameters = new TokenValidationParameters
+                            {
+                                ValidateIssuer = true,
+                                ValidateAudience = true,
+                                ValidateLifetime = true,
+                                ValidateIssuerSigningKey = true,
+                                ValidIssuer = jWTOptions.JwtIssuer,
+                                ValidAudience = jWTOptions.JwtAudience,
+                                IssuerSigningKey = jWTOptions.JwtSecurityKey
+                            };
+                        });
 
             builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
@@ -39,9 +67,11 @@ namespace XFood.API
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
         }
+
     }
 }
