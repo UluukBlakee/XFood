@@ -18,8 +18,8 @@ namespace XFood.API
             var corsPolicy = "_xFoodWebCors";
             IConfigurationSection jWTSettingsSection = builder.Configuration.GetSection(nameof(JWTSettings));
             builder.Services.Configure<JWTSettings>(jWTSettingsSection);
-            var jWTOptions = new JWTSettings();
-            builder.Configuration.GetSection(nameof(JWTSettings)).Bind(jWTOptions);
+            var jWtOptions = new JWTSettings();
+            builder.Configuration.GetSection(nameof(JWTSettings)).Bind(jWtOptions);
 
 
             builder.Services.AddCors(options =>
@@ -37,23 +37,28 @@ namespace XFood.API
             builder.Services.AddControllers();
 
             builder.Services.RegisterDataServices(builder.Configuration)
-                    .ConfigureApplication();
+                .ConfigureApplication();
 
 
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jWtOptions.JwtIssuer,
+                ValidAudience = jWtOptions.JwtAudience,
+                IssuerSigningKey = jWtOptions.JwtSecurityKey
+            };
+
+            builder.Services.AddSingleton(tokenValidationParameters);
+            
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-                        {
-                            options.TokenValidationParameters = new TokenValidationParameters
-                            {
-                                ValidateIssuer = true,
-                                ValidateAudience = true,
-                                ValidateLifetime = true,
-                                ValidateIssuerSigningKey = true,
-                                ValidIssuer = jWTOptions.JwtIssuer,
-                                ValidAudience = jWTOptions.JwtAudience,
-                                IssuerSigningKey = jWTOptions.JwtSecurityKey
-                            };
-                        });
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = tokenValidationParameters;
+                });
 
             builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
@@ -72,6 +77,5 @@ namespace XFood.API
             app.MapControllers();
             app.Run();
         }
-
     }
 }

@@ -12,7 +12,5 @@ namespace XFood.Data.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? FatherName { get; set; }
-        public int PizzeriaId { get; set; }
-        public Pizzeria? Pizzeria { get; set; }
     }
 }
