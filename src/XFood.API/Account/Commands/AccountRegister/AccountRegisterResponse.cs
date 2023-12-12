@@ -1,4 +1,4 @@
 ﻿namespace XFood.API.Account.Commands.AccountRegister
 {
-    public record AccountRegisterResponse;
+    public record AccountRegisterResponse(bool IsSuccess);
 }

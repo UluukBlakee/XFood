@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFood.Data", "src\XFood.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xFood.Infrastructure", "src\xFood.Infrastructure\xFood.Infrastructure.csproj", "{B3C6F39C-7258-41F8-A92A-15EC382089C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XFoodBlazor.Web.Server", "XFoodBlazor.Web\Server\XFoodBlazor.Web.Server.csproj", "{6847BAF5-A999-4A2C-BFC3-325EDBC83F50}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XFoodBlazor.Web.Client", "XFoodBlazor.Web\Client\XFoodBlazor.Web.Client.csproj", "{F9EE7BD6-DF59-468D-BA7A-A19CBB267C42}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XFoodBlazor.Web.Client", "src\XFood.Web\XFoodBlazor.Web.Client.csproj", "{F9EE7BD6-DF59-468D-BA7A-A19CBB267C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		{B3C6F39C-7258-41F8-A92A-15EC382089C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3C6F39C-7258-41F8-A92A-15EC382089C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3C6F39C-7258-41F8-A92A-15EC382089C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6847BAF5-A999-4A2C-BFC3-325EDBC83F50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6847BAF5-A999-4A2C-BFC3-325EDBC83F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6847BAF5-A999-4A2C-BFC3-325EDBC83F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6847BAF5-A999-4A2C-BFC3-325EDBC83F50}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9EE7BD6-DF59-468D-BA7A-A19CBB267C42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9EE7BD6-DF59-468D-BA7A-A19CBB267C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9EE7BD6-DF59-468D-BA7A-A19CBB267C42}.Release|Any CPU.ActiveCfg = Release|Any CPU

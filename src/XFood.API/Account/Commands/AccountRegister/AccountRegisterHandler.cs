@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using XFood.API.Employee.Queries.GetEmployeeList;
 using xFood.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using XFood.Data.Models;
@@ -22,9 +21,9 @@ namespace XFood.API.Account.Commands.AccountRegister
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(x => x.Description);
-                return Result.Failure<AccountRegisterResponse>(String.Join("\n",errors.ToArray()));
+                return Result.Failure<AccountRegisterResponse>(string.Join("\n",errors.ToArray()));
             }
-            return new AccountRegisterResponse();
+            return new AccountRegisterResponse(true);
         }
     }
     }
