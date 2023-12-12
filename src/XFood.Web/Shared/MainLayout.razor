@@ -1,7 +1,4 @@
-﻿@using XFoodBlazor.Web.Client.Services.Authorization
-@inherits LayoutComponentBase
-@inject IAuthService AuthService
-@inject NavigationManager NavigationManager
+﻿@inherits LayoutComponentBase
 <div class="page">
     <div class="sidebar">
         <NavMenu/>
@@ -9,8 +6,8 @@
 
     <main>
         <div class="top-row px-4">
+            <LoginDisplay/>
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-            <button type="submit" class="btn btn-primary" @onclick="Logout">Submit</button>
         </div>
 
         <article class="content px-4">
@@ -18,11 +15,3 @@
         </article>
     </main>
 </div>
-
-@code
-{
-    private async Task Logout()
-    {
-        await AuthService.Logout();
-    }
-}
