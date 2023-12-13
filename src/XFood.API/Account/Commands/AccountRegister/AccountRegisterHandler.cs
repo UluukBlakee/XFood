@@ -17,6 +17,7 @@ namespace XFood.API.Account.Commands.AccountRegister
         public async Task<Result<AccountRegisterResponse>> Handle(AccountRegisterRequest command, CancellationToken cancellationToken)
         {
             var newUser = new User { UserName = command.Email, Email = command.Email };
+            await _userManager.AddToRoleAsync(newUser, "User");
             var result = await _userManager.CreateAsync(newUser, command.Password);
             if (!result.Succeeded)
             {

@@ -29,7 +29,18 @@ namespace XFood.API.Account.Commands.AccountLogin
             if (!result.Succeeded)
                 return Result.Failure<AccountLoginResponse>("Username or password are invalid.");
 
-            var claims = new[] { new Claim(ClaimTypes.Name, command.Email) };
+            var user = await _signInManager.UserManager.FindByEmailAsync(command.Email);
+            var roles = await _signInManager.UserManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, command.Email)
+            };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
             var key = _settings.JwtSecurityKey;
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.Now.AddDays(Convert.ToInt32(_settings.JwtExpiryInDays));

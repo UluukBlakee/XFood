@@ -1,17 +1,19 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using System;
 using xFood.Infrastructure;
 using XFood.API.Configuration.Application;
 using XFood.Data;
+using XFood.Data.Configuration;
 using XFood.Data.Models;
 
 namespace XFood.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -28,17 +30,15 @@ namespace XFood.API
                     policy =>
                     {
                         policy
-                            .AllowAnyOrigin()
+                            .AllowAnyOrigin()   
                             .AllowAnyMethod()
                             .AllowAnyHeader();
                     });
             });
 
-            builder.Services.AddControllers();
-
             builder.Services.RegisterDataServices(builder.Configuration)
                 .ConfigureApplication();
-
+            builder.Services.AddControllers();
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -59,18 +59,21 @@ namespace XFood.API
                     options.SaveToken = true;
                     options.TokenValidationParameters = tokenValidationParameters;
                 });
-
             builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
-
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                 await Adminitializer.SeedAdminUser(roleManager, userManager);
+            }
             app.UseCors(corsPolicy);
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
