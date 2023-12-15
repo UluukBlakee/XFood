@@ -25,18 +25,21 @@ namespace XFood.API.Account.Commands.AccountLogin
         public async Task<Result<AccountLoginResponse>> Handle(AccountLoginRequest command,
             CancellationToken cancellationToken)
         {
-            var result = await _signInManager.PasswordSignInAsync(command.Email, command.Password, false, false);
-            if (!result.Succeeded)
-                return Result.Failure<AccountLoginResponse>("Username or password are invalid.");
+            var user = command.EmailOrLogin.Contains("@")
+                    ? await _signInManager.UserManager.FindByEmailAsync(command.EmailOrLogin)
+                    : await _signInManager.UserManager.FindByNameAsync(command.EmailOrLogin);
 
-            var user = await _signInManager.UserManager.FindByEmailAsync(command.Email);
+            var result = await _signInManager.PasswordSignInAsync(
+                user,
+                command.Password,
+                command.RememberMe,
+                false
+            );
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
-
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, command.Email)
+                new Claim(ClaimTypes.Name, command.EmailOrLogin)
             };
-
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));

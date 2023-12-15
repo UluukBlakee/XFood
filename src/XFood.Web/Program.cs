@@ -18,7 +18,7 @@ namespace XFoodBlazor.Web.Client
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44318/api/") });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/api/") });
             
             await builder
                 .Build()

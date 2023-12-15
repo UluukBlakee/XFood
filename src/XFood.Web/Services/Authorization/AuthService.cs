@@ -55,7 +55,7 @@ public class AuthService : IAuthService
         {
             var response = await result.Content.ReadFromJsonAsync<LoginResponse>();
             await _localStorage.SetItemAsync("token", response.Token);
-            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.EmailOrLogin);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", response.Token);
             response.IsSuccess = true;
             return response;

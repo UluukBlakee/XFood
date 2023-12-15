@@ -7,3 +7,10 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<AuthorizeView Roles="admin">
+    <div>"Если вы это читаете то вы админ"</div>
+</AuthorizeView>
+<AuthorizeView Roles="user">
+    <div>"Если вы это читаете то вы обычный пользователь, фу"</div>
+</AuthorizeView>

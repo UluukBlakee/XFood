@@ -21,9 +21,9 @@
             <ValidationSummary/>
 
             <div class="form-group">
-                <label for="email">Email address</label>
-                <InputText Id="email" Class="form-control" @bind-Value="_loginModel.Email"/>
-                <ValidationMessage For="@(() => _loginModel.Email)"/>
+                <label for="emailOrLogin">Email address</label>
+                <InputText Id="email" Class="form-control" @bind-Value="_loginModel.EmailOrLogin"/>
+                <ValidationMessage For="@(() => _loginModel.EmailOrLogin)" />
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -34,6 +34,7 @@
         </EditForm>
     </div>
 </div>
+
 
 @code {
 
