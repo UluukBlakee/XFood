@@ -1,4 +1,4 @@
 ﻿namespace XFood.API.Check_List.Queries.GetCheckList
 {
-    public record GetCheckListRequest(int id);
+    public record GetCheckListRequest(int Id);
 }

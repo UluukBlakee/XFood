@@ -3,6 +3,8 @@ using xFood.Infrastructure;
 using XFood.Data;
 using Microsoft.EntityFrameworkCore;
 using XFood.Data.Models;
+using XFood.API.Employee.Queries.GetEmployeeList;
+using XFood.API.Employee.Queries;
 
 namespace XFood.API.Check_List.Queries.GetCheckListAll
 {
@@ -18,6 +20,7 @@ namespace XFood.API.Check_List.Queries.GetCheckListAll
             List<CheckList> checkLists = await _db.CheckLists.Include(cl => cl.Pizzeria).Include(cl => cl.Criteria).Include(cl => cl.CategoryFactors).ToListAsync();
             List<CheckListView> list = checkLists.Select(cl => new CheckListView
             {
+                Id = cl.Id,
                 CategoryFactors = cl.CategoryFactors,
                 Criteria = cl.Criteria,
                 TotalPoints = cl.TotalPoints,
