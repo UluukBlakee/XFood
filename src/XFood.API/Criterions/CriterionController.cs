@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using xFood.Infrastructure;
 using XFood.API.Account.Commands.AccountRegister;
+using XFood.API.Criterions.Commands.PatchEditCriterion;
 using XFood.API.Criterions.Commands.PostCreateCriterion;
 using XFood.API.Criterions.Queries.GetCriterionList;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace XFood.API.Criterions
 {
@@ -41,6 +43,25 @@ namespace XFood.API.Criterions
     )
         {
             var res = await commandDispatcher.Dispatch<PostCreateCriterionRequest, Result<PostCreateCriterionResponse>>(request, cancellationToken);
+
+            return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
+        }
+
+        [HttpPatch("edit/{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PatchEditCriterionResponse))]
+        public async Task<ActionResult<Result<PatchEditCriterionResponse>>> EditCriterion(
+        [FromRoute] int id,
+        [FromBody] PatchEditCriterionRequest request,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        CancellationToken cancellationToken
+    )
+        {
+            var newRequest = request with { Id = id };
+            var res = await commandDispatcher.Dispatch<PatchEditCriterionRequest, Result<PatchEditCriterionResponse>>(newRequest, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
