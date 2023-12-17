@@ -31,7 +31,7 @@ namespace XFood.API.Criterions
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
 
-        [HttpPost("create")]
+        [HttpPost("")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -48,7 +48,7 @@ namespace XFood.API.Criterions
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
 
-        [HttpPatch("edit/{id}")]
+        [HttpPut("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -61,13 +61,13 @@ namespace XFood.API.Criterions
         CancellationToken cancellationToken
     )
         {
-            var newRequest = request with { Id = id };
-            var res = await commandDispatcher.Dispatch<PatchEditCriterionRequest, Result<PatchEditCriterionResponse>>(newRequest, cancellationToken);
+            request.Id = id;
+            var res = await commandDispatcher.Dispatch<PatchEditCriterionRequest, Result<PatchEditCriterionResponse>>(request, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -75,12 +75,11 @@ namespace XFood.API.Criterions
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeleteCriterionResponse))]
         public async Task<ActionResult<Result<DeleteCriterionResponse>>> DeleteCriterion(
         [FromRoute] int id,
-        [FromBody] DeleteCriterionRequest request,
         [FromServices] ICommandDispatcher commandDispatcher,
         CancellationToken cancellationToken
     )
         {
-            var newRequest = request with { Id = id };
+            var newRequest = new DeleteCriterionRequest(id);
             var res = await commandDispatcher.Dispatch<DeleteCriterionRequest, Result<DeleteCriterionResponse>>(newRequest, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);

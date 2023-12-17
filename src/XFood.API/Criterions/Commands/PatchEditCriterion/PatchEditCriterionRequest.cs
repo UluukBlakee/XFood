@@ -3,5 +3,14 @@ using System.Text.Json.Serialization;
 
 namespace XFood.API.Criterions.Commands.PatchEditCriterion
 {
-    public record PatchEditCriterionRequest(int Id, string Name, [Required] int MaxPoints, string Section, [Required] int ReceivedPoints, [Required] int CheckListId);
+    public class PatchEditCriterionRequest
+    {
+        [JsonIgnore]
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int MaxPoints { get; set; }
+        public string Section { get; set; }
+        public int ReceivedPoints { get; set; }
+        public int CheckListId { get; set; }
+    }
 }
