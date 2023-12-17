@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using XFood.Data;
@@ -11,9 +12,10 @@ using XFood.Data;
 namespace XFood.Data.Migrations
 {
     [DbContext(typeof(XFoodContext))]
-    partial class XFoodContextModelSnapshot : ModelSnapshot
+    [Migration("20231211124734_AddFatherName")]
+    partial class AddFatherName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -417,7 +419,7 @@ namespace XFood.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("PizzeriaId")
+                    b.Property<int>("PizzeriaId")
                         .HasColumnType("integer");
 
                     b.Property<string>("SecurityStamp")
@@ -571,9 +573,13 @@ namespace XFood.Data.Migrations
 
             modelBuilder.Entity("XFood.Data.Models.User", b =>
                 {
-                    b.HasOne("XFood.Data.Models.Pizzeria", null)
+                    b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
                         .WithMany("Managers")
-                        .HasForeignKey("PizzeriaId");
+                        .HasForeignKey("PizzeriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pizzeria");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.CategoryFactor", b =>

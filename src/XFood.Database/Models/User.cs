@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace XFood.Data.Models
 {
-    public class User:IdentityUser<int>
+    public class User: IdentityUser<int>
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public int PizzeriaId { get; set; }
-        public Pizzeria? Pizzeria { get; set; }
+        public string? FatherName { get; set; }
     }
 }
