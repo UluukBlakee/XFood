@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using XFood.Data.Models;
 
-namespace XFood.Data
+namespace XFood.Data.Configuration
 {
     public static class ServiceCollectionExtensions
     {
@@ -13,9 +13,10 @@ namespace XFood.Data
         {
             services.AddDbContext<XFoodContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<User>()
-.AddEntityFrameworkStores<XFoodContext>();
-
+            services.AddIdentity<User, IdentityRole<int>>()
+               .AddEntityFrameworkStores<XFoodContext>()
+               .AddDefaultUI()
+            .AddDefaultTokenProviders(); ;
             return services;
         }
     }

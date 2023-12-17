@@ -17,5 +17,10 @@ namespace XFood.Data
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<OpportunitySchedule> OpportunitySchedules { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+             }
     }
+    
 }

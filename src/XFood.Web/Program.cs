@@ -1,5 +1,5 @@
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
+global using Microsoft.AspNetCore.Components.Authorization;
+global using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using XFoodBlazor.Web.Client.Services.Authorization;
@@ -14,12 +14,15 @@ namespace XFoodBlazor.Web.Client
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/") });
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
-            await builder.Build().RunAsync();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/api/") });
+            
+            await builder
+                .Build()
+                .RunAsync();
         }
     }
 }
