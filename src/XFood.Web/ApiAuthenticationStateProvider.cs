@@ -1,11 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
-
 namespace XFoodBlazor.Web.Client;
-
 public class ApiAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly HttpClient _httpClient;
@@ -19,16 +15,24 @@ public class ApiAuthenticationStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var savedToken = await _localStorage.GetItemAsync<string>("authToken");
+        string token = await _localStorage.GetItemAsStringAsync("token");
 
-        if (string.IsNullOrWhiteSpace(savedToken))
+        var identity = new ClaimsIdentity();
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+
+        if (!string.IsNullOrEmpty(token))
         {
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         }
 
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+        var user = new ClaimsPrincipal(identity);
+        var state = new AuthenticationState(user);
 
-        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
+        NotifyAuthenticationStateChanged(Task.FromResult(state));
+
+        return state;
     }
 
     public void MarkUserAsAuthenticated(string email)

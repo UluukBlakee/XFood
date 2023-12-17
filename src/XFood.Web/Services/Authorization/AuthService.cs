@@ -35,8 +35,7 @@ public class AuthService : IAuthService
 
     public async Task<RegisterResponse> Register(RegisterRequest registerModel)
     {
-        var q = _httpClient.BaseAddress?.Host;
-        var result = await _httpClient.PostAsJsonAsync("https://localhost:7051/api/account/register", registerModel);
+        var result = await _httpClient.PostAsJsonAsync("account/register", registerModel);
 
         if (result.IsSuccessStatusCode)
         {
@@ -50,27 +49,29 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponse> Login(LoginRequest loginModel)
     {
-        var loginAsJson = JsonSerializer.Serialize(loginModel);
-        var response = await _httpClient.PostAsync("api/account/login",
-            new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
-        var loginResult = JsonSerializer.Deserialize<LoginResponse>(await response.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var result = await _httpClient.PostAsJsonAsync("account/login", loginModel);
 
-        if (!response.IsSuccessStatusCode)
+        if (result.IsSuccessStatusCode)
         {
-            return loginResult;
+            var response = await result.Content.ReadFromJsonAsync<LoginResponse>();
+            await _localStorage.SetItemAsync("token", response.Token);
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.EmailOrLogin);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", response.Token);
+            response.IsSuccess = true;
+            return response;
         }
 
-        await _localStorage.SetItemAsync("authToken", loginResult.Token);
-        ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
-
-        return loginResult;
+        return new LoginResponse
+        {
+            IsSuccess = false,
+            Error = await result.Content.ReadAsStringAsync(),
+            Token = null
+        };
     }
 
     public async Task Logout()
     {
-        await _localStorage.RemoveItemAsync("authToken");
+        await _localStorage.RemoveItemAsync("token");
         ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
         _httpClient.DefaultRequestHeaders.Authorization = null;
     }
