@@ -21,7 +21,7 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
             var result = await _db.SaveChangesAsync();
             if (result > 0)
             {
-                return Result.Success(new CreateCheckListResponse(true));
+                return new CreateCheckListResponse(newCheckList.Id);
             }
             else
             {

@@ -4,6 +4,7 @@ using XFood.Data.Models;
 using XFood.Data;
 using xFood.Infrastructure;
 using XFood.API.Check_List.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace XFood.API.Check_List.Commands.UpdateCheckList
 {
@@ -17,21 +18,26 @@ namespace XFood.API.Check_List.Commands.UpdateCheckList
         }
         public async Task<Result<UpdateCheckListResponse>> Handle(UpdateCheckListRequest command, CancellationToken cancellationToken)
         {
-            CheckList checkList = new CheckList
+            CheckList checkList = await _db.CheckLists.FindAsync(command.Id);
+            if (checkList  != null)
             {
-                Id = command.CheckList.Id,
-                TotalPoints = command.CheckList.TotalPoints,
-                PizzeriaId = command.CheckList.Pizzeria.Id
-            };
-            _db.Update(checkList);
-            var result = await _db.SaveChangesAsync();
-            if (result > 0)
-            {
-                return Result.Success(new UpdateCheckListResponse(true));
+                checkList.Id = command.Id;
+                checkList.TotalPoints = command.TotalPoints;
+                checkList.PizzeriaId = command.PizzeriaId;
+                _db.Update(checkList);
+                var result = await _db.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return new UpdateCheckListResponse(true);
+                }
+                else
+                {
+                    return Result.Failure<UpdateCheckListResponse>("Не удалось сохранить изменения в базе данных.");
+                }
             }
             else
             {
-                return Result.Failure<UpdateCheckListResponse>("Не удалось сохранить изменения в базе данных.");
+                return Result.Failure<UpdateCheckListResponse>("Не удалось найти данные, попробуйте еще раз.");
             }
         }
     }

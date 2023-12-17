@@ -15,7 +15,7 @@ namespace XFood.API.Check_List
     [ApiController]
     public class CheckListController : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("list")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -39,17 +39,18 @@ namespace XFood.API.Check_List
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCheckListResponse))]
         public async Task<ActionResult<Result<GetCheckListResponse>>> GetCheckList(
-            [FromRoute] GetCheckListRequest request,
+            [FromRoute] int id,
             [FromServices] IQueryDispatcher queryDispatcher,
             CancellationToken cancellationToken
         )
         {
+            var request = new GetCheckListRequest(id);
             var res = await queryDispatcher.Dispatch<GetCheckListRequest, Result<GetCheckListResponse>>(request, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
 
-        [HttpPost("create")]
+        [HttpPost("")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -66,35 +67,38 @@ namespace XFood.API.Check_List
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateCheckListResponse))]
         public async Task<ActionResult<Result<UpdateCheckListResponse>>> Update(
+           [FromRoute] int id,
            [FromBody] UpdateCheckListRequest request,
            [FromServices] ICommandDispatcher commandDispatcher,
            CancellationToken cancellationToken
         )
         {
+            request.Id = id;
             var res = await commandDispatcher.Dispatch<UpdateCheckListRequest, Result<UpdateCheckListResponse>>(request, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeleteCheckListResponse))]
         public async Task<ActionResult<Result<DeleteCheckListResponse>>> Delete(
-           [FromRoute] DeleteCheckListRequest request,
+           [FromRoute] int id,
            [FromServices] ICommandDispatcher commandDispatcher,
            CancellationToken cancellationToken
         )
         {
+            var request = new DeleteCheckListRequest(id);
             var res = await commandDispatcher.Dispatch<DeleteCheckListRequest, Result<DeleteCheckListResponse>>(request, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);

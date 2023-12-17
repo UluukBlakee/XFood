@@ -6,6 +6,8 @@ using XFood.Data;
 using Microsoft.EntityFrameworkCore;
 using XFood.API.Employee.Queries.GetEmployeeList;
 using XFood.API.Employee.Queries;
+using XFood.API.Check_List.Commands.CreateCheckList;
+using XFood.API.Check_List.Commands.DeleteCheckList;
 
 namespace XFood.API.Check_List.Queries.GetCheckList
 {
@@ -19,15 +21,22 @@ namespace XFood.API.Check_List.Queries.GetCheckList
         public async Task<Result<GetCheckListResponse>> Handle(GetCheckListRequest query, CancellationToken cancellation)
         {
             CheckList checkList = await _db.CheckLists.Include(cl => cl.Pizzeria).Include(cl => cl.Criteria).Include(cl => cl.CategoryFactors).FirstOrDefaultAsync(cl => cl.Id == query.Id);
-            CheckListView newCheckList = new CheckListView
+            if (checkList != null)
             {
-                Id = checkList.Id,
-                CategoryFactors = checkList.CategoryFactors,
-                Criteria = checkList.Criteria,
-                TotalPoints = checkList.TotalPoints,
-                Pizzeria = checkList.Pizzeria
-            };
-            return new GetCheckListResponse(newCheckList);
+                CheckListView newCheckList = new CheckListView
+                {
+                    Id = checkList.Id,
+                    CategoryFactors = checkList.CategoryFactors,
+                    Criteria = checkList.Criteria,
+                    TotalPoints = checkList.TotalPoints,
+                    Pizzeria = checkList.Pizzeria
+                };
+                return new GetCheckListResponse(newCheckList);
+            }
+            else
+            {
+                return Result.Failure<GetCheckListResponse>("Не удалось найти данные, попробуйте еще раз.");
+            }
         }
     }
 }

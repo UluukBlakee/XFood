@@ -4,6 +4,7 @@ using XFood.Data.Models;
 using XFood.Data;
 using xFood.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using XFood.API.Check_List.Commands.UpdateCheckList;
 
 namespace XFood.API.Check_List.Commands.DeleteCheckList
 {
@@ -17,17 +18,21 @@ namespace XFood.API.Check_List.Commands.DeleteCheckList
         }
         public async Task<Result<DeleteCheckListResponse>> Handle(DeleteCheckListRequest command, CancellationToken cancellationToken)
         {
-            CheckList checkList = await _db.CheckLists.FirstOrDefaultAsync(cl => cl.Id == command.Id);
-            _db.Remove(checkList);
-            var result = await _db.SaveChangesAsync();
-            if (result > 0)
+            CheckList checkList = await _db.CheckLists.FindAsync(command.Id);
+            if (checkList != null)
             {
-                return Result.Success(new DeleteCheckListResponse(true));
+                _db.Remove(checkList);
+                var result = await _db.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return new DeleteCheckListResponse(true);
+                }
+                else
+                {
+                    return Result.Failure<DeleteCheckListResponse>("Не удалось удалить данные в базе данных.");
+                }
             }
-            else
-            {
-                return Result.Failure<DeleteCheckListResponse>("Не удалось удалить данные в базе данных.");
-            }
+            return Result.Failure<DeleteCheckListResponse>("Не удалось найти данные, попробуйте еще раз.");
         }
     }
 }
