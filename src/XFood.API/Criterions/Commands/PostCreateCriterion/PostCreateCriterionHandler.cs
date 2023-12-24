@@ -15,7 +15,7 @@ namespace XFood.API.Criterions.Commands.PostCreateCriterion
 
         public async Task<Result<PostCreateCriterionResponse>> Handle(PostCreateCriterionRequest command, CancellationToken cancellationToken)
         {
-            var newCriterion = new Criterion { Name = command.Name, MaxPoints = command.MaxPoints, Section = command.Section, ReceivedPoints = command.ReceivedPoints, CheckListId = command.CheckListId };
+            var newCriterion = new Criterion { Name = command.Name, MaxPoints = command.MaxPoints, Section = command.Section, ReceivedPoints = command.ReceivedPoints, PizzeriaId = command.PizzeriaId };
             var result = await _context.AddAsync(newCriterion);
             await _context.SaveChangesAsync();
             if (result.Entity == null)
