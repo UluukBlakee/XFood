@@ -23,7 +23,7 @@ namespace XFood.API.Criterions.Commands.PatchEditCriterion
                 criterion.MaxPoints = command.MaxPoints;
                 criterion.Section = command.Section;
                 criterion.ReceivedPoints = command.ReceivedPoints;
-                criterion.CheckListId = command.CheckListId;
+                criterion.PizzeriaId = command.PizzeriaId;
                 _context.Update(criterion);
                 await _context.SaveChangesAsync();
             }
