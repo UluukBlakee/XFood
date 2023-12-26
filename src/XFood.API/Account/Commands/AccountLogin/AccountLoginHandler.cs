@@ -32,7 +32,7 @@ namespace XFood.API.Account.Commands.AccountLogin
             var result = await _signInManager.PasswordSignInAsync(
                 user,
                 command.Password,
-                command.RememberMe,
+                true,
                 false
             );
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
