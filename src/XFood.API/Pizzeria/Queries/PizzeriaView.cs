@@ -1,6 +1,6 @@
-﻿namespace XFood.Data.Models
+﻿namespace XFood.API.Pizzeria.Queries
 {
-    public class Pizzeria
+    public class PizzeriaView
     {
         public int Id { get; set; }
         public string? Name { get; set; }
