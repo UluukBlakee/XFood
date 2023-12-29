@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using XFood.Data.Models;
 
 namespace XFood.Data
@@ -18,10 +20,16 @@ namespace XFood.Data
         public DbSet<OpportunitySchedule> OpportunitySchedules { get; set; }
         public DbSet<Manager> Managers { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
+
+        public XFoodContext()
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Pizzeria>().HasData(new Pizzeria {Id=1, Name = "Пиццерия 1", Region = "Москва" });
             base.OnModelCreating(builder);
-             }
+        }
     }
     
 }
