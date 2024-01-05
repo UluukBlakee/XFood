@@ -4,6 +4,7 @@ using xFood.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using XFood.Data.Models;
 using XFood.Data;
+using XFood.API.Check_List.Queries;
 
 namespace XFood.API.Check_List.Commands.CreateCheckList
 {
@@ -16,12 +17,22 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
         }
         public async Task<Result<CreateCheckListResponse>> Handle(CreateCheckListRequest command, CancellationToken cancellationToken)
         {
-            var newCheckList = new CheckList { PizzeriaId = command.PizzeriaId};
+            XFood.Data.Models.Manager manager = await _db.Managers.FindAsync(command.ManagerId);
+            var newCheckList = new CheckList { 
+                PizzeriaId = manager.PizzeriaId,
+                ManagerId = manager.Id,
+                StartCheck = DateTime.UtcNow,
+            };
             await _db.AddAsync(newCheckList);
             var result = await _db.SaveChangesAsync();
             if (result > 0)
             {
-                return new CreateCheckListResponse(newCheckList.Id);
+                CheckListView checkList = new CheckListView
+                {
+                    Id = newCheckList.Id,
+                    TotalPoints = newCheckList.TotalPoints
+                }; 
+                return new CreateCheckListResponse(checkList);
             }
             else
             {

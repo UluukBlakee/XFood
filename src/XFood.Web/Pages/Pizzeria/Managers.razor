@@ -1,0 +1,54 @@
+﻿@page "/pizzeria/managers/{PizzeriaId:int}"
+@using XFoodBlazor.Web.Client.Services.Pizzeria
+@using XFoodBlazor.Web.Client.Services.Pizzeria.GetPizzeria
+@inject IPizzeriaService PizzeriaService
+@inject NavigationManager NavigationManager
+
+@if (response != null && response.Pizzeria.Managers.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var manager in response.Pizzeria.Managers)
+            {
+                <tr>
+                    <td>@manager.FirstName</td>
+                    <td>@manager.LastName</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => CheckWork(manager.Id)">Проверить работу</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Нет данных о менеджерах.</p>
+}
+
+@code {
+    [Parameter]
+    public int PizzeriaId { get; set; }
+
+    GetPizzeriaRequest request = new GetPizzeriaRequest();
+
+    GetPizzeriaResponse response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        request.Id = PizzeriaId;
+        response = await PizzeriaService.GetPizzeria(request);
+    }
+
+    private void CheckWork(int managerId)
+    {
+        NavigationManager.NavigateTo($"checkWork/{managerId}");
+    }
+}

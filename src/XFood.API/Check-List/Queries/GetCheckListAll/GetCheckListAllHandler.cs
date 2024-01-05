@@ -17,13 +17,11 @@ namespace XFood.API.Check_List.Queries.GetCheckListAll
         }
         public async Task<Result<GetCheckListAllResponse>> Handle(GetCheckListAllRequest query,CancellationToken cancellation)
         {
-            List<CheckList> checkLists = await _db.CheckLists.Include(cl => cl.Pizzeria).Include(cl => cl.Criteria).ToListAsync();
+            List<CheckList> checkLists = await _db.CheckLists.Include(cl => cl.Pizzeria).ToListAsync();
             List<CheckListView> list = checkLists.Select(cl => new CheckListView
             {
                 Id = cl.Id,
-                Criteria = cl.Criteria,
                 TotalPoints = cl.TotalPoints,
-                Pizzeria = cl.Pizzeria
             }).ToList();
             return new GetCheckListAllResponse(list);
         }

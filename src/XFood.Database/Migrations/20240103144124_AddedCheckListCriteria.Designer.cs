@@ -12,8 +12,8 @@ using XFood.Data;
 namespace XFood.Data.Migrations
 {
     [DbContext(typeof(XFoodContext))]
-    [Migration("20231229173428_PizzeriaDataSeed")]
-    partial class PizzeriaDataSeed
+    [Migration("20240103144124_AddedCheckListCriteria")]
+    partial class AddedCheckListCriteria
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -186,7 +186,7 @@ namespace XFood.Data.Migrations
                     b.ToTable("Appeals");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CategoryFactor", b =>
+            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -194,13 +194,42 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CheckListId")
+                    b.Property<DateTime?>("EndCheck")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ManagerId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
                     b.Property<int>("PizzeriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("StartCheck")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TotalPoints")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("PizzeriaId");
+
+                    b.ToTable("CheckLists");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CheckListId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CriterionId")
                         .HasColumnType("integer");
 
                     b.Property<int>("ReceivedPoints")
@@ -210,30 +239,9 @@ namespace XFood.Data.Migrations
 
                     b.HasIndex("CheckListId");
 
-                    b.HasIndex("PizzeriaId");
+                    b.HasIndex("CriterionId");
 
-                    b.ToTable("CategoryFactors");
-                });
-
-            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PizzeriaId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalPoints")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PizzeriaId");
-
-                    b.ToTable("CheckLists");
+                    b.ToTable("ChecklistCriteria");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Criterion", b =>
@@ -256,9 +264,6 @@ namespace XFood.Data.Migrations
                     b.Property<int>("PizzeriaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ReceivedPoints")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Section")
                         .HasColumnType("text");
 
@@ -279,7 +284,7 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("CriterionId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
@@ -290,7 +295,7 @@ namespace XFood.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CriterionId");
 
                     b.ToTable("CriticalFactors");
                 });
@@ -360,14 +365,6 @@ namespace XFood.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pizzerias");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Пиццерия 1",
-                            Region = "Москва"
-                        });
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Schedule", b =>
@@ -537,30 +534,42 @@ namespace XFood.Data.Migrations
                     b.Navigation("CheckList");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CategoryFactor", b =>
+            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
                 {
-                    b.HasOne("XFood.Data.Models.CheckList", null)
-                        .WithMany("CategoryFactors")
-                        .HasForeignKey("CheckListId");
+                    b.HasOne("XFood.Data.Models.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
                         .WithMany()
                         .HasForeignKey("PizzeriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Manager");
 
                     b.Navigation("Pizzeria");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
+            modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>
                 {
-                    b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
+                    b.HasOne("XFood.Data.Models.CheckList", "CheckList")
                         .WithMany()
-                        .HasForeignKey("PizzeriaId")
+                        .HasForeignKey("CheckListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pizzeria");
+                    b.HasOne("XFood.Data.Models.Criterion", "Criterion")
+                        .WithMany()
+                        .HasForeignKey("CriterionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CheckList");
+
+                    b.Navigation("Criterion");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Criterion", b =>
@@ -580,13 +589,13 @@ namespace XFood.Data.Migrations
 
             modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
                 {
-                    b.HasOne("XFood.Data.Models.CategoryFactor", "Category")
-                        .WithMany("CriticalFactors")
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("XFood.Data.Models.Criterion", "Criterion")
+                        .WithMany()
+                        .HasForeignKey("CriterionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Criterion");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Manager", b =>
@@ -630,15 +639,8 @@ namespace XFood.Data.Migrations
                     b.Navigation("Manager");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CategoryFactor", b =>
-                {
-                    b.Navigation("CriticalFactors");
-                });
-
             modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
                 {
-                    b.Navigation("CategoryFactors");
-
                     b.Navigation("Criteria");
                 });
 #pragma warning restore 612, 618

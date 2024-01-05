@@ -17,7 +17,7 @@ namespace XFood.API.Manager.Queries.GetManager
         }
         public async Task<Result<GetManagerResponse>> Handle(GetManagerRequest query, CancellationToken cancellation)
         {
-            Data.Models.Manager manager = await _db.Managers.Include(cl => cl.Pizzeria).FirstOrDefaultAsync(cl => cl.Id == query.Id);
+            Data.Models.Manager manager = await _db.Managers.FirstOrDefaultAsync(cl => cl.Id == query.Id);
             if (manager != null)
             {
                 ManagerView managerView = new ManagerView
@@ -26,7 +26,6 @@ namespace XFood.API.Manager.Queries.GetManager
                     FirstName = manager.FirstName,
                     LastName = manager.LastName,
                     PizzeriaId = manager.PizzeriaId,
-                    Pizzeria = manager.Pizzeria
                 };
                 return new GetManagerResponse(managerView);
             }

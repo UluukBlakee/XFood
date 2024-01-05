@@ -1,4 +1,4 @@
-﻿namespace XFood.API.Manager.Queries
+﻿namespace XFoodBlazor.Web.Client.Services.Manager
 {
     public class ManagerView
     {

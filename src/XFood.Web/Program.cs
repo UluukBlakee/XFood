@@ -3,6 +3,8 @@ global using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using XFoodBlazor.Web.Client.Services.Authorization;
+using XFoodBlazor.Web.Client.Services.Pizzeria;
+using XFoodBlazor.Web.Client.Services.Manager;
 
 namespace XFoodBlazor.Web.Client
 {
@@ -18,6 +20,8 @@ namespace XFoodBlazor.Web.Client
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IPizzeriaService, PizzeriaService>();
+            builder.Services.AddScoped<IManagerService, ManagerService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/api/") });
             
             await builder

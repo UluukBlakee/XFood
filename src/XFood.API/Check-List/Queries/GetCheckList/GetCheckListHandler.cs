@@ -20,15 +20,13 @@ namespace XFood.API.Check_List.Queries.GetCheckList
         }
         public async Task<Result<GetCheckListResponse>> Handle(GetCheckListRequest query, CancellationToken cancellation)
         {
-            CheckList checkList = await _db.CheckLists.Include(cl => cl.Pizzeria).Include(cl => cl.Criteria).FirstOrDefaultAsync(cl => cl.Id == query.Id);
+            CheckList checkList = await _db.CheckLists.Include(cl => cl.Pizzeria).FirstOrDefaultAsync(cl => cl.Id == query.Id);
             if (checkList != null)
             {
                 CheckListView newCheckList = new CheckListView
                 {
                     Id = checkList.Id,
-                    Criteria = checkList.Criteria,
-                    TotalPoints = checkList.TotalPoints,
-                    Pizzeria = checkList.Pizzeria
+                    TotalPoints = checkList.TotalPoints
                 };
                 return new GetCheckListResponse(newCheckList);
             }

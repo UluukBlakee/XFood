@@ -1,7 +1,6 @@
-﻿using System.Text.Json.Serialization;
-using XFood.API.Manager.Queries;
+﻿using XFoodBlazor.Web.Client.Services.Manager;
 
-namespace XFood.API.Pizzeria.Queries
+namespace XFoodBlazor.Web.Client.Services.Pizzeria
 {
     public class PizzeriaView
     {
@@ -10,5 +9,4 @@ namespace XFood.API.Pizzeria.Queries
         public string? Region { get; set; }
         public List<ManagerView> Managers { get; set; }
     }
-
 }

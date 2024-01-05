@@ -1,0 +1,8 @@
+﻿@page "/checkWork/{ManagerId:int}"
+
+<h3>Проверка работы менеджера ID: @ManagerId</h3>
+
+@code {
+    [Parameter]
+    public int ManagerId { get; set; }
+}

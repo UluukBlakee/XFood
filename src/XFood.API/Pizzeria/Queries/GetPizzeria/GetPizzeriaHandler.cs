@@ -4,6 +4,7 @@ using xFood.Infrastructure;
 using XFood.Data.Models;
 using XFood.Data;
 using Microsoft.EntityFrameworkCore;
+using XFood.API.Manager.Queries;
 
 namespace XFood.API.Pizzeria.Queries.GetPizzeria
 {
@@ -16,14 +17,21 @@ namespace XFood.API.Pizzeria.Queries.GetPizzeria
         }
         public async Task<Result<GetPizzeriaResponse>> Handle(GetPizzeriaRequest query, CancellationToken cancellation)
         {
-            XFood.Data.Models.Pizzeria pizzeria = await _context.Pizzerias.FirstOrDefaultAsync(cl => cl.Id == query.Id);
+            XFood.Data.Models.Pizzeria pizzeria = await _context.Pizzerias.Include(p => p.Managers).FirstOrDefaultAsync(cl => cl.Id == query.Id);
             if (pizzeria != null)
             {
                 PizzeriaView newPizzeria = new PizzeriaView
                 {
                     Id = pizzeria.Id,
                     Name = pizzeria.Name,
-                    Region = pizzeria.Region
+                    Region = pizzeria.Region,
+                    Managers = pizzeria.Managers.Select(m => new ManagerView
+                    {
+                        Id = m.Id,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        PizzeriaId = m.PizzeriaId
+                    }).ToList()
                 };
                 return new GetPizzeriaResponse(newPizzeria);
             }

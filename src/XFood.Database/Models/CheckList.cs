@@ -14,7 +14,6 @@ namespace XFood.Data.Models
         public DateTime? StartCheck { get; set; }
         public DateTime? EndCheck { get; set; }
         public int TotalPoints { get; set; }
-        public List<Criterion>? Criteria { get; set; }
         public int ManagerId { get; set; }
         public Manager? Manager { get; set; }
     }
