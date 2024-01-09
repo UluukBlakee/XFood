@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using XFoodBlazor.Web.Client.Services.Authorization;
 using XFoodBlazor.Web.Client.Services.Pizzeria;
 using XFoodBlazor.Web.Client.Services.Manager;
+using XFoodBlazor.Web.Client.Services.Check_List;
+using XFoodBlazor.Web.Client.Services.CheckListCriteria;
 
 namespace XFoodBlazor.Web.Client
 {
@@ -22,6 +24,8 @@ namespace XFoodBlazor.Web.Client
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IPizzeriaService, PizzeriaService>();
             builder.Services.AddScoped<IManagerService, ManagerService>();
+            builder.Services.AddScoped<ICheckService, CheckService>();
+            builder.Services.AddScoped<ICheckListCriteriaService, CheckListCriteriaService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/api/") });
             
             await builder

@@ -29,8 +29,7 @@ namespace XFood.API.Pizzeria.Queries.GetPizzeria
                     {
                         Id = m.Id,
                         FirstName = m.FirstName,
-                        LastName = m.LastName,
-                        PizzeriaId = m.PizzeriaId
+                        LastName = m.LastName
                     }).ToList()
                 };
                 return new GetPizzeriaResponse(newPizzeria);

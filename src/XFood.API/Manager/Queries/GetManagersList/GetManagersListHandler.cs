@@ -19,8 +19,7 @@ namespace XFood.API.Manager.Queries.GetManagersList
             {
                 Id = m.Id,
                 FirstName = m.FirstName,
-                LastName = m.LastName,
-                PizzeriaId = m.PizzeriaId,
+                LastName = m.LastName
             }).ToList();
             return new GetManagersListResponse(list);
         }

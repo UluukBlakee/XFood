@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using XFood.API.Account.Commands.AccountLogin;
-using XFood.API.Employee.Queries.GetEmployeeList;
 using xFood.Infrastructure;
 using XFood.API.Account.Commands.AccountRegister;
 

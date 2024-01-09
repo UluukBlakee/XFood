@@ -1,8 +1,8 @@
-﻿using XFood.API.CheckListCriteria.Queries;
-using XFood.API.Manager.Queries;
-using XFood.API.Pizzeria.Queries;
+﻿using XFoodBlazor.Web.Client.Services.CheckListCriteria;
+using XFoodBlazor.Web.Client.Services.Manager;
+using XFoodBlazor.Web.Client.Services.Pizzeria;
 
-namespace XFood.API.Check_List.Queries
+namespace XFoodBlazor.Web.Client.Services.Check_List
 {
     public class CheckListView
     {

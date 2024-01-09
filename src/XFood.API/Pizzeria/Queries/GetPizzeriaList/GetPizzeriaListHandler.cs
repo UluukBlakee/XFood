@@ -3,8 +3,6 @@ using xFood.Infrastructure;
 using XFood.Data;
 using Microsoft.EntityFrameworkCore;
 using XFood.Data.Models;
-using XFood.API.Employee.Queries.GetEmployeeList;
-using XFood.API.Employee.Queries;
 
 namespace XFood.API.Pizzeria.Queries.GetPizzeriaList
 {

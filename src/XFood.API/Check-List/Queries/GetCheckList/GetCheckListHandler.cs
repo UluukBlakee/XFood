@@ -4,8 +4,6 @@ using xFood.Infrastructure;
 using XFood.Data.Models;
 using XFood.Data;
 using Microsoft.EntityFrameworkCore;
-using XFood.API.Employee.Queries.GetEmployeeList;
-using XFood.API.Employee.Queries;
 using XFood.API.Check_List.Commands.CreateCheckList;
 using XFood.API.Check_List.Commands.DeleteCheckList;
 

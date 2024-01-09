@@ -24,8 +24,7 @@ namespace XFood.API.Manager.Queries.GetManager
                 {
                     Id = manager.Id,
                     FirstName = manager.FirstName,
-                    LastName = manager.LastName,
-                    PizzeriaId = manager.PizzeriaId,
+                    LastName = manager.LastName
                 };
                 return new GetManagerResponse(managerView);
             }
