@@ -2,6 +2,7 @@
 using XFood.Data;
 using xFood.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using XFood.Data.Models;
 
 namespace XFood.API.Manager.Queries.GetManagersList
 {
@@ -19,7 +20,9 @@ namespace XFood.API.Manager.Queries.GetManagersList
             {
                 Id = m.Id,
                 FirstName = m.FirstName,
-                LastName = m.LastName
+                LastName = m.LastName,
+                Telegram = m.Telegram,
+                Email = m.Email
             }).ToList();
             return new GetManagersListResponse(list);
         }

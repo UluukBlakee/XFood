@@ -24,7 +24,9 @@ namespace XFood.API.Manager.Queries.GetManager
                 {
                     Id = manager.Id,
                     FirstName = manager.FirstName,
-                    LastName = manager.LastName
+                    LastName = manager.LastName,
+                    Telegram = manager.Telegram,
+                    Email = manager.Email
                 };
                 return new GetManagerResponse(managerView);
             }
