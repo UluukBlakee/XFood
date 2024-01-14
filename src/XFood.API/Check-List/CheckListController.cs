@@ -5,6 +5,7 @@ using System.Threading;
 using xFood.Infrastructure;
 using XFood.API.Check_List.Commands.CreateCheckList;
 using XFood.API.Check_List.Commands.DeleteCheckList;
+using XFood.API.Check_List.Commands.EndCheckListAndEtTotalPoints;
 using XFood.API.Check_List.Commands.UpdateCheckList;
 using XFood.API.Check_List.Queries.GetCheckList;
 using XFood.API.Check_List.Queries.GetCheckListAll;
@@ -100,6 +101,25 @@ namespace XFood.API.Check_List
         {
             var request = new DeleteCheckListRequest(id);
             var res = await commandDispatcher.Dispatch<DeleteCheckListRequest, Result<DeleteCheckListResponse>>(request, cancellationToken);
+
+            return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
+        }
+
+        [HttpPut("endCheck/{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EndCheckListAndEtTotalPointsResponse))]
+        public async Task<ActionResult<Result<EndCheckListAndEtTotalPointsResponse>>> EndCheckListAndSetTotalPoints(
+           [FromRoute] int id,
+           [FromBody] EndCheckListAndEtTotalPointsRequest request,
+           [FromServices] ICommandDispatcher commandDispatcher,
+           CancellationToken cancellationToken
+        )
+        {
+            request.Id = id;
+            var res = await commandDispatcher.Dispatch<EndCheckListAndEtTotalPointsRequest, Result<EndCheckListAndEtTotalPointsResponse>>(request, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }
