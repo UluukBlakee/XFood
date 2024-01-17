@@ -1,11 +1,13 @@
 ﻿using System.Net.Http.Json;
 using XFoodBlazor.Web.Client.Services.Check_List.Create;
+using XFoodBlazor.Web.Client.Services.Check_List.SetTotalPoints;
 
 namespace XFoodBlazor.Web.Client.Services.Check_List
 {
     public interface ICheckService
     {
         Task<CreateCheckListResponse> Create(CreateCheckListRequest checkListModel);
+        Task<SetTotalPointsResponse> SetTotalPoints(SetTotalPointsRequest checkListModel);
     }
     public class CheckService : ICheckService
     {
@@ -24,6 +26,17 @@ namespace XFoodBlazor.Web.Client.Services.Check_List
                 return response;
             }
             return new CreateCheckListResponse(null, await result.Content.ReadAsStringAsync());
+        }
+
+        public async Task<SetTotalPointsResponse> SetTotalPoints(SetTotalPointsRequest checkListModel)
+        {
+            var result = await _httpClient.PutAsJsonAsync($"checkList/endCheck/{checkListModel.Id}", checkListModel);
+            if (result.IsSuccessStatusCode)
+            {
+                var response = await result.Content.ReadFromJsonAsync<SetTotalPointsResponse>();
+                return response;
+            }
+            return new SetTotalPointsResponse(false);
         }
     }
 }

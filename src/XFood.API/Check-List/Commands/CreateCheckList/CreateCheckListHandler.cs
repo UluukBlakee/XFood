@@ -34,7 +34,9 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                 {
                     PizzeriaId = manager.PizzeriaId,
                     ManagerId = manager.Id,
-                    StartCheck = DateTime.UtcNow
+                    StartCheck = DateTime.UtcNow,
+                    TotalPoints = 0,
+                    EndCheck = null
                 };
                 await _db.AddAsync(newCheckList);
                 var result = await _db.SaveChangesAsync();
@@ -73,7 +75,6 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                             Name = manager.Pizzeria.Name
                         },
                         StartCheck = newCheckList.StartCheck,
-                        TotalPoints = newCheckList.TotalPoints,
                         Manager = new ManagerView
                         {
                             FirstName = manager.FirstName,
@@ -81,7 +82,6 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                         },
                         Criteria = checkListCriteria
                     };
-
                     return new CreateCheckListResponse(checkList);
                 }
                 else
