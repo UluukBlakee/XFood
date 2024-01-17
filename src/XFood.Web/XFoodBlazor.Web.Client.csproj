@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Новая папка\**" />
+    <Content Remove="Pages\Новая папка\**" />
+    <EmbeddedResource Remove="Pages\Новая папка\**" />
+    <None Remove="Pages\Новая папка\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
