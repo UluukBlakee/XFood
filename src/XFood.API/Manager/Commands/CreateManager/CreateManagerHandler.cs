@@ -18,6 +18,8 @@ namespace XFood.API.Manager.Commands.CreateManager
             { 
                 FirstName = command.FirstName,
                 LastName = command.LastName,
+                Telegram = command.Telegram,
+                Email = command.Email,
                 PizzeriaId = command.PizzeriaId 
             };
             await _db.AddAsync(manager);

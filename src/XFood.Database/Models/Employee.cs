@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace XFood.Data.Models
 {
-    public class Manager
+    public class Employee
     {
         public int Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? Telegram { get; set; }
-        public string? Email { get; set; }
+        public string? Position { get; set; }
+        public DateTime? EntryDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string? ContactInfo { get; set; }
         public int PizzeriaId { get; set; }
         public Pizzeria? Pizzeria { get; set; }
     }

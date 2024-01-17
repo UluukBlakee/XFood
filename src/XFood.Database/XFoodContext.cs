@@ -19,6 +19,7 @@ namespace XFood.Data
         public DbSet<OpportunitySchedule> OpportunitySchedules { get; set; }
         public DbSet<Manager> Managers { get; set; }
         public DbSet<ChecklistCriteria> ChecklistCriteria { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
 
         public XFoodContext()
@@ -39,26 +40,26 @@ namespace XFood.Data
                 new Pizzeria { Id = 9, Name = "Орша-1", Region = "Беларусь" }
             );
             builder.Entity<Manager>().HasData(
-                new Manager { Id = 1, FirstName = "Александр", LastName = "Иванов", PizzeriaId = 1 },
-                new Manager { Id = 2, FirstName = "Екатерина", LastName = "Смирнова", PizzeriaId = 2 },
-                new Manager { Id = 3, FirstName = "Дмитрий", LastName = "Петров", PizzeriaId = 3 },
-                new Manager { Id = 4, FirstName = "Мария", LastName = "Сидорова", PizzeriaId = 4 },
-                new Manager { Id = 5, FirstName = "Андрей", LastName = "Кузнецов", PizzeriaId = 5 },
-                new Manager { Id = 6, FirstName = "Ольга", LastName = "Семенова", PizzeriaId = 6 },
-                new Manager { Id = 7, FirstName = "Сергей", LastName = "Лебедев", PizzeriaId = 7 },
-                new Manager { Id = 8, FirstName = "Анастасия", LastName = "Новикова", PizzeriaId = 8 },
-                new Manager { Id = 9, FirstName = "Иван", LastName = "Морозов", PizzeriaId = 9 },
-                new Manager { Id = 10, FirstName = "Елена", LastName = "Васнецова", PizzeriaId = 1 },
-                new Manager { Id = 11, FirstName = "Павел", LastName = "Федоров", PizzeriaId = 2 },
-                new Manager { Id = 12, FirstName = "Алиса", LastName = "Соловьева", PizzeriaId = 3 },
-                new Manager { Id = 13, FirstName = "Никита", LastName = "Тихонов", PizzeriaId = 4 },
-                new Manager { Id = 14, FirstName = "Валерия", LastName = "Козлова", PizzeriaId = 5 },
-                new Manager { Id = 15, FirstName = "Григорий", LastName = "Игнатьев", PizzeriaId = 6 },
-                new Manager { Id = 16, FirstName = "Татьяна", LastName = "Смирнова", PizzeriaId = 7 },
-                new Manager { Id = 17, FirstName = "Артем", LastName = "Емельянов", PizzeriaId = 8 },
-                new Manager { Id = 18, FirstName = "Евгения", LastName = "Белова", PizzeriaId = 9 },
-                new Manager { Id = 19, FirstName = "Максим", LastName = "Третьяков", PizzeriaId = 1 },
-                new Manager { Id = 20, FirstName = "Виктория", LastName = "Жукова", PizzeriaId = 2 }
+                new Manager { Id = 1, FirstName = "Александр", LastName = "Иванов", Email = "alex@example.com", Telegram = "@alex_telegram", PizzeriaId = 1 },
+                new Manager { Id = 2, FirstName = "Екатерина", LastName = "Смирнова", Email = "ekaterina@example.com", Telegram = "@ekaterina_telegram", PizzeriaId = 2 },
+                new Manager { Id = 3, FirstName = "Дмитрий", LastName = "Петров", Email = "dmitry@example.com", Telegram = "@dmitry_telegram", PizzeriaId = 3 },
+                new Manager { Id = 4, FirstName = "Мария", LastName = "Сидорова", Email = "maria@example.com", Telegram = "@maria_telegram", PizzeriaId = 4 },
+                new Manager { Id = 5, FirstName = "Андрей", LastName = "Кузнецов", Email = "andrey@example.com", Telegram = "@andrey_telegram", PizzeriaId = 5 },
+                new Manager { Id = 6, FirstName = "Ольга", LastName = "Семенова", Email = "olga@example.com", Telegram = "@olga_telegram", PizzeriaId = 6 },
+                new Manager { Id = 7, FirstName = "Сергей", LastName = "Лебедев", Email = "sergey@example.com", Telegram = "@sergey_telegram", PizzeriaId = 7 },
+                new Manager { Id = 8, FirstName = "Анастасия", LastName = "Новикова", Email = "anastasia@example.com", Telegram = "@anastasia_telegram", PizzeriaId = 8 },
+                new Manager { Id = 9, FirstName = "Иван", LastName = "Морозов", Email = "ivan@example.com", Telegram = "@ivan_telegram", PizzeriaId = 9 },
+                new Manager { Id = 10, FirstName = "Елена", LastName = "Васнецова", Email = "elena@example.com", Telegram = "@elena_telegram", PizzeriaId = 1 },
+                new Manager { Id = 11, FirstName = "Павел", LastName = "Федоров", Email = "pavel@example.com", Telegram = "@pavel_telegram", PizzeriaId = 2 },
+                new Manager { Id = 12, FirstName = "Алиса", LastName = "Соловьева", Email = "alisa@example.com", Telegram = "@alisa_telegram", PizzeriaId = 3 },
+                new Manager { Id = 13, FirstName = "Никита", LastName = "Тихонов", Email = "nikita@example.com", Telegram = "@nikita_telegram", PizzeriaId = 4 },
+                new Manager { Id = 14, FirstName = "Валерия", LastName = "Козлова", Email = "valeria@example.com", Telegram = "@valeria_telegram", PizzeriaId = 5 },
+                new Manager { Id = 15, FirstName = "Григорий", LastName = "Игнатьев", Email = "grigory@example.com", Telegram = "@grigory_telegram", PizzeriaId = 6 },
+                new Manager { Id = 16, FirstName = "Татьяна", LastName = "Смирнова", Email = "tatiana@example.com", Telegram = "@tatiana_telegram", PizzeriaId = 7 },
+                new Manager { Id = 17, FirstName = "Артем", LastName = "Емельянов", Email = "artem@example.com", Telegram = "@artem_telegram", PizzeriaId = 8 },
+                new Manager { Id = 18, FirstName = "Евгения", LastName = "Белова", Email = "evgenia@example.com", Telegram = "@evgenia_telegram", PizzeriaId = 9 },
+                new Manager { Id = 19, FirstName = "Максим", LastName = "Третьяков", Email = "maxim@example.com", Telegram = "@maxim_telegram", PizzeriaId = 1 },
+                new Manager { Id = 20, FirstName = "Виктория", LastName = "Жукова", Email = "viktoria@example.com", Telegram = "@viktoria_telegram", PizzeriaId = 2 }
             );
             builder.Entity<Criterion>().HasData(
                 new Criterion { Id = 1, Name = "Форма всех сотрудников соответствует стандарту. \r\nСотрудники кухни (кассир при работе на упаковке) с бородой на всех станциях носят набородник", MaxPoints = 2, Section = "", PizzeriaId = 1 },
