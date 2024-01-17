@@ -14,14 +14,12 @@ namespace XFood.API.Manager.Queries.GetManagersList
         }
         public async Task<Result<GetManagersListResponse>> Handle(GetManagersListRequest query, CancellationToken cancellation)
         {
-            List<Data.Models.Manager> managers = await _db.Managers.Include(cl => cl.Pizzeria).ToListAsync();
+            List<Data.Models.Manager> managers = await _db.Managers.ToListAsync();
             List<ManagerView> list = managers.Select(m => new ManagerView
             {
                 Id = m.Id,
                 FirstName = m.FirstName,
-                LastName = m.LastName,
-                PizzeriaId = m.PizzeriaId,
-                Pizzeria = m.Pizzeria
+                LastName = m.LastName
             }).ToList();
             return new GetManagersListResponse(list);
         }

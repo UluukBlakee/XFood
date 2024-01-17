@@ -1,0 +1,128 @@
+﻿@page "/checkWork/{ManagerId:int}"
+@using XFoodBlazor.Web.Client.Services.CheckListCriteria.SetPoints;
+@using XFoodBlazor.Web.Client.Services.CheckListCriteria;
+@using XFoodBlazor.Web.Client.Services.Check_List
+@using XFoodBlazor.Web.Client.Services.Check_List.Create
+@using XFoodBlazor.Web.Client.Services.Criterion;
+@inject ICheckService CheckService
+@inject ICheckListCriteriaService CheckCriteriaService
+
+@if (response != null)
+{
+    <p>Пиццерия: @response.CheckList.Pizzeria?.Name</p>
+    <p>Менеджер: @response.CheckList.Manager?.FirstName @response.CheckList.Manager?.LastName</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Раздел</th>
+                <th>Что проверить</th>
+                <th>Оценка</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in response.CheckList.Criteria.GroupBy(c => c.Criterion.Section))
+            {
+                var firstCriterion = group.First();
+                <tr>
+                    <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
+                    <td>@firstCriterion.Criterion.Name</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="@($"#exampleModal-{firstCriterion.Id}")">
+                            @firstCriterion.ReceivedPoints
+                        </button>
+                    </td>
+                </tr>
+                @foreach (var criterion in group.Skip(1))
+                {
+                    <tr>
+                        <td>@criterion.Criterion.Name</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="@($"#exampleModal-{criterion.Id}")">
+                                @criterion.ReceivedPoints
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @foreach (var criteria in response.CheckList.Criteria)
+    {
+        <div class="modal fade" id="@($"exampleModal-{criteria.Id}")" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Выставление балла</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Название критерия: @criteria.Id</p>
+                        <p>Название критерия: @criteria.Criterion.Name</p>
+                        <p>Максимальный балл: @criteria.Criterion.MaxPoints</p>
+                        <label for="inputScore">Введите оценку:</label>
+                        <input type="number" class="form-control" id="inputScore" @bind="criteria.ReceivedPoints" min="0" max="@criteria.Criterion.MaxPoints" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" @onclick="@(async () => await SaveScore(criteria.Id, criteria.ReceivedPoints))">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <p>Максимальный балл: @MaxPoints</p>
+    <p>Общее количество баллов: @TotalPoints</p>
+    @if (TotalPoints != 0)
+    {
+        <p>Общее количество баллов в процентах: @PointProz %</p>
+    }
+    else
+    {
+        <p>Общее количество баллов в процентах: 0%</p>
+    }
+}
+else
+{
+    <p>Ошибка при загрузке данных.</p>
+}
+
+@code {
+    [Parameter]
+    public int ManagerId { get; set; }
+    CreateCheckListRequest request = new CreateCheckListRequest();
+    CreateCheckListResponse response;
+    SetPointsRequest setPointsRequest = new SetPointsRequest();
+    SetPointsResponse setPointsResponse;
+    double MaxPoints;
+    double TotalPoints;
+    double PointProz;
+
+    private async Task SaveScore(int Id, int ReceivedPoints)
+    {
+        setPointsRequest.Id = Id;
+        Console.WriteLine(Id);
+        Console.WriteLine(setPointsRequest);
+        setPointsRequest.ReceivedPoints = ReceivedPoints;
+        setPointsResponse = await CheckCriteriaService.SetPoints(setPointsRequest);
+        UpdatePoints();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        request.ManagerId = ManagerId;
+        response = await CheckService.Create(request);
+        UpdatePoints();
+    }
+
+    private void UpdatePoints()
+    {
+        MaxPoints = response.CheckList.Criteria
+            .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
+            .Sum(c => c.Criterion.MaxPoints);
+        TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);
+        PointProz = TotalPoints / MaxPoints * 100;
+    }
+}

@@ -6,7 +6,6 @@
         public string? Name { get; set; }
         public int MaxPoints { get; set; }
         public string? Section { get; set; }
-        public int ReceivedPoints { get; set; }
         public int PizzeriaId { get; set; }
         public Pizzeria? Pizzeria { get; set; }
     }

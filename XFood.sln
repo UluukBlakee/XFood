@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFood.Data", "src\XFood.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xFood.Infrastructure", "src\xFood.Infrastructure\xFood.Infrastructure.csproj", "{B3C6F39C-7258-41F8-A92A-15EC382089C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XFoodBlazor.Web.Client", "src\XFood.Web\XFoodBlazor.Web.Client.csproj", "{F9EE7BD6-DF59-468D-BA7A-A19CBB267C42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XFoodBlazor.Web.Client", "src\XFood.Web\XFoodBlazor.Web.Client.csproj", "{F9EE7BD6-DF59-468D-BA7A-A19CBB267C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
