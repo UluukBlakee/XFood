@@ -1,0 +1,50 @@
+﻿@page "/pizzerias"
+@using XFoodBlazor.Web.Client.Services.Pizzeria.GetList
+@using XFoodBlazor.Web.Client.Services.Pizzeria
+@inject IPizzeriaService PizzeriaService
+@inject NavigationManager NavigationManager
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Регион</th>
+            <th>Название</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (response != null && response.List != null && response.List.Any())
+        {
+            var groupedPizzerias = response.List.GroupBy(p => p.Region);
+
+            foreach (var group in groupedPizzerias)
+            {
+                        <tr>
+                            <td colspan="2"><strong>@group.Key</strong></td>
+                        </tr>
+
+                foreach (var pizzeria in group)
+                {
+                                <tr>
+                                    <td></td>
+                                    <td><a href="@($"pizzeria/managers/{pizzeria.Id}")">@pizzeria.Name</a></td>
+                                </tr>
+                }
+            }
+        }
+        else
+        {
+                <tr>
+                    <td colspan="2">Нету данных</td>
+                </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    GetListPizzeriaResponse response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await PizzeriaService.GetListPizzeria(new GetListPizzeriaRequest());
+    }
+}

@@ -1,13 +1,17 @@
-﻿using XFood.Data.Models;
+﻿using XFood.API.CheckListCriteria.Queries;
+using XFood.API.Manager.Queries;
+using XFood.API.Pizzeria.Queries;
 
 namespace XFood.API.Check_List.Queries
 {
     public class CheckListView
     {
         public int Id { get; set; }
-        public XFood.Data.Models.Pizzeria? Pizzeria{ get; set; }
+        public PizzeriaView? Pizzeria { get; set; }
+        public DateTime? StartCheck { get; set; }
+        public DateTime? EndCheck { get; set; }
         public int TotalPoints { get; set; }
-        public List<Criterion>? Criteria { get; set; }
-        public List<CategoryFactor>? CategoryFactors { get; set; }
+        public ManagerView? Manager { get; set; }
+        public List<CheckListCriteriaView>? Criteria { get; set; }
     }
 }

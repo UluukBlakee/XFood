@@ -20,6 +20,8 @@ namespace XFood.API.Manager.Commands.UpdateManager
                 manager.Id = command.Id;
                 manager.FirstName = command.FirstName;
                 manager.LastName = command.LastName;
+                manager.Email = command.Email;
+                manager.Telegram = command.Telegram;
                 manager.PizzeriaId = command.PizzeriaId;
                 _db.Update(manager);
                 var result = await _db.SaveChangesAsync();

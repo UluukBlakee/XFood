@@ -67,7 +67,9 @@ namespace XFood.API
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                  await Adminitializer.SeedAdminUser(roleManager, userManager);
+                 
             }
+            //await Pizzeriainitializer.SeedPizzeria(app.Services);
             app.UseCors(corsPolicy);
             if (app.Environment.IsDevelopment())
             {

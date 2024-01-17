@@ -184,7 +184,7 @@ namespace XFood.Data.Migrations
                     b.ToTable("Appeals");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CategoryFactor", b =>
+            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -192,13 +192,42 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CheckListId")
+                    b.Property<DateTime?>("EndCheck")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ManagerId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
                     b.Property<int>("PizzeriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("StartCheck")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TotalPoints")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("PizzeriaId");
+
+                    b.ToTable("CheckLists");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CheckListId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CriterionId")
                         .HasColumnType("integer");
 
                     b.Property<int>("ReceivedPoints")
@@ -208,30 +237,9 @@ namespace XFood.Data.Migrations
 
                     b.HasIndex("CheckListId");
 
-                    b.HasIndex("PizzeriaId");
+                    b.HasIndex("CriterionId");
 
-                    b.ToTable("CategoryFactors");
-                });
-
-            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PizzeriaId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalPoints")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PizzeriaId");
-
-                    b.ToTable("CheckLists");
+                    b.ToTable("ChecklistCriteria");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Criterion", b =>
@@ -242,9 +250,6 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CheckListId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("MaxPoints")
                         .HasColumnType("integer");
 
@@ -254,19 +259,280 @@ namespace XFood.Data.Migrations
                     b.Property<int>("PizzeriaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ReceivedPoints")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Section")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CheckListId");
-
                     b.HasIndex("PizzeriaId");
 
                     b.ToTable("Criteria");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            MaxPoints = 2,
+                            Name = "Форма всех сотрудников соответствует стандарту. \r\nСотрудники кухни (кассир при работе на упаковке) с бородой на всех станциях носят набородник",
+                            PizzeriaId = 1,
+                            Section = ""
+                        },
+                        new
+                        {
+                            Id = 2,
+                            MaxPoints = 2,
+                            Name = "Менеджер смены делает обходы.",
+                            PizzeriaId = 1,
+                            Section = ""
+                        },
+                        new
+                        {
+                            Id = 3,
+                            MaxPoints = 2,
+                            Name = "Сотрудники не используют личные телефоны в зеленой зоне пиццерии, не носят их в карманах.",
+                            PizzeriaId = 1,
+                            Section = ""
+                        },
+                        new
+                        {
+                            Id = 4,
+                            MaxPoints = 4,
+                            Name = "Продукт готовится по стандарту. Соблюдаются стандарты начинения и упаковки. Нет перерасхода ингредиентов. До 3-х ошибок, 4 и более - крит. фактор",
+                            PizzeriaId = 1,
+                            Section = "Потери"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            MaxPoints = 2,
+                            Name = "При приемке товар взвешивается, пересчитывается. Товар на пол не ставится.  \r\nРазбор поставки не более 1,5 часов (ВЗ), не более 1 часа - тесто",
+                            PizzeriaId = 1,
+                            Section = "Потери"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            MaxPoints = 4,
+                            Name = "Продукты не размораживаются в ГЦ и ХЦ, мойке, на печи. Не лежат на столах более чем 30 минут. Одновременная заготовка не более 1 ингредиента одним сотрудником.",
+                            PizzeriaId = 1,
+                            Section = "Потери"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            MaxPoints = 1,
+                            Name = "На линии начинения на каждый сыпучий ингредиент есть отдельный стаканчик. Используются актуальные стаканчики.",
+                            PizzeriaId = 1,
+                            Section = "Потери"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            MaxPoints = 1,
+                            Name = "У всех сумок есть место для хранения ,не хранятся на полу.",
+                            PizzeriaId = 1,
+                            Section = "Курьеры"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            MaxPoints = 1,
+                            Name = "Внешний вид курьеров соответствует стандарту",
+                            PizzeriaId = 1,
+                            Section = "Курьеры"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            MaxPoints = 1,
+                            Name = "Ответственный сотрудник не оставляет открытым денежный ящик.",
+                            PizzeriaId = 1,
+                            Section = "Кассир"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            MaxPoints = 3,
+                            Name = "Кассир дружелюбен, моментально реагирует на гостя. \r\nПринимает заказы быстро, помогает с выбором. \r\nНе игнорирует гостя, не стоит спиной к нему, в закрытой позе. \r\nРеакция на звонок не более 30 секунд.",
+                            PizzeriaId = 1,
+                            Section = "Касса"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            MaxPoints = 2,
+                            Name = "Тесто хранится по стандарту.",
+                            PizzeriaId = 1,
+                            Section = "Касса"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            MaxPoints = 2,
+                            Name = "Заказы в ресторан выданы на подносе согласно стандарту комплектации заказов. Гостю выдан чек (РБ). Пицца на металлическом подносе выдана согласно стандарту.",
+                            PizzeriaId = 1,
+                            Section = "Тесто"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            MaxPoints = 2,
+                            Name = "Линия полностью заполнена гастроемкостями - герметична. \r\nПри отсутствии заказов линия и гастроемкости закрыты.",
+                            PizzeriaId = 1,
+                            Section = "Кухня"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            MaxPoints = 4,
+                            Name = "Условия хранения продуктов и расходников соответствует стандартам \r\n(температура, 15 см от пола, пищевое/непищевое). \r\nВ желтой зоне нет вскрытых упаковок с напитками.",
+                            PizzeriaId = 1,
+                            Section = "Кухня"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            MaxPoints = 3,
+                            Name = "Овощи моются по стандарту, необработанные овощи не кладут на столы в ГЦ и ХЦ.",
+                            PizzeriaId = 1,
+                            Section = "Кухня"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            MaxPoints = 2,
+                            Name = "Пиццы готовятся согласно принципу конвейера. ",
+                            PizzeriaId = 1,
+                            Section = "Кухня"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            MaxPoints = 2,
+                            Name = "Зал: чистый пол, нет следов от ботинок, сильных загрязнений.",
+                            PizzeriaId = 1,
+                            Section = "Ресторан"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            MaxPoints = 2,
+                            Name = "Чистые столы. Подносы убираются в течение трех минут, нет остатков еды на убранных столах.",
+                            PizzeriaId = 1,
+                            Section = "Ресторан"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            MaxPoints = 4,
+                            Name = "Руки моются и обрабатываются антисептиком в соответствии со стандартом мытья рук.",
+                            PizzeriaId = 1,
+                            Section = "Сотрудник"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            MaxPoints = 3,
+                            Name = "Посуду моют согласно стандарту",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            MaxPoints = 2,
+                            Name = "Чистая линия начинения и стол раскатки, убирается вовремя и по стандарту.\r\n- если мусор собрали в руку - руки помыты.",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            MaxPoints = 2,
+                            Name = "Пицца-соус и альфредо закрывают крышкой при отстутствии заказов. \r\nПоловник меняют каждые два часа. - если хранится в соусе.",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            MaxPoints = 2,
+                            Name = "Сотрудники кухни используют перчатки по стандарту: уборка происходит только в перчатках. \r\nУборка без перчаток только без использования химии. ",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            MaxPoints = 1,
+                            Name = "Чисто в пищевой зоне (столы,полки, стены, пол, раковины, микроволновки, урна не переполнена)",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            MaxPoints = 1,
+                            Name = "Чисто в непищевой зоне (двери, колодец, стыки, стены, пол).",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            MaxPoints = 1,
+                            Name = "Менеджерской зона: чистота и порядок, отсутствуют напитки рядом с оборудованием.",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            MaxPoints = 1,
+                            Name = "Все проходы свободны , не захламлены , отсутствуют мусорные мешки, можно пройти без препятствий.",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            MaxPoints = 1,
+                            Name = "Химия и уборочный инвентарь хранится согласно стандарту. Уборочный инвентарь чистый.",
+                            PizzeriaId = 1,
+                            Section = "Прочие"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            MaxPoints = 2,
+                            Name = "",
+                            PizzeriaId = 1,
+                            Section = "Wow Фактор"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            MaxPoints = -4,
+                            Name = "Уберите балл, за то, что считаете особо важным, чему не уделяют на смене внимание.",
+                            PizzeriaId = 1,
+                            Section = "Критический фактор"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            MaxPoints = -8,
+                            Name = "Критическое нарушение пищевой безопасности.",
+                            PizzeriaId = 1,
+                            Section = "Критический фактор"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            MaxPoints = -8,
+                            Name = "Опоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.",
+                            PizzeriaId = 1,
+                            Section = "Критический фактор"
+                        });
                 });
 
             modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
@@ -277,7 +543,7 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("CriterionId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
@@ -288,18 +554,27 @@ namespace XFood.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CriterionId");
 
                     b.ToTable("CriticalFactors");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.Manager", b =>
+            modelBuilder.Entity("XFood.Data.Models.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContactInfo")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("EntryDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
@@ -310,11 +585,226 @@ namespace XFood.Data.Migrations
                     b.Property<int>("PizzeriaId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Position")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PizzeriaId");
+
+                    b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.Manager", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PizzeriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Telegram")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PizzeriaId");
 
                     b.ToTable("Managers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "alex@example.com",
+                            FirstName = "Александр",
+                            LastName = "Иванов",
+                            PizzeriaId = 1,
+                            Telegram = "@alex_telegram"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "ekaterina@example.com",
+                            FirstName = "Екатерина",
+                            LastName = "Смирнова",
+                            PizzeriaId = 2,
+                            Telegram = "@ekaterina_telegram"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "dmitry@example.com",
+                            FirstName = "Дмитрий",
+                            LastName = "Петров",
+                            PizzeriaId = 3,
+                            Telegram = "@dmitry_telegram"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "maria@example.com",
+                            FirstName = "Мария",
+                            LastName = "Сидорова",
+                            PizzeriaId = 4,
+                            Telegram = "@maria_telegram"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Email = "andrey@example.com",
+                            FirstName = "Андрей",
+                            LastName = "Кузнецов",
+                            PizzeriaId = 5,
+                            Telegram = "@andrey_telegram"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Email = "olga@example.com",
+                            FirstName = "Ольга",
+                            LastName = "Семенова",
+                            PizzeriaId = 6,
+                            Telegram = "@olga_telegram"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Email = "sergey@example.com",
+                            FirstName = "Сергей",
+                            LastName = "Лебедев",
+                            PizzeriaId = 7,
+                            Telegram = "@sergey_telegram"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Email = "anastasia@example.com",
+                            FirstName = "Анастасия",
+                            LastName = "Новикова",
+                            PizzeriaId = 8,
+                            Telegram = "@anastasia_telegram"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Email = "ivan@example.com",
+                            FirstName = "Иван",
+                            LastName = "Морозов",
+                            PizzeriaId = 9,
+                            Telegram = "@ivan_telegram"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Email = "elena@example.com",
+                            FirstName = "Елена",
+                            LastName = "Васнецова",
+                            PizzeriaId = 1,
+                            Telegram = "@elena_telegram"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Email = "pavel@example.com",
+                            FirstName = "Павел",
+                            LastName = "Федоров",
+                            PizzeriaId = 2,
+                            Telegram = "@pavel_telegram"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Email = "alisa@example.com",
+                            FirstName = "Алиса",
+                            LastName = "Соловьева",
+                            PizzeriaId = 3,
+                            Telegram = "@alisa_telegram"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Email = "nikita@example.com",
+                            FirstName = "Никита",
+                            LastName = "Тихонов",
+                            PizzeriaId = 4,
+                            Telegram = "@nikita_telegram"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Email = "valeria@example.com",
+                            FirstName = "Валерия",
+                            LastName = "Козлова",
+                            PizzeriaId = 5,
+                            Telegram = "@valeria_telegram"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Email = "grigory@example.com",
+                            FirstName = "Григорий",
+                            LastName = "Игнатьев",
+                            PizzeriaId = 6,
+                            Telegram = "@grigory_telegram"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Email = "tatiana@example.com",
+                            FirstName = "Татьяна",
+                            LastName = "Смирнова",
+                            PizzeriaId = 7,
+                            Telegram = "@tatiana_telegram"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Email = "artem@example.com",
+                            FirstName = "Артем",
+                            LastName = "Емельянов",
+                            PizzeriaId = 8,
+                            Telegram = "@artem_telegram"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Email = "evgenia@example.com",
+                            FirstName = "Евгения",
+                            LastName = "Белова",
+                            PizzeriaId = 9,
+                            Telegram = "@evgenia_telegram"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Email = "maxim@example.com",
+                            FirstName = "Максим",
+                            LastName = "Третьяков",
+                            PizzeriaId = 1,
+                            Telegram = "@maxim_telegram"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Email = "viktoria@example.com",
+                            FirstName = "Виктория",
+                            LastName = "Жукова",
+                            PizzeriaId = 2,
+                            Telegram = "@viktoria_telegram"
+                        });
                 });
 
             modelBuilder.Entity("XFood.Data.Models.OpportunitySchedule", b =>
@@ -358,6 +848,62 @@ namespace XFood.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pizzerias");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Москва-13-2",
+                            Region = "Москва"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Москва-13-3",
+                            Region = "Москва"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Москва-13-4",
+                            Region = "Москва"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Калининград-1",
+                            Region = "Калининград"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Калининград-2",
+                            Region = "Калининград"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Калининград-3",
+                            Region = "Калининград"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Тучково-1",
+                            Region = "Беларусь"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Полоцк-1",
+                            Region = "Беларусь"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Орша-1",
+                            Region = "Беларусь"
+                        });
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Schedule", b =>
@@ -527,40 +1073,48 @@ namespace XFood.Data.Migrations
                     b.Navigation("CheckList");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CategoryFactor", b =>
+            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
                 {
-                    b.HasOne("XFood.Data.Models.CheckList", null)
-                        .WithMany("CategoryFactors")
-                        .HasForeignKey("CheckListId");
+                    b.HasOne("XFood.Data.Models.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
                         .WithMany()
                         .HasForeignKey("PizzeriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Manager");
 
                     b.Navigation("Pizzeria");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
+            modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>
                 {
-                    b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
+                    b.HasOne("XFood.Data.Models.CheckList", "CheckList")
                         .WithMany()
-                        .HasForeignKey("PizzeriaId")
+                        .HasForeignKey("CheckListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pizzeria");
+                    b.HasOne("XFood.Data.Models.Criterion", "Criterion")
+                        .WithMany()
+                        .HasForeignKey("CriterionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CheckList");
+
+                    b.Navigation("Criterion");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Criterion", b =>
                 {
-                    b.HasOne("XFood.Data.Models.CheckList", null)
-                        .WithMany("Criteria")
-                        .HasForeignKey("CheckListId");
-
                     b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
-                        .WithMany()
+                        .WithMany("Criteria")
                         .HasForeignKey("PizzeriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -570,19 +1124,30 @@ namespace XFood.Data.Migrations
 
             modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
                 {
-                    b.HasOne("XFood.Data.Models.CategoryFactor", "Category")
-                        .WithMany("CriticalFactors")
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("XFood.Data.Models.Criterion", "Criterion")
+                        .WithMany()
+                        .HasForeignKey("CriterionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Criterion");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.Employee", b =>
+                {
+                    b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
+                        .WithMany()
+                        .HasForeignKey("PizzeriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pizzeria");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Manager", b =>
                 {
                     b.HasOne("XFood.Data.Models.Pizzeria", "Pizzeria")
-                        .WithMany()
+                        .WithMany("Managers")
                         .HasForeignKey("PizzeriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -620,16 +1185,11 @@ namespace XFood.Data.Migrations
                     b.Navigation("Manager");
                 });
 
-            modelBuilder.Entity("XFood.Data.Models.CategoryFactor", b =>
+            modelBuilder.Entity("XFood.Data.Models.Pizzeria", b =>
                 {
-                    b.Navigation("CriticalFactors");
-                });
-
-            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
-                {
-                    b.Navigation("CategoryFactors");
-
                     b.Navigation("Criteria");
+
+                    b.Navigation("Managers");
                 });
 #pragma warning restore 612, 618
         }
