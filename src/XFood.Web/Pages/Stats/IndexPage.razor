@@ -1,5 +1,26 @@
 @page "/stats"
+@using XFoodBlazor.Web.Client.Services.Stats.GetList
+@using XFoodBlazor.Web.Client.Services.Stats
+@inject IStatsService StatsService
 
 <PageTitle>Общая статистика</PageTitle>
 
 <h1>Все проверки</h1>
+
+@if (response != null && response.List != null && response.List.Any())
+{
+  <span>@response.List.ToString()</span>
+}
+else
+{
+    <span>Нету данных</span>
+}
+
+@code {
+    GetListStatsResponse response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await StatsService.GetListStats(new GetListStatsRequest());
+    }
+}
