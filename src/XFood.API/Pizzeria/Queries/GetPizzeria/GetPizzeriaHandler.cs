@@ -5,6 +5,7 @@ using XFood.Data.Models;
 using XFood.Data;
 using Microsoft.EntityFrameworkCore;
 using XFood.API.Manager.Queries;
+using XFood.API.Criterions.Queries;
 
 namespace XFood.API.Pizzeria.Queries.GetPizzeria
 {
@@ -17,7 +18,7 @@ namespace XFood.API.Pizzeria.Queries.GetPizzeria
         }
         public async Task<Result<GetPizzeriaResponse>> Handle(GetPizzeriaRequest query, CancellationToken cancellation)
         {
-            XFood.Data.Models.Pizzeria pizzeria = await _context.Pizzerias.Include(p => p.Managers).FirstOrDefaultAsync(cl => cl.Id == query.Id);
+            XFood.Data.Models.Pizzeria pizzeria = await _context.Pizzerias.Include(p => p.Managers).Include(p => p.Criteria).FirstOrDefaultAsync(cl => cl.Id == query.Id);
             if (pizzeria != null)
             {
                 PizzeriaView newPizzeria = new PizzeriaView
@@ -32,6 +33,13 @@ namespace XFood.API.Pizzeria.Queries.GetPizzeria
                         LastName = m.LastName,
                         Telegram = m.Telegram,
                         Email = m.Email
+                    }).ToList(),
+                    Criteria = pizzeria.Criteria.Select(c => new CriterionView
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Section = c.Section,
+                        MaxPoints = c.MaxPoints
                     }).ToList()
                 };
                 return new GetPizzeriaResponse(newPizzeria);
