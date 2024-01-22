@@ -17,6 +17,15 @@
         </button>
     </div>
 
+    @if (TotalMaxPoints == 60)
+    {
+        <div class="text-center mb-3">
+            <p class="text-danger">
+                <span class="oi oi-warning" aria-hidden="true"></span> Общий балл должен быть 60.
+            </p>
+        </div>
+    }
+
     <table class="table">
         <thead>
             <tr>
@@ -27,88 +36,135 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var group in response.Pizzeria.Criteria.GroupBy(c => c.Section))
+            @if (isAddingCriterion)
             {
-                var firstCriterion = group.First();
                 <tr>
-                    <td rowspan="@group.Count()">@firstCriterion.Section</td>
                     <td>
-                        @if (firstCriterion != editedCriterion)
-                        {
-                            @firstCriterion.Name
-                        }
-                        else
-                        {
-                            <textarea @bind="editedCriterion.Name" class="form-control" rows="2"></textarea>
-                        }
+                        <select @bind="createRequest.Section" class="form-control">
+                            <option></option>
+                            <option value="Потери">Потери</option>
+                            <option value="Курьеры">Курьеры</option>
+                            <option value="Кассир">Кассир</option>
+                            <option value="Касса">Касса</option>
+                            <option value="Тесто">Тесто</option>
+                            <option value="Кухня">Кухня</option>
+                            <option value="Ресторан">Ресторан</option>
+                            <option value="Сотрудник">Сотрудник</option>
+                            <option value="Прочие">Прочие</option>
+                        </select>
                     </td>
                     <td>
-                        @if (firstCriterion != editedCriterion)
-                        {
-                            @firstCriterion.MaxPoints
-                        }
-                        else
-                        {
-                            <input @bind="editedCriterion.MaxPoints" class="form-control" />
-                        }
+                        <input @bind="createRequest.Name" class="form-control" />
                     </td>
                     <td>
-                        @if (firstCriterion != editedCriterion)
-                        {
-                            <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriterion(firstCriterion))">
-                                <span class="oi oi-pencil" aria-hidden="true"></span>
-                            </button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-sm btn-success" @onclick="@(async () => await SaveEditedCriterion(firstCriterion))">
-                                <span class="oi oi-check" aria-hidden="true"></span>
-                            </button>
-                        }
-                        <button class="btn btn-sm btn-danger" @onclick="@(async () => await DeleteCriterion(firstCriterion))">
-                            <span class="oi oi-trash" aria-hidden="true"></span>
+                        <input @bind="createRequest.MaxPoints" class="form-control" />
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-success" @onclick="@(async () => await SaveNewCriterion())">
+                            <span class="oi oi-check" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-sm btn-danger" @onclick="CancelAddCriterion">
+                            <span class="oi oi-x" aria-hidden="true"></span>
                         </button>
                     </td>
                 </tr>
-                @foreach (var criterion in group.Skip(1))
+            }
+
+            @foreach (var section in fixedSectionsOrder)
+            {
+                var group = response.Pizzeria.Criteria.Where(c => c.Section == section).OrderBy(c => c.Id);
+                if (group.Any())
                 {
+                    var firstCriterion = group.First();
                     <tr>
+                        <td rowspan="@group.Count()">@firstCriterion.Section</td>
                         <td>
-                            @if (criterion != editedCriterion)
+                            @if (firstCriterion != editedCriterion)
                             {
-                                @criterion.Name
+                                @firstCriterion.Name
                             }
                             else
                             {
                                 <textarea @bind="editedCriterion.Name" class="form-control" rows="2"></textarea>
                             }
                         </td>
-                        <td>@criterion.MaxPoints</td>
                         <td>
-                            @if (criterion != editedCriterion)
+                            @if (firstCriterion != editedCriterion)
                             {
-                                <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriterion(criterion))">
+                                @firstCriterion.MaxPoints
+                            }
+                            else
+                            {
+                                <input @bind="editedCriterion.MaxPoints" class="form-control" />
+                            }
+                        </td>
+                        <td>
+                            @if (firstCriterion != editedCriterion)
+                            {
+                                <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriterion(firstCriterion))">
                                     <span class="oi oi-pencil" aria-hidden="true"></span>
                                 </button>
                             }
                             else
                             {
-                                <button class="btn btn-sm btn-success" @onclick="@(async () => await SaveEditedCriterion(criterion))">
+                                <button class="btn btn-sm btn-success" @onclick="@(async () => await SaveEditedCriterion(firstCriterion))">
                                     <span class="oi oi-check" aria-hidden="true"></span>
                                 </button>
                             }
-                            <button class="btn btn-sm btn-danger" @onclick="@(async () => await DeleteCriterion(criterion))">
+                            <button class="btn btn-sm btn-danger" @onclick="@(async () => await DeleteCriterion(firstCriterion))">
                                 <span class="oi oi-trash" aria-hidden="true"></span>
                             </button>
                         </td>
                     </tr>
+                    @foreach (var criterion in group.Skip(1))
+                    {
+                        <tr>
+                            <td>
+                                @if (criterion != editedCriterion)
+                                {
+                                    @criterion.Name
+                                }
+                                else
+                                {
+                                    <textarea @bind="editedCriterion.Name" class="form-control" rows="2"></textarea>
+                                }
+                            </td>
+                            <td>
+                                @if (criterion != editedCriterion)
+                                {
+                                    @criterion.MaxPoints
+                                }
+                                else
+                                {
+                                    <input @bind="editedCriterion.MaxPoints" class="form-control" />
+                                }
+                            </td>
+                            <td>
+                                @if (criterion != editedCriterion)
+                                {
+                                    <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriterion(criterion))">
+                                        <span class="oi oi-pencil" aria-hidden="true"></span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-success" @onclick="@(async () => await SaveEditedCriterion(criterion))">
+                                        <span class="oi oi-check" aria-hidden="true"></span>
+                                    </button>
+                                }
+                                <button class="btn btn-sm btn-danger" @onclick="@(async () => await DeleteCriterion(criterion))">
+                                    <span class="oi oi-trash" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
                 }
             }
 
         </tbody>
     </table>
 
-    <p><span class="oi oi-list-rich" aria-hidden="true"></span> Максимальный балл: @MaxPoints</p>
+    <p><span class="oi oi-list-rich" aria-hidden="true"></span> Максимальный балл: @TotalMaxPoints</p>
 }
 else
 {
@@ -118,7 +174,7 @@ else
 @code {
     [Parameter]
     public int PizzeriaId { get; set; }
-    double MaxPoints;
+    double TotalMaxPoints;
     GetPizzeriaRequest request = new GetPizzeriaRequest();
     GetPizzeriaResponse response;
     CreateCriterionRequest createRequest = new CreateCriterionRequest();
@@ -129,6 +185,20 @@ else
     UpdateCriterionResponse updateResponse;
 
     private CriterionView editedCriterion;
+    private bool isAddingCriterion = false;
+
+    private List<string> fixedSectionsOrder = new List<string>
+    {
+        "",
+        "Потери",
+        "Курьеры",
+        "Кассир",
+        "Тесто",
+        "Кухня",
+        "Ресторан",
+        "Сотрудник",
+        "Прочие"
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -139,7 +209,7 @@ else
 
     private async void UpdateTotalPoints()
     {
-        MaxPoints = response.Pizzeria.Criteria
+        TotalMaxPoints = response.Pizzeria.Criteria
             .Where(c => c.Section != "Критический фактор" && c.Section != "Wow Фактор")
             .Sum(c => c.MaxPoints);
     }
@@ -157,18 +227,32 @@ else
         updateRequest.Section = criterion.Section;
         updateResponse = await CriterionService.Update(updateRequest);
         editedCriterion = null;
-        OnInitializedAsync();
+        await OnInitializedAsync();
     }
 
     private async Task DeleteCriterion(CriterionView criterion)
     {
         deleteRequest.Id = criterion.Id;
         deleteResponse = await CriterionService.Delete(deleteRequest);
-        OnInitializedAsync();
+        await OnInitializedAsync();
+    }
+
+    private async Task SaveNewCriterion()
+    {
+        createRequest.PizzeriaId = response.Pizzeria.Id;
+        createResponse = await CriterionService.Create(createRequest);
+        isAddingCriterion = false;
+        createRequest = new CreateCriterionRequest();
+        await OnInitializedAsync();
+    }
+
+    private void CancelAddCriterion()
+    {
+        isAddingCriterion = false;
     }
 
     private void AddCriterion()
     {
-        // Логика добавления нового критерия
+        isAddingCriterion = true;
     }
 }

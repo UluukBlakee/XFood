@@ -6,8 +6,7 @@ namespace XFoodBlazor.Web.Client.Services.Criterion.Create
     {
         public string Name { get; set; }
         [Required] public int MaxPoints { get; set; }
-        public string Section { get; set; }
-        [Required] public int ReceivedPoints { get; set; }
+        public string? Section { get; set; }
         [Required] public int PizzeriaId { get; set; }   
     }
 }
