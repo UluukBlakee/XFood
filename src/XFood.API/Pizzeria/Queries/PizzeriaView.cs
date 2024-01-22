@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using XFood.API.Criterions.Queries;
 using XFood.API.Manager.Queries;
 
 namespace XFood.API.Pizzeria.Queries
@@ -9,6 +9,7 @@ namespace XFood.API.Pizzeria.Queries
         public string? Name { get; set; }
         public string? Region { get; set; }
         public List<ManagerView>? Managers { get; set; }
+        public List<CriterionView>? Criteria { get; set; }
     }
 
 }

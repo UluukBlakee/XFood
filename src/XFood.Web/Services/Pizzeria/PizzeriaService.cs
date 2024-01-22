@@ -32,11 +32,9 @@ namespace XFoodBlazor.Web.Client.Services.Pizzeria
 
         public async Task<GetPizzeriaResponse> GetPizzeria(GetPizzeriaRequest pizzeriaModel)
         {
-            Console.WriteLine("Start");
             var result = await _httpClient.GetAsync($"pizzeria/{pizzeriaModel.Id}");
             if (result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Good");
                 var response = await result.Content.ReadFromJsonAsync<GetPizzeriaResponse>();
                 return response;
             }
