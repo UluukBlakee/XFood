@@ -21,14 +21,25 @@
                         <tr>
                             <td colspan="2"><strong>@group.Key</strong></td>
                         </tr>
+                <AuthorizeView Roles="user">
+                    @foreach (var pizzeria in group)
+                    {
+                        <tr>
+                            <td></td>
+                            <td><a href="@($"pizzeria/managers/{pizzeria.Id}")">@pizzeria.Name</a></td>
+                        </tr>
+                    }
+                </AuthorizeView>
+                <AuthorizeView Roles="admin">
+                    @foreach (var pizzeria in group)
+                    {
+                        <tr>
+                            <td></td>
+                            <td><a href="@($"pizzeria/criteria/{pizzeria.Id}")">@pizzeria.Name</a></td>
+                    </tr>
+                    }
+                </AuthorizeView>
 
-                foreach (var pizzeria in group)
-                {
-                                <tr>
-                                    <td></td>
-                                    <td><a href="@($"pizzeria/managers/{pizzeria.Id}")">@pizzeria.Name</a></td>
-                                </tr>
-                }
             }
         }
         else

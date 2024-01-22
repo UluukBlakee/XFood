@@ -7,6 +7,7 @@ using XFoodBlazor.Web.Client.Services.Pizzeria;
 using XFoodBlazor.Web.Client.Services.Manager;
 using XFoodBlazor.Web.Client.Services.Check_List;
 using XFoodBlazor.Web.Client.Services.CheckListCriteria;
+using XFoodBlazor.Web.Client.Services.Criterion;
 
 namespace XFoodBlazor.Web.Client
 {
@@ -26,6 +27,7 @@ namespace XFoodBlazor.Web.Client
             builder.Services.AddScoped<IManagerService, ManagerService>();
             builder.Services.AddScoped<ICheckService, CheckService>();
             builder.Services.AddScoped<ICheckListCriteriaService, CheckListCriteriaService>();
+            builder.Services.AddScoped<ICriterionService, CriterionService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/api/") });
             
             await builder
