@@ -7,9 +7,33 @@
 
 <h1>Все проверки</h1>
 
-@if (response != null && response.List != null && response.List.Any())
+@if (chekLists != null && chekLists.List != null && chekLists.List.Any())
 {
-  <span>@response.List.ToString()</span>
+    <h3>График контроллинга</h3>
+
+    <table class="table hovered text-center">
+        <thead>
+            <tr>
+                <th>КЛН Менеджера</th>
+                <th>Пиццерия</th>
+                <th>Дата начала проверки</th>
+                <th>Дата завершения проверки</th>
+                <th>Количество баллов</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var checkList in chekLists.List)
+            {
+                <tr>
+                    <td>@checkList.Manager?.FirstName @checkList.Manager?.LastName</td>
+                    <td>@checkList.Pizzeria?.Name</td>
+                    <td>@checkList?.StartCheck</td>
+                    <td>@checkList?.EndCheck</td>
+                    <td>@checkList?.TotalPoints</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 else
 {
@@ -17,10 +41,10 @@ else
 }
 
 @code {
-    GetListStatsResponse response;
+    GetListStatsResponse chekLists;
 
     protected override async Task OnInitializedAsync()
     {
-        response = await StatsService.GetListStats(new GetListStatsRequest());
+        chekLists = await StatsService.GetListStats(new GetListStatsRequest());
     }
 }
