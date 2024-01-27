@@ -2,5 +2,5 @@
 
 namespace XFood.API.CriticalFactors.Commands.CreateCriticalFactor
 {
-    public record CreateCriticalFactorRequest([Required] int MaxPoints, string? Description, [Required] int CriterionId);
+    public record CreateCriticalFactorRequest([Required] int MaxPoints, string? Description, [Required] int CriterionId, [Required] int CheckListId);
 }

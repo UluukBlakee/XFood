@@ -1,4 +1,4 @@
-﻿namespace XFood.API.CriticalFactors.Queries
+﻿namespace XFoodBlazor.Web.Client.Services.CriticalFactor
 {
     public class CriticalFactorView
     {

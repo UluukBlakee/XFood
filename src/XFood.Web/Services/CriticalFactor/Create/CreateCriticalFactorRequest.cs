@@ -1,8 +1,7 @@
-﻿namespace XFood.API.CriticalFactors.Queries
+﻿namespace XFoodBlazor.Web.Client.Services.CriticalFactor.Create
 {
-    public class CriticalFactorView
+    public class CreateCriticalFactorRequest
     {
-        public int Id { get; set; }
         public int CriterionId { get; set; }
         public string? Description { get; set; }
         public int MaxPoints { get; set; }

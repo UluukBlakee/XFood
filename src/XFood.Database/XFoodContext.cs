@@ -94,45 +94,57 @@ namespace XFood.Data
                 new Criterion { Id = 29, Name = "Химия и уборочный инвентарь хранится согласно стандарту. Уборочный инвентарь чистый.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 1 },
                 new Criterion { Id = 30, Name = "", MaxPoints = 2, Section = "Wow Фактор", PizzeriaId = 1 },
                 new Criterion { Id = 31, Name = "Уберите балл, за то, что считаете особо важным, чему не уделяют на смене внимание.", MaxPoints = -4, Section = "Критический фактор", PizzeriaId = 1 },
-                new Criterion { Id = 32, Name = "Критическое нарушение пищевой безопасности.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 1 },
-                new Criterion { Id = 33, Name = "Опоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 1 }
+                new Criterion { Id = 32, Name = "Критическое нарушение пищевой безопасности. \r\nОпоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 1 }
             );
 
             builder.Entity<Criterion>().HasData(
-                new Criterion { Id = 34, Name = "Форма всех сотрудников соответствует стандарту. \r\nСотрудники кухни (кассир при работе на упаковке) с бородой на всех станциях носят набородник", MaxPoints = 2, Section = "", PizzeriaId = 8 },
-                new Criterion { Id = 35, Name = "Менеджер смены делает обходы.", MaxPoints = 2, Section = "", PizzeriaId = 8 },
-                new Criterion { Id = 36, Name = "Сотрудники не используют личные телефоны в зеленой зоне пиццерии, не носят их в карманах.", MaxPoints = 2, Section = "", PizzeriaId = 8 },
-                new Criterion { Id = 37, Name = "Продукт готовится по стандарту. Соблюдаются стандарты начинения и упаковки. Нет перерасхода ингредиентов. До 3-х ошибок, 4 и более - крит. фактор", MaxPoints = 4, Section = "Потери", PizzeriaId = 8 },
-                new Criterion { Id = 38, Name = "При приемке товар взвешивается, пересчитывается. Товар на пол не ставится.  \r\nРазбор поставки не более 1,5 часов (ВЗ), не более 1 часа - тесто", MaxPoints = 2, Section = "Потери", PizzeriaId = 8 },
-                new Criterion { Id = 39, Name = "Продукты не размораживаются в ГЦ и ХЦ, мойке, на печи. Не лежат на столах более чем 30 минут. Одновременная заготовка не более 1 ингредиента одним сотрудником.", MaxPoints = 4, Section = "Потери", PizzeriaId = 8 },
-                new Criterion { Id = 40, Name = "На линии начинения на каждый сыпучий ингредиент есть отдельный стаканчик. Используются актуальные стаканчики.", MaxPoints = 1, Section = "Потери", PizzeriaId = 8 },
-                new Criterion { Id = 41, Name = "У всех сумок есть место для хранения ,не хранятся на полу.", MaxPoints = 1, Section = "Курьеры", PizzeriaId = 8 },
-                new Criterion { Id = 42, Name = "Внешний вид курьеров соответствует стандарту", MaxPoints = 1, Section = "Курьеры", PizzeriaId = 8 },
-                new Criterion { Id = 43, Name = "Ответственный сотрудник не оставляет открытым денежный ящик.", MaxPoints = 1, Section = "Кассир", PizzeriaId = 8 },
-                new Criterion { Id = 44, Name = "Кассир дружелюбен, моментально реагирует на гостя. \r\nПринимает заказы быстро, помогает с выбором. \r\nНе игнорирует гостя, не стоит спиной к нему, в закрытой позе. \r\nРеакция на звонок не более 30 секунд.", MaxPoints = 3, Section = "Касса", PizzeriaId = 8},
-                new Criterion { Id = 45, Name = "Тесто хранится по стандарту.", MaxPoints = 2, Section = "Касса", PizzeriaId = 8 },
-                new Criterion { Id = 46, Name = "Заказы в ресторан выданы на подносе согласно стандарту комплектации заказов. Гостю выдан чек (РБ). Пицца на металлическом подносе выдана согласно стандарту.", MaxPoints = 2, Section = "Тесто", PizzeriaId = 8 },
-                new Criterion { Id = 47, Name = "Линия полностью заполнена гастроемкостями - герметична. \r\nПри отсутствии заказов линия и гастроемкости закрыты.", MaxPoints = 2, Section = "Кухня", PizzeriaId = 8 },
-                new Criterion { Id = 48, Name = "Условия хранения продуктов и расходников соответствует стандартам \r\n(температура, 15 см от пола, пищевое/непищевое). \r\nВ желтой зоне нет вскрытых упаковок с напитками.", MaxPoints = 4, Section = "Кухня", PizzeriaId = 8 },
-                new Criterion { Id = 49, Name = "Овощи моются по стандарту, необработанные овощи не кладут на столы в ГЦ и ХЦ.", MaxPoints = 3, Section = "Кухня", PizzeriaId = 8 },
-                new Criterion { Id = 50, Name = "Пиццы готовятся согласно принципу конвейера. ", MaxPoints = 2, Section = "Кухня", PizzeriaId = 8 },
-                new Criterion { Id = 51, Name = "Зал: чистый пол, нет следов от ботинок, сильных загрязнений.", MaxPoints = 2, Section = "Ресторан", PizzeriaId = 8 },
-                new Criterion { Id = 52, Name = "Чистые столы. Подносы убираются в течение трех минут, нет остатков еды на убранных столах.", MaxPoints = 2, Section = "Ресторан", PizzeriaId = 8 },
-                new Criterion { Id = 53, Name = "Руки моются и обрабатываются антисептиком в соответствии со стандартом мытья рук.", MaxPoints = 4, Section = "Сотрудник", PizzeriaId = 8 },
-                new Criterion { Id = 54, Name = "Посуду моют согласно стандарту", MaxPoints = 3, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 55, Name = "Чистая линия начинения и стол раскатки, убирается вовремя и по стандарту.\r\n- если мусор собрали в руку - руки помыты.", MaxPoints = 2, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 56, Name = "Пицца-соус и альфредо закрывают крышкой при отстутствии заказов. \r\nПоловник меняют каждые два часа. - если хранится в соусе.", MaxPoints = 2, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 57, Name = "Сотрудники кухни используют перчатки по стандарту: уборка происходит только в перчатках. \r\nУборка без перчаток только без использования химии. ", MaxPoints = 2, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 58, Name = "Чисто в пищевой зоне (столы,полки, стены, пол, раковины, микроволновки, урна не переполнена)", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 59, Name = "Чисто в непищевой зоне (двери, колодец, стыки, стены, пол).", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 60, Name = "Менеджерской зона: чистота и порядок, отсутствуют напитки рядом с оборудованием.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 61, Name = "Все проходы свободны , не захламлены , отсутствуют мусорные мешки, можно пройти без препятствий.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 62, Name = "Химия и уборочный инвентарь хранится согласно стандарту. Уборочный инвентарь чистый.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 63, Name = "", MaxPoints = 2, Section = "Wow Фактор", PizzeriaId = 1 },
-                new Criterion { Id = 64, Name = "Уберите балл, за то, что считаете особо важным, чему не уделяют на смене внимание.", MaxPoints = -4, Section = "Критический фактор", PizzeriaId = 8 },
-                new Criterion { Id = 65, Name = "Критическое нарушение пищевой безопасности.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 8 },
-                new Criterion { Id = 66, Name = "Опоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 8 }
+                new Criterion { Id = 33, Name = "Форма всех сотрудников соответствует стандарту. \r\nСотрудники кухни (кассир при работе на упаковке) с бородой на всех станциях носят набородник", MaxPoints = 2, Section = "", PizzeriaId = 8 },
+                new Criterion { Id = 34, Name = "Менеджер смены делает обходы.", MaxPoints = 2, Section = "", PizzeriaId = 8 },
+                new Criterion { Id = 35, Name = "Сотрудники не используют личные телефоны в зеленой зоне пиццерии, не носят их в карманах.", MaxPoints = 2, Section = "", PizzeriaId = 8 },
+                new Criterion { Id = 36, Name = "Продукт готовится по стандарту. Соблюдаются стандарты начинения и упаковки. Нет перерасхода ингредиентов. До 3-х ошибок, 4 и более - крит. фактор", MaxPoints = 4, Section = "Потери", PizzeriaId = 8 },
+                new Criterion { Id = 37, Name = "При приемке товар взвешивается, пересчитывается. Товар на пол не ставится.  \r\nРазбор поставки не более 1,5 часов (ВЗ), не более 1 часа - тесто", MaxPoints = 2, Section = "Потери", PizzeriaId = 8 },
+                new Criterion { Id = 38, Name = "Продукты не размораживаются в ГЦ и ХЦ, мойке, на печи. Не лежат на столах более чем 30 минут. Одновременная заготовка не более 1 ингредиента одним сотрудником.", MaxPoints = 4, Section = "Потери", PizzeriaId = 8 },
+                new Criterion { Id = 39, Name = "На линии начинения на каждый сыпучий ингредиент есть отдельный стаканчик. Используются актуальные стаканчики.", MaxPoints = 1, Section = "Потери", PizzeriaId = 8 },
+                new Criterion { Id = 40, Name = "У всех сумок есть место для хранения ,не хранятся на полу.", MaxPoints = 1, Section = "Курьеры", PizzeriaId = 8 },
+                new Criterion { Id = 41, Name = "Внешний вид курьеров соответствует стандарту", MaxPoints = 1, Section = "Курьеры", PizzeriaId = 8 },
+                new Criterion { Id = 42, Name = "Ответственный сотрудник не оставляет открытым денежный ящик.", MaxPoints = 1, Section = "Кассир", PizzeriaId = 8 },
+                new Criterion { Id = 43, Name = "Кассир дружелюбен, моментально реагирует на гостя. \r\nПринимает заказы быстро, помогает с выбором. \r\nНе игнорирует гостя, не стоит спиной к нему, в закрытой позе. \r\nРеакция на звонок не более 30 секунд.", MaxPoints = 3, Section = "Касса", PizzeriaId = 8},
+                new Criterion { Id = 44, Name = "Тесто хранится по стандарту.", MaxPoints = 2, Section = "Касса", PizzeriaId = 8 },
+                new Criterion { Id = 45, Name = "Заказы в ресторан выданы на подносе согласно стандарту комплектации заказов. Гостю выдан чек (РБ). Пицца на металлическом подносе выдана согласно стандарту.", MaxPoints = 2, Section = "Тесто", PizzeriaId = 8 },
+                new Criterion { Id = 46, Name = "Линия полностью заполнена гастроемкостями - герметична. \r\nПри отсутствии заказов линия и гастроемкости закрыты.", MaxPoints = 2, Section = "Кухня", PizzeriaId = 8 },
+                new Criterion { Id = 47, Name = "Условия хранения продуктов и расходников соответствует стандартам \r\n(температура, 15 см от пола, пищевое/непищевое). \r\nВ желтой зоне нет вскрытых упаковок с напитками.", MaxPoints = 4, Section = "Кухня", PizzeriaId = 8 },
+                new Criterion { Id = 48, Name = "Овощи моются по стандарту, необработанные овощи не кладут на столы в ГЦ и ХЦ.", MaxPoints = 3, Section = "Кухня", PizzeriaId = 8 },
+                new Criterion { Id = 49, Name = "Пиццы готовятся согласно принципу конвейера. ", MaxPoints = 2, Section = "Кухня", PizzeriaId = 8 },
+                new Criterion { Id = 50, Name = "Зал: чистый пол, нет следов от ботинок, сильных загрязнений.", MaxPoints = 2, Section = "Ресторан", PizzeriaId = 8 },
+                new Criterion { Id = 51, Name = "Чистые столы. Подносы убираются в течение трех минут, нет остатков еды на убранных столах.", MaxPoints = 2, Section = "Ресторан", PizzeriaId = 8 },
+                new Criterion { Id = 52, Name = "Руки моются и обрабатываются антисептиком в соответствии со стандартом мытья рук.", MaxPoints = 4, Section = "Сотрудник", PizzeriaId = 8 },
+                new Criterion { Id = 53, Name = "Посуду моют согласно стандарту", MaxPoints = 3, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 54, Name = "Чистая линия начинения и стол раскатки, убирается вовремя и по стандарту.\r\n- если мусор собрали в руку - руки помыты.", MaxPoints = 2, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 55, Name = "Пицца-соус и альфредо закрывают крышкой при отстутствии заказов. \r\nПоловник меняют каждые два часа. - если хранится в соусе.", MaxPoints = 2, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 56, Name = "Сотрудники кухни используют перчатки по стандарту: уборка происходит только в перчатках. \r\nУборка без перчаток только без использования химии. ", MaxPoints = 2, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 57, Name = "Чисто в пищевой зоне (столы,полки, стены, пол, раковины, микроволновки, урна не переполнена)", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 58, Name = "Чисто в непищевой зоне (двери, колодец, стыки, стены, пол).", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 59, Name = "Менеджерской зона: чистота и порядок, отсутствуют напитки рядом с оборудованием.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 60, Name = "Все проходы свободны , не захламлены , отсутствуют мусорные мешки, можно пройти без препятствий.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 61, Name = "Химия и уборочный инвентарь хранится согласно стандарту. Уборочный инвентарь чистый.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
+                new Criterion { Id = 62, Name = "", MaxPoints = 2, Section = "Wow Фактор", PizzeriaId = 1 },
+                new Criterion { Id = 63, Name = "Уберите балл, за то, что считаете особо важным, чему не уделяют на смене внимание.", MaxPoints = -4, Section = "Критический фактор", PizzeriaId = 8 },
+                new Criterion { Id = 64, Name = "Критическое нарушение пищевой безопасности. \r\nОпоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 8 }
             );
+
+            //builder.Entity<CriticalFactor>().HasData(
+            //    new CriticalFactor { Id = 1, CriterionId = 31, Description = "лотки на печи", MaxPoints = -4 },
+            //    new CriticalFactor { Id = 2, CriterionId = 31, Description = "продукт достали ранее чем он выехал на 2/3 из печи", MaxPoints = -4 },
+            //    new CriticalFactor { Id = 3, CriterionId = 31, Description = "пиццу достали ранее чем она выехала на 2/3 из печи", MaxPoints = -4 }
+            //);
+
+            //builder.Entity<CriticalFactor>().HasData(
+            //    new CriticalFactor { Id = 4, CriterionId = 32, Description = "Руки перед работой с продуктом помыты без антисептика.", MaxPoints = -8 },
+            //    new CriticalFactor { Id = 5, CriterionId = 32, Description = "Нарушен принцип пищевое/непищевое:\r\nповерхность не опищевили после этого. \r\nво время уборки в перчатках касаются пищевых лотков/посуды/продуктов.", MaxPoints = -8 },
+            //    new CriticalFactor { Id = 6, CriterionId = 32, Description = "Использование просроченных ингредиентов, перемаркировка.", MaxPoints = -8 },
+            //    new CriticalFactor { Id = 7, CriterionId = 32, Description = "Заготовка ингредиента в грязную (или со старым ингредиентом) гастроемкость/бутылку.", MaxPoints = -8 },
+            //    new CriticalFactor { Id = 8, CriterionId = 32, Description = "Использование теста с утра, которое ранее выносили на нагрев и занесли обратно в холодильник (вечером в конце смены).", MaxPoints = -8 }
+            //);
 
             base.OnModelCreating(builder);
         }
