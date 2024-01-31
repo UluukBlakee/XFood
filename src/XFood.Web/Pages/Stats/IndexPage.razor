@@ -1,0 +1,60 @@
+@page "/stats"
+@using XFoodBlazor.Web.Client.Services.Stats.GetList
+@using XFoodBlazor.Web.Client.Services.Stats
+@inject IStatsService StatsService
+
+<PageTitle>Общая статистика</PageTitle>
+<h3>График контроллинга</h3>
+
+<table class="table hovered text-center">
+    <thead>
+        <tr>
+            <th>КЛН Менеджера</th>
+            <th>Пиццерия</th>
+            <th>Дата начала проверки</th>
+            <th>Дата завершения проверки</th>
+            <th>Количество баллов</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (checkLists != null && checkLists.List != null && checkLists.List.Any())
+        {
+            var groupedCheckLists = checkLists.List.GroupBy(c => c.Pizzeria.Name);
+
+            @foreach (var group in groupedCheckLists)
+            {
+                <tr>
+                    <td colspan="5"><b>@group.Key</b></td>
+                </tr>
+                @foreach (var checkList in group)
+                {
+                    <tr>
+                        <td>@checkList.Manager?.FirstName @checkList.Manager?.LastName</td>
+                        <td>@checkList.Pizzeria?.Name</td>
+                        <td>@checkList?.StartCheck</td>
+                        <td>@checkList?.EndCheck</td>
+                        <td>@checkList?.TotalPoints</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="4" style="text-align: right;"><b>Средний балл</b></td>
+                    <td>@group.Average(c => c.TotalPoints)</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <span>Нету данных</span>
+        }
+    </tbody>
+</table>
+
+@code {
+    GetListStatsResponse checkLists;
+
+    protected override async Task OnInitializedAsync()
+    {
+        checkLists = await StatsService.GetListStats(new GetListStatsRequest());
+    }
+}

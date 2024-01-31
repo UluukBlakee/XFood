@@ -4,52 +4,61 @@
 @inject IPizzeriaService PizzeriaService
 @inject NavigationManager NavigationManager
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Регион</th>
-            <th>Название</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (response != null && response.List != null && response.List.Any())
-        {
-            var groupedPizzerias = response.List.GroupBy(p => p.Region);
+<div>
+    <AuthorizeView Roles="admin">
+        <a class="btn btn-sm btn-success" href="/pizzerias/create">
+            <span class="oi oi-plus" aria-hidden="true"></span>   Добавить пиццерию
+        </a>
+    </AuthorizeView>
 
-            foreach (var group in groupedPizzerias)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Регион</th>
+                <th>Название</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (response != null && response.List != null && response.List.Any())
             {
-                        <tr>
-                            <td colspan="2"><strong>@group.Key</strong></td>
-                        </tr>
-                <AuthorizeView Roles="user">
-                    @foreach (var pizzeria in group)
-                    {
-                        <tr>
-                            <td></td>
-                            <td><a href="@($"pizzeria/managers/{pizzeria.Id}")">@pizzeria.Name</a></td>
-                        </tr>
-                    }
-                </AuthorizeView>
-                <AuthorizeView Roles="admin">
-                    @foreach (var pizzeria in group)
-                    {
-                        <tr>
-                            <td></td>
-                            <td><a href="@($"pizzeria/criteria/{pizzeria.Id}")">@pizzeria.Name</a></td>
-                    </tr>
-                    }
-                </AuthorizeView>
+                var groupedPizzerias = response.List.GroupBy(p => p.Region);
 
+                foreach (var group in groupedPizzerias)
+                {
+                    <tr>
+                        <td colspan="2"><strong>@group.Key</strong></td>
+                    </tr>
+                    <AuthorizeView Roles="user">
+                        @foreach (var pizzeria in group)
+                        {
+                            <tr>
+                                <td></td>
+                                <td><a href="@($"pizzeria/managers/{pizzeria.Id}")">@pizzeria.Name</a></td>
+                            </tr>
+                        }
+                    </AuthorizeView>
+                    <AuthorizeView Roles="admin">
+                        @foreach (var pizzeria in group)
+                        {
+                            <tr>
+                                <td></td>
+                                <td><a href="@($"pizzeria/criteria/{pizzeria.Id}")">@pizzeria.Name</a></td>
+                            </tr>
+                        }
+                    </AuthorizeView>
+
+                }
             }
-        }
-        else
-        {
+            else
+            {
                 <tr>
                     <td colspan="2">Нету данных</td>
                 </tr>
-        }
-    </tbody>
-</table>
+            }
+        </tbody>
+    </table>
+</div>
+
 
 @code {
     GetListPizzeriaResponse response;
