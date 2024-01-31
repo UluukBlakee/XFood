@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using XFood.Data;
@@ -11,9 +12,10 @@ using XFood.Data;
 namespace XFood.Data.Migrations
 {
     [DbContext(typeof(XFoodContext))]
-    partial class XFoodContextModelSnapshot : ModelSnapshot
+    [Migration("20240125171733_UpdateDataSeed")]
+    partial class UpdateDataSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -791,9 +793,6 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CheckListId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CriterionId")
                         .HasColumnType("integer");
 
@@ -804,8 +803,6 @@ namespace XFood.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CheckListId");
 
                     b.HasIndex("CriterionId");
 
@@ -1377,19 +1374,11 @@ namespace XFood.Data.Migrations
 
             modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
                 {
-                    b.HasOne("XFood.Data.Models.CheckList", "CheckList")
-                        .WithMany()
-                        .HasForeignKey("CheckListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("XFood.Data.Models.Criterion", "Criterion")
                         .WithMany()
                         .HasForeignKey("CriterionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("CheckList");
 
                     b.Navigation("Criterion");
                 });
