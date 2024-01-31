@@ -111,9 +111,9 @@ else
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          @if (getListCriticalFactorResponse != null && getListCriticalFactorResponse.List != null && getListCriticalFactorResponse.List.Any() && containsDataForCurrentChecklist)
+          @if (getListCriticalFactorResponse != null && getListCriticalFactorResponse.List != null && getListCriticalFactorResponse.List.Any())
         {
-            var groupedCriterions = getListCriticalFactorResponse.List.GroupBy(c => c.CriterionId);
+            var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId1).GroupBy(c => c.CriterionId);
             foreach (var group in groupedCriterions)
             {      
             <ul class="list-group">
@@ -153,24 +153,21 @@ else
                 <tr>
                     <td colspan="2">Нету данных</td>
                 </tr>
-                <div class="input-group mb-3">
-                @if (getTotalCriticalFactor == -12 && containsDataForCurrentChecklist)
-                {
-                    <div class="alert alert-danger" role="alert">
-                        Нельзя добавить критический фактор, так как MaxPoint = -12
-                    </div>
-                }
-
-              <input type="text" class="form-control" placeholder="Введите критический фактор" @bind="@CriticalFactor"  aria-describedby="button-addon2">
-              <button class="btn btn-success" type="button" @onclick="SaveModal1" id="button-addon2">Добавить</button>
-              @if (_error1)
-              {
-                <div class="alert alert-danger" role="alert">
-                    Нельзя добавить критический фактор, так как MaxPoint = -12
-                </div>
-              }
+                
+        }
+       <div class="input-group mb-3">
+        @if (getTotalCriticalFactor == -12)
+        {
+            <div class="alert alert-danger" role="alert">
+                Нельзя добавить критический фактор, так как MaxPoint = -12
             </div>
         }
+        else
+        {
+            <input type="text" class="form-control" placeholder="Введите критический фактор" @bind="@CriticalFactor"  aria-describedby="button-addon2">
+            <button class="btn btn-success" type="button" @onclick="SaveModal1" id="button-addon2">Добавить</button>
+        }
+        </div>
        
       </div>
       <div class="modal-footer">
@@ -184,7 +181,7 @@ else
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Критический фактор</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -192,7 +189,6 @@ else
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
@@ -220,29 +216,28 @@ else
     double PointProz;
     int getTotalCriticalFactor;
     private bool _error1 = false;
-    public bool containsDataForCurrentChecklist;
     private string CriticalFactor { get; set; }
 
     private int selectedCriterionId1;
     private int selectedcheckListId1;
 
+    private async Task RefreshCriticalFactorsList()
+    {
+        getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
+        GetTotalMaxPoint();
+    }
     private async Task OpenModal1(int criterionId, int checkListId)
     {
         selectedCriterionId1 = criterionId;
         selectedcheckListId1 = checkListId;
-        containsDataForCurrentChecklist = getListCriticalFactorResponse.List.Any(item => item.CheckListId == selectedcheckListId1);
-        Console.WriteLine(containsDataForCurrentChecklist);
-        await OnInitializedAsync();
-        containsDataForCurrentChecklist = false;
-
+        await RefreshCriticalFactorsList();
     }
     private async Task SaveModal1()
     {
-        if (getTotalCriticalFactor == -12 && containsDataForCurrentChecklist)
+        await RefreshCriticalFactorsList();
+        if (getTotalCriticalFactor == -12)
         {
             _error1 = true;
-            containsDataForCurrentChecklist = false;
-            await OnInitializedAsync();
         }
         else
         {
@@ -252,7 +247,7 @@ else
             createCriticalFactorRequest.MaxPoints = -4;
             createCriticalFactorRequest.CheckListId = selectedcheckListId1;
             createCriticalFactorResponse = await CriticalFactorService.Create(createCriticalFactorRequest);
-            await OnInitializedAsync();
+            await RefreshCriticalFactorsList();
         }
     }
 
@@ -279,23 +274,21 @@ else
         request.ManagerId = ManagerId;
         response = await CheckService.Create(request);
         getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
-        Console.WriteLine(selectedcheckListId1);
-        //UpdatePoints();
-        GetTotalMaxPoint();
+        await RefreshCriticalFactorsList();
     }
 
 
     private async void UpdatePoints()
     {
+        RefreshCriticalFactorsList();
         MaxPoints = response.CheckList.Criteria
             .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
             .Sum(c => c.Criterion.MaxPoints);
         TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);
         PointProz = TotalPoints / MaxPoints * 100;
-        setTotalPointsRequest.TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);;
+        setTotalPointsRequest.TotalPoints = TotalPoints;
         setTotalPointsRequest.EndCheck = DateTime.UtcNow;
         setTotalPointsRequest.Id = response.CheckList.Id;
-        Console.WriteLine(response.CheckList.Id);
         selectedcheckListId1 = response.CheckList.Id;
         setTotalPointsResponse = await CheckService.SetTotalPoints(setTotalPointsRequest);
     }
@@ -309,8 +302,9 @@ else
     {
         updateCriticalFactorRequest.Id = criticalFactorView.Id;
         updateCriticalFactorRequest.Description = criticalFactorView.Description;
+        updateCriticalFactorRequest.MaxPoints = -4;
         updateCriticalFactorResponse = await CriticalFactorService.Update(updateCriticalFactorRequest);
-        await OnInitializedAsync();
+        await RefreshCriticalFactorsList();
         criticalFactorView = null;
 
     }
@@ -319,12 +313,12 @@ else
     {
         deleteCriticalFactorRequest.Id = criticalFactor.Id;
         deleteCriticalFactorResponse = await CriticalFactorService.Delete(deleteCriticalFactorRequest);
-        await OnInitializedAsync();
+        await RefreshCriticalFactorsList();
     }
 
     private  async Task GetTotalMaxPoint()
     {
-        var groupedCriterions = getListCriticalFactorResponse.List.GroupBy(c => c.CriterionId);
+        var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId1).GroupBy(c => c.CriterionId);
         int totalMaxPoints = 0;
         foreach (var group in groupedCriterions)
         {
