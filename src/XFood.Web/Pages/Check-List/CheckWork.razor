@@ -13,7 +13,7 @@
 @inject ICheckService CheckService
 @inject ICriticalFactorService CriticalFactorService
 @inject ICheckListCriteriaService CheckCriteriaService
-
+@inject NavigationManager NavigationManager
 
 @if (response != null)
 {
@@ -31,30 +31,34 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var group in response.CheckList.Criteria.GroupBy(c => c.Criterion.Section))
-        {
-            var firstCriterion = group.First();
-                    @if(@firstCriterion.Criterion.Section == "Критический фактор")
+            @foreach (var section in fixedSectionsOrder)
+            {
+                var group = response.CheckList.Criteria.Where(c => c.Criterion.Section == section).OrderBy(c => c.Id);
+                if (group.Any())
+                {
+                    var firstCriterion = group.First();
+                    @if (@firstCriterion.Criterion.Section == "Критический фактор")
                     {
-                         <tr>
+                        <tr>
                             <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
                             <td><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal"  @onclick="() => OpenModal1(firstCriterion.Criterion.Id, response.CheckList.Id)">@firstCriterion.Criterion.Name</a></td>
                             <td>@firstCriterion.Criterion.MaxPoints</td>
                             <td>
                                 <p class="form-control text-warning">@getTotalCriticalFactor</p>
                             </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
+                        <td>@firstCriterion.Criterion.Name</td>
+                        <td>@firstCriterion.Criterion.MaxPoints</td>
+                        <td>
+                            <input type="number" class="form-control text-warning" @bind="firstCriterion.ReceivedPoints" min="0" max="@firstCriterion.Criterion.MaxPoints" />
+                        </td>
                     </tr>
-                }
-                else
-                {   
-                <tr>
-                    <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
-                    <td>@firstCriterion.Criterion.Name</td>
-                    <td>@firstCriterion.Criterion.MaxPoints</td>
-                    <td>
-                        <input type="number" class="form-control text-warning" @bind="firstCriterion.ReceivedPoints" min="0" max="@firstCriterion.Criterion.MaxPoints" />
-                    </td>
-                </tr>
+                    }
                 }
             @foreach (var criterion in group.Skip(1))
             {
@@ -87,7 +91,7 @@
     <p>Общее количество баллов: @TotalPoints</p>
     @if (TotalPoints != 0)
     {
-        <p>Общее количество баллов в процентах: @PointProz %</p>
+        <p>Общее количество баллов в процентах:@Math.Round(PointProz) %</p>
     }
     else
     {
@@ -99,7 +103,8 @@ else
     <p>Ошибка при загрузке данных.</p>
 }
 
-<button type="button" class="btn btn-primary" @onclick="SaveScore">Закончить проверку</button>
+<button type="button" class="btn btn-success" @onclick="SaveScore">Сохранить баллы</button>
+<button type="button" class="btn btn-primary" @onclick="EndCheck">Закончить проверку</button>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -276,6 +281,23 @@ else
     private int selectedCriterionId2;
     private int selectedcheckListId2;
 
+    private Timer timer;
+
+    private List<string> fixedSectionsOrder = new List<string>
+    {
+        "",
+        "Потери",
+        "Курьеры",
+        "Кассир",
+        "Тесто",
+        "Кухня",
+        "Ресторан",
+        "Сотрудник",
+        "Прочие",
+        "Wow Фактор",
+        "Критический фактор"
+    };
+
     private async Task RefreshCriticalFactorsList()
     {
         getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
@@ -322,7 +344,7 @@ else
         createCriticalFactorResponse = await CriticalFactorService.Create(createCriticalFactorRequest);
         CriticalFactor = "";
         await RefreshCriticalFactorsList();
-        
+
     }
 
     private async Task SaveScore()
@@ -344,7 +366,7 @@ else
             }
             setPointsResponse = await CheckCriteriaService.SetPoints(setPointsRequest);
         }
-        UpdatePoints();
+        timer?.Dispose();
     }
 
     protected override async Task OnInitializedAsync()
@@ -353,22 +375,34 @@ else
         response = await CheckService.Create(request);
         getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
         await RefreshCriticalFactorsList();
+        timer = new Timer(UpdatePointsCallback, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
     }
 
+    private async Task EndCheck()
+    {
+        timer?.Dispose();
+        setTotalPointsRequest.TotalPoints = TotalPoints;
+        setTotalPointsRequest.EndCheck = DateTime.UtcNow;
+        setTotalPointsRequest.Id = response.CheckList.Id;
+        setTotalPointsResponse = await CheckService.SetTotalPoints(setTotalPointsRequest);
+        int CheckListId = response.CheckList.Id;
+        NavigationManager.NavigateTo($"endCheck/{CheckListId}");
+    }
+
+    private async void UpdatePointsCallback(object state)
+    {
+        await InvokeAsync(UpdatePoints);
+        StateHasChanged();
+    }
 
     private async void UpdatePoints()
     {
-        RefreshCriticalFactorsList();
         MaxPoints = response.CheckList.Criteria
             .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
             .Sum(c => c.Criterion.MaxPoints);
         TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);
+        TotalPoints = getTotalCriticalFactor2 + getTotalCriticalFactor;
         PointProz = TotalPoints / MaxPoints * 100;
-        setTotalPointsRequest.TotalPoints = TotalPoints;
-        setTotalPointsRequest.EndCheck = DateTime.UtcNow;
-        setTotalPointsRequest.Id = response.CheckList.Id;
-        selectedcheckListId1 = response.CheckList.Id;
-        setTotalPointsResponse = await CheckService.SetTotalPoints(setTotalPointsRequest);
     }
 
     private async Task EditCriticalFactor(CriticalFactorView criticalFactor)
