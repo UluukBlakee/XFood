@@ -1,10 +1,27 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization;
-@using XFoodBlazor.Web.Client.Services.Authorization
-@inject IAuthService AuthService
+@using XFoodBlazor.Web.Client.Services.Authorization;
+@using XFoodBlazor.Web.Client.Services.User;
+@inject IAuthService AuthService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject NavigationManager NavigationManager;
+@using System.Security.Claims;
+@inject IUserService UserService;
+
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity.Name!
-        <button @onclick="Logout">Logout</button>
+<div class="btn-group">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-person"></i>
+  </button>
+  <ul class="dropdown-menu">
+    <li><button class="dropdown-item" href="#">Мой профиль</button></li>
+    <li><a class="dropdown-item" href="#">Карта возможностей</a></li>
+    <li><a class="dropdown-item" href="#" @onclick="Logout"> Выход</a></li>
+  </ul>
+</div>
+    <div class="ps-3">
+        @context.User.Identity.Name!
+    </div>
     </Authorized>
     <NotAuthorized>
         <a href="Register">Register</a>
@@ -14,8 +31,21 @@
 
 @code
 {
+    private string currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        currentUserId = await UserService.GetUserIdByNameAsync(user.Identity.Name);
+
+    }
     private async Task Logout()
     {
         await AuthService.Logout();
+    }
+    private void MyProfile(int userId)
+    {
+        NavigationManager.NavigateTo($"user/{userId}");
     }
 }

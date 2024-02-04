@@ -13,10 +13,10 @@ namespace XFood.API.Account.Commands.AccountLogin
     public class AccountLoginHandler : ICommandHandler<AccountLoginRequest, Result<AccountLoginResponse>>
     {
         private readonly JWTSettings _settings;
-        private readonly SignInManager<User> _signInManager;
+        private readonly SignInManager<XFood.Data.Models.User> _signInManager;
 
         public AccountLoginHandler(IOptions<JWTSettings> options,
-            SignInManager<User> signInManager)
+            SignInManager<XFood.Data.Models.User> signInManager)
         {
             _settings = options.Value;
             _signInManager = signInManager;

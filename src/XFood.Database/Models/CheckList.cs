@@ -16,5 +16,7 @@ namespace XFood.Data.Models
         public int TotalPoints { get; set; }
         public int ManagerId { get; set; }
         public Manager? Manager { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }
