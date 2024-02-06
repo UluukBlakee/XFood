@@ -19,7 +19,7 @@
                 <th>Что проверить</th>
                 <th>MaxPoints</th>
                 <th>Оценка</th>
-
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -29,14 +29,26 @@
                 if (group.Any())
                 {
                     var firstCriterion = group.First();
-                    @if (@firstCriterion.Criterion.Section == "Критический фактор")
+                    @if (firstCriterion.Criterion.Section == "Критический фактор")
                     {
                         <tr>
                             <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
-                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="() => OpenModal1(firstCriterion.Criterion.Id, response.CheckList.Id)">@firstCriterion.Criterion.Name</a></td>
+                            <td>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="() => OpenModal1(firstCriterion.Criterion.Id, response.CheckList.Id)">
+                                    @firstCriterion.Criterion.Name
+                                </a>
+                            </td>
                             <td>@firstCriterion.Criterion.MaxPoints</td>
                             <td>
                                 <p class="text-warning">@getTotalCriticalFactor</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(firstCriterion.Criterion.Id, response.CheckList.Id)">
+                                        <span class="oi oi-warning"></span>
+                                    </button>
+                                }
                             </td>
                         </tr>
                     }
@@ -44,10 +56,20 @@
                     {
                         <tr>
                             <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
-                            <td>@firstCriterion.Criterion.Name</td>
+                            <td>
+                                @firstCriterion.Criterion.Name
+                            </td>
                             <td>@firstCriterion.Criterion.MaxPoints</td>
                             <td>
                                 <p class="text-danger">@firstCriterion.ReceivedPoints</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(firstCriterion.Criterion.Id, response.CheckList.Id)">
+                                        <span class="oi oi-warning"></span>
+                                    </button>
+                                }
                             </td>
                         </tr>
                     }
@@ -57,20 +79,43 @@
                     @if (criterion.Criterion.Section == "Критический фактор")
                     {
                         <tr>
-                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2" @onclick="() => OpenModal2(criterion.Criterion.Id, response.CheckList.Id)">@criterion.Criterion.Name</a></td>
+                            <td>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2" @onclick="() => OpenModal2(criterion.Criterion.Id, response.CheckList.Id)">
+                                    @criterion.Criterion.Name
+                                </a>
+
+                            </td>
                             <td>@criterion.Criterion.MaxPoints</td>
                             <td>
                                 <p class="text-warning">@getTotalCriticalFactor2</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(criterion.Criterion.Id, response.CheckList.Id)">
+                                        <span class="oi oi-warning"></span>
+                                    </button>
+                                }
                             </td>
                         </tr>
                     }
                     else
                     {
                         <tr>
-                            <td>@criterion.Criterion.Name</td>
+                            <td>
+                                @criterion.Criterion.Name
+                            </td>
                             <td>@criterion.Criterion.MaxPoints</td>
                             <td>
                                 <p class="text-danger">@criterion.ReceivedPoints</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(criterion.Criterion.Id, response.CheckList.Id)">
+                                        <span class="oi oi-warning"></span>
+                                    </button>
+                                }
                             </td>
                         </tr>
                     }
@@ -83,7 +128,7 @@
     <p>Общее количество баллов: @response.CheckList.TotalPoints</p>
     @if (response.CheckList.TotalPoints != 0)
     {
-        <p>Общее количество баллов в процентах:@Math.Round(PointProz) % %</p>
+        <p>Общее количество баллов в процентах:@Math.Round(PointProz) %</p>
     }
     else
     {
@@ -94,7 +139,6 @@ else
 {
     <p>Ошибка при загрузке данных.</p>
 }
-
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -136,7 +180,6 @@ else
                     </tr>
 
                 }
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -201,7 +244,6 @@ else
     GetListCriticalFactorResponse getListCriticalFactorResponse;
     private CriticalFactorView criticalFactorView;
     double MaxPoints;
-    double TotalPoints;
     double PointProz;
     int getTotalCriticalFactor;
     int getTotalCriticalFactor2;
@@ -234,6 +276,7 @@ else
         selectedcheckListId1 = checkListId;
         await RefreshCriticalFactorsList();
     }
+
     private async Task OpenModal2(int criterionId, int checkListId)
     {
         selectedCriterionId2 = criterionId;
@@ -254,9 +297,10 @@ else
         response = await CheckService.GetCheckList(request);
         getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
         await RefreshCriticalFactorsList();
+        await UpdatePoints();
     }
 
-    private async void UpdatePoints()
+    private async Task UpdatePoints()
     {
         MaxPoints = response.CheckList.Criteria
             .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
@@ -277,6 +321,7 @@ else
         }
         getTotalCriticalFactor = totalMaxPoints;
     }
+
     private async Task GetTotalMaxPoint2()
     {
         var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId2 && c.CriterionId == selectedCriterionId2).GroupBy(c => c.CriterionId);
@@ -290,4 +335,10 @@ else
         }
         getTotalCriticalFactor2 = totalMaxPoints;
     }
+
+    private async Task Appeal(int criterionId, int checkListId)
+    {
+        // Логика обработки аппеляции
+    }
 }
+

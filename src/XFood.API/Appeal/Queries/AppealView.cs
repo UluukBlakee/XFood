@@ -1,16 +1,15 @@
-﻿namespace XFood.Data.Models
+﻿using XFood.Data.Models;
+
+namespace XFood.API.Appeal.Queries
 {
-    public class Appeal
+    public class AppealView
     {
         public int Id { get; set; }
         public int CheckListId { get; set; }
-        public CheckList? CheckList { get; set; }
         public int ChecklistCriteriaId { get; set; }
-        public ChecklistCriteria? ChecklistCriteria { get; set; }
         public string? Email { get; set; }
         public string? Description { get; set; }
         public string? Materials { get; set; }
         public bool IsApproved { get; set; }
-
     }
 }

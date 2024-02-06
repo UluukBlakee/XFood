@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using XFood.Data;
@@ -11,9 +12,10 @@ using XFood.Data;
 namespace XFood.Data.Migrations
 {
     [DbContext(typeof(XFoodContext))]
-    partial class XFoodContextModelSnapshot : ModelSnapshot
+    [Migration("20240204152420_UpdateAppealModels")]
+    partial class UpdateAppealModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
