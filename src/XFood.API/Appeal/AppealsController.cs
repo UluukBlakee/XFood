@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using xFood.Infrastructure;
 using XFood.API.Appeal.Commands.Create;
 using XFood.API.Appeal.Commands.Delete;
-using XFood.API.Appeal.Commands.Update;
 using XFood.API.Appeal.Queries.GetAppeal;
 using XFood.API.Appeal.Queries.GetListAppeals;
 

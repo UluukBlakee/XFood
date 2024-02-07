@@ -15,7 +15,7 @@ namespace XFood.API.Appeal.Commands.Create
 
         public async Task<Result<CreateAppealResponse>> Handle(CreateAppealRequest command, CancellationToken cancellationToken)
         {
-            var appeal = new Data.Models.Appeal { Email = command.Email, Description = command.Description, Materials = command.Materials, ChecklistCriteriaId = command.ChecklistCriteriaId, CheckListId = command.CheckListId, IsApproved = false };
+            var appeal = new Data.Models.Appeal { Email = command.Email, Description = command.Description, ChecklistCriteriaId = command.ChecklistCriteriaId, CheckListId = command.CheckListId, IsApproved = false };
             var result = await _context.AddAsync(appeal);
             await _context.SaveChangesAsync();
             if (result.Entity == null)

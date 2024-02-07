@@ -6,5 +6,5 @@
             .catch(function (error) {
                 alert(error);
             });
-    }
+    },
 };

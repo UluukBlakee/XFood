@@ -1,0 +1,73 @@
+﻿@page "/appeals/details/{AppealId:int}"
+@using XFoodBlazor.Web.Client.Services.Appeal
+@using XFoodBlazor.Web.Client.Services.Appeal.GetAppeal
+@using XFoodBlazor.Web.Client.Services.Appeal.Delete
+@inject IAppealService AppealService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Детали аппеляции</PageTitle>
+
+@if (response != null)
+{
+    <div class="d-flex justify-content-center align-items-center vh-50">
+        <div class="card shadow" style="width: 30rem;">
+            <div class="card-body">
+                <h5 class="card-title text-center">Детали аппеляции</h5>
+                <p class="card-text">Чек-лист: <a href="@($"checklist/{response.Appeal.CheckListId}")">@response.Appeal.CheckListId</a></p>
+                <p class="card-text">Название критерия: @response.Appeal.ChecklistCriteriaId</p>
+                <p class="card-text">Email: @response.Appeal.Email</p>
+                <!-- Для материалов -->
+                <p class="card-text">Комментарий: @response.Appeal.Description</p>
+                <div class="text-center mt-3">
+                    <button class="btn btn-success me-2" @onclick="AcceptAppeal">Принять</button>
+                    <button class="btn btn-danger me-2" @onclick="RejectAppeal">Отклонить</button>
+                    <button class="btn btn-danger me-2" @onclick="DeleteAppeal">Удалить</button>
+                    <button class="btn btn-secondary" @onclick="GoBack">Назад</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-center">Данные аппеляции не найдены</p>
+}
+
+@code {
+    [Parameter]
+    public int AppealId { get; set; }
+
+    GetAppealResponse response;
+    DeleteAppealResponse deleteResponse;
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await AppealService.GetAppeal(new GetAppealRequest { Id = AppealId });
+    }
+
+    private async Task AcceptAppeal()
+    {
+        //Действия при принятии апелляции
+        NavigationManager.NavigateTo("/appeals");
+    }
+
+    private async Task RejectAppeal()
+    {
+        //Действия при отклонении апелляции
+        NavigationManager.NavigateTo("/appeals");
+    }
+
+    private async Task DeleteAppeal()
+    {
+        deleteResponse = await AppealService.Delete(new DeleteAppealRequest { Id = AppealId });
+        if (deleteResponse.Success == true)
+        {
+            NavigationManager.NavigateTo("/appeals");
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/appeals");
+    }
+}

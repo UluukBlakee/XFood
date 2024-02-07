@@ -3,8 +3,12 @@
 @using XFoodBlazor.Web.Client.Services.Check_List.GetCheckList
 @using XFoodBlazor.Web.Client.Services.CriticalFactor
 @using XFoodBlazor.Web.Client.Services.CriticalFactor.GetList;
+@using XFoodBlazor.Web.Client.Services.Appeal
+@using XFoodBlazor.Web.Client.Services.Appeal.Create
 @inject ICheckService CheckService
 @inject ICriticalFactorService CriticalFactorService
+@inject IAppealService AppealService
+@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
 @if (response != null)
@@ -45,8 +49,8 @@
                             <td>
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
-                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(firstCriterion.Criterion.Id, response.CheckList.Id)">
-                                        <span class="oi oi-warning"></span>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
+                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
                                     </button>
                                 }
                             </td>
@@ -66,8 +70,8 @@
                             <td>
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
-                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(firstCriterion.Criterion.Id, response.CheckList.Id)">
-                                        <span class="oi oi-warning"></span>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
+                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
                                     </button>
                                 }
                             </td>
@@ -92,8 +96,8 @@
                             <td>
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
-                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(criterion.Criterion.Id, response.CheckList.Id)">
-                                        <span class="oi oi-warning"></span>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(criterion.Id, criterion.Criterion.Name)">
+                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
                                     </button>
                                 }
                             </td>
@@ -112,8 +116,8 @@
                             <td>
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
-                                    <button class="btn btn-warning" title="Апелляция" @onclick="() => Appeal(criterion.Criterion.Id, response.CheckList.Id)">
-                                        <span class="oi oi-warning"></span>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(criterion.Id, criterion.Criterion.Name)">
+                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
                                     </button>
                                 }
                             </td>
@@ -190,6 +194,12 @@ else
 
 <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
+        @if (isSentSuccessfully)
+        {
+            <div class="alert alert-success" role="alert">
+                Сообщение успешно отправлено!
+            </div>
+        }
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Критический фактор</h1>
@@ -236,12 +246,48 @@ else
     </div>
 </div>
 
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Подать аппеляцию</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Критерий:</label>
+                    <input type="email" class="form-control" id="criterion" value="@selectedCriterion">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" @bind="@emailValue">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Комментарий:</label>
+<textarea class="form-control" id="description" rows="3" @bind="@descriptionValue"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="attachments" class="form-label">Материалы:</label>
+                    <input type="file" class="form-control" id="attachments" multiple>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" @onclick="() => Appeal()">Отправить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @code {
     [Parameter]
     public int CheckListId { get; set; }
     GetCheckListRequest request = new GetCheckListRequest();
     GetCheckListResponse response;
     GetListCriticalFactorResponse getListCriticalFactorResponse;
+    CreateAppealRequest appealRequest = new CreateAppealRequest();
+    CreateAppealResponse appealResponse;
     private CriticalFactorView criticalFactorView;
     double MaxPoints;
     double PointProz;
@@ -254,6 +300,14 @@ else
     private int selectedcheckListId1;
     private int selectedCriterionId2;
     private int selectedcheckListId2;
+
+    private string selectedCriterion;
+    private int selectedCriterionId;
+    private string emailValue = "";
+    private string descriptionValue = "";
+    private bool isSentSuccessfully = false;
+
+
 
     private List<string> fixedSectionsOrder = new List<string>
     {
@@ -282,6 +336,12 @@ else
         selectedCriterionId2 = criterionId;
         selectedcheckListId2 = checkListId;
         await RefreshCriticalFactorsList();
+    }
+
+    private async Task OpenModal3(int criterionId, string criterionName)
+    {
+        selectedCriterion = criterionName;
+        selectedCriterionId = criterionId;
     }
 
     private async Task RefreshCriticalFactorsList()
@@ -336,9 +396,20 @@ else
         getTotalCriticalFactor2 = totalMaxPoints;
     }
 
-    private async Task Appeal(int criterionId, int checkListId)
+    private async Task Appeal()
     {
-        // Логика обработки аппеляции
+        appealRequest.Email = emailValue;
+        appealRequest.Description = descriptionValue;
+        appealRequest.CheckListId = response.CheckList.Id;
+        appealRequest.ChecklistCriteriaId = selectedCriterionId;
+        appealResponse = await AppealService.Create(appealRequest);
+        if (appealResponse.AppealId != null)
+        {
+            isSentSuccessfully = true;
+            emailValue = "";
+            descriptionValue = "";
+        }
+
     }
 }
 

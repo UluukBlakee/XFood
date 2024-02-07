@@ -1,0 +1,54 @@
+﻿@page "/appeals"
+@using XFoodBlazor.Web.Client.Services.Appeal.GetListAppeals
+@using XFoodBlazor.Web.Client.Services.Appeal
+@inject IAppealService AppealService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Аппеляции</PageTitle>
+
+<table class="table hovered text-center">
+    <thead>
+        <tr>
+            <th>Чек-лист</th>
+            <th>Критерий</th>
+            <th>Email</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (response != null && response.Appeals != null && response.Appeals.Any())
+        {
+            @foreach (var appeal in response.Appeals)
+            {
+                <tr>
+                    <td><a href="@($"checklist/{appeal.CheckListId}")">@appeal.CheckListId</a></td>
+                    <td>@appeal.ChecklistCriteriaId</td>
+                    <td>@appeal.Email</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => ShowDetails(appeal.Id)">Подробнее</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">Нету данных</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    GetListAppealsResponse response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await AppealService.GetListAppeals(new GetListAppealsRequest());
+    }
+
+    private void ShowDetails(int appealId)
+    {
+        NavigationManager.NavigateTo($"/appeals/details/{appealId}");
+    }
+}
