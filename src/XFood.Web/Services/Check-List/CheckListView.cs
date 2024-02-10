@@ -1,6 +1,7 @@
 ﻿using XFoodBlazor.Web.Client.Services.CheckListCriteria;
 using XFoodBlazor.Web.Client.Services.Manager;
 using XFoodBlazor.Web.Client.Services.Pizzeria;
+using XFoodBlazor.Web.Client.Services.User;
 
 namespace XFoodBlazor.Web.Client.Services.Check_List
 {
@@ -12,6 +13,7 @@ namespace XFoodBlazor.Web.Client.Services.Check_List
         public DateTime? EndCheck { get; set; }
         public int TotalPoints { get; set; }
         public ManagerView? Manager { get; set; }
+        public UserView? User { get; set; }
         public List<CheckListCriteriaView>? Criteria { get; set; }
     }
 }

@@ -2,5 +2,5 @@
 
 namespace XFood.API.Check_List.Commands.CreateCheckList
 {
-    public record CreateCheckListRequest([Required] int ManagerId);
+    public record CreateCheckListRequest([Required] int ManagerId, [Required] int UserId);
 }

@@ -38,7 +38,8 @@ namespace XFood.API.Account.Commands.AccountLogin
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, command.EmailOrLogin)
+                new Claim(ClaimTypes.Name, command.EmailOrLogin),
+                new Claim("sub", user.Id.ToString())
             };
             foreach (var role in roles)
             {

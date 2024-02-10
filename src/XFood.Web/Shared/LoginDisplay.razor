@@ -31,13 +31,11 @@
 
 @code
 {
-    private string currentUserId;
-
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        currentUserId = await UserService.GetUserIdByNameAsync(user.Identity.Name);
+       var userId = user.FindFirst("sub").Value;
 
     }
     private async Task Logout()
