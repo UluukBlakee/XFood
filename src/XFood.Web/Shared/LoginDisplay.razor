@@ -14,7 +14,7 @@
     <i class="bi bi-person"></i>
   </button>
   <ul class="dropdown-menu">
-    <li><button class="dropdown-item" href="#">Мой профиль</button></li>
+    <li><button class="dropdown-item" href="#" @onclick="Checks">Проверки</button></li>
     <li><a class="dropdown-item" href="#">Карта возможностей</a></li>
     <li><a class="dropdown-item" href="#" @onclick="Logout"> Выход</a></li>
   </ul>
@@ -31,19 +31,19 @@
 
 @code
 {
+    private int currentUserId;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-       var userId = user.FindFirst("sub").Value;
-
+       currentUserId = Convert.ToInt32(user.FindFirst("sub").Value);
     }
     private async Task Logout()
     {
         await AuthService.Logout();
     }
-    private void MyProfile(int userId)
+    private void Checks()
     {
-        NavigationManager.NavigateTo($"user/{userId}");
+        NavigationManager.NavigateTo($"user/{currentUserId}");
     }
 }

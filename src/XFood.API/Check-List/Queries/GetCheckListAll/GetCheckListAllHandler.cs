@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using XFood.Data.Models;
 using XFood.API.Pizzeria.Queries;
 using XFood.API.Manager.Queries;
+using XFood.API.User.Queries.GetUser;
 
 namespace XFood.API.Check_List.Queries.GetCheckListAll
 {
@@ -20,6 +21,7 @@ namespace XFood.API.Check_List.Queries.GetCheckListAll
             List<CheckList> checkLists = await _db.CheckLists
                 .Include(cl => cl.Pizzeria)
                 .Include(cl => cl.Manager)
+                .Include(cl => cl.User)
                 .ToListAsync();
 
             List<CheckListView> list = checkLists.Select(cl => new CheckListView
@@ -29,7 +31,8 @@ namespace XFood.API.Check_List.Queries.GetCheckListAll
                 TotalPoints = cl.TotalPoints,
                 StartCheck = cl.StartCheck,
                 EndCheck = cl.EndCheck,
-                Manager = MapManager(cl.Manager)
+                Manager = MapManager(cl.Manager),
+                UserId = cl.User.Id
             }).ToList();
 
             return new GetCheckListAllResponse(list);
@@ -49,7 +52,7 @@ namespace XFood.API.Check_List.Queries.GetCheckListAll
                 Email = manager.Email
             };
         }
-
+      
         private PizzeriaView MapPizzeria(Data.Models.Pizzeria? pizzeria)
         {
             if (pizzeria == null)

@@ -25,7 +25,7 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
             try
             {
                 Data.Models.Manager manager = await _db.Managers.Include(m => m.Pizzeria).FirstOrDefaultAsync(m => m.Id == command.ManagerId);
-
+                Data.Models.User user = await _db.Users.FirstOrDefaultAsync(u =>u.Id == command.UserId);
                 List<Criterion> criteriaList = await _db.Criteria
                     .Where(c => c.PizzeriaId == manager.PizzeriaId)
                     .ToListAsync();
@@ -37,7 +37,7 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                     StartCheck = DateTime.UtcNow,
                     TotalPoints = 0,
                     EndCheck = null,
-                    UserId = command.UserId
+                    UserId = user.Id
                 };
                 await _db.AddAsync(newCheckList);
                 var result = await _db.SaveChangesAsync();

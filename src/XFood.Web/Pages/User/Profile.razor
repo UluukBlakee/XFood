@@ -1,5 +1,55 @@
-﻿<h3>Profile</h3>
+﻿@page "/user/{UserId:int}"
+@using XFoodBlazor.Web.Client.Services.Check_List.GetList
+@using XFoodBlazor.Web.Client.Services.Check_List
+@inject ICheckService CheckService
+<h3>Проверки</h3>
+<div class="container">
+        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <button type="button" class="btn btn-primary">Все</button>
+            <button type="button" class="btn btn-warning">Активные</button>
+            <button type="button" class="btn btn-success">Завершенные</button>
+        </div>
+        <ul class="list-group mt-4">
+    @if (response != null && response.List != null && response.List.Any())
+    {
+        
+        foreach (var checkList in response.List)
+        {
+                @if(checkList.UserId == UserId)
+                {
+                    anyChecks = true;
+                    <li class="list-group-item border border-secondary">
+                        <div class="row">
+                            <div class="col-md-4">@checkList.Pizzeria.Name</div>
+                            <div class="col-md-4">@checkList.Manager.FirstName @checkList.Manager.LastName</div>
+                            <div class="col-md-4">@checkList.StartCheck?.ToString("d")</div>
+                        </div>
+                    </li>
+                }
+                
 
+        }
+        @if (!anyChecks)
+        {
+            <li class="list-group-item">Проверки отсутствуют</li>
+        }
+    }
+    else
+                {
+                    <li class="list-group-item">Проверки отсутствуют</li>
+                }
+    </ul>
+</div>
 @code {
-
+    [Parameter]
+    public int UserId { get; set; }
+    bool anyChecks = false;
+    GetListCheckListResponse response;
+    private int currentUserId;
+    protected override async Task OnInitializedAsync()
+    {
+        response = await CheckService.GetListCheckList(new GetListCheckListRequest());
+        currentUserId = UserId;
+        Console.WriteLine(UserId);
+    }
 }
