@@ -5,24 +5,38 @@
 <h3>Проверки</h3>
 <div class="container">
         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <button type="button" class="btn btn-primary">Все</button>
-            <button type="button" class="btn btn-warning">Активные</button>
-            <button type="button" class="btn btn-success">Завершенные</button>
+            <button type="button" class="btn btn-primary" @onclick="FilterAllChecks">Все</button>
+            <button type="button" class="btn btn-warning"  @onclick="FilterActiveChecks">Активные</button>
+            <button type="button" class="btn btn-success" @onclick="FilterDoneChecks">Завершенные</button>
         </div>
         <ul class="list-group mt-4">
-    @if (response != null && response.List != null && response.List.Any())
+    @if (filteredChecks != null)
     {
         
-        foreach (var checkList in response.List)
+        foreach (var checkList in filteredChecks)
         {
                 @if(checkList.UserId == UserId)
                 {
                     anyChecks = true;
                     <li class="list-group-item border border-secondary">
                         <div class="row">
-                            <div class="col-md-4">@checkList.Pizzeria.Name</div>
-                            <div class="col-md-4">@checkList.Manager.FirstName @checkList.Manager.LastName</div>
-                            <div class="col-md-4">@checkList.StartCheck?.ToString("d")</div>
+                            <div class="col-md-3">@checkList.Pizzeria.Name</div>
+                            <div class="col-md-3">@checkList.Manager.FirstName @checkList.Manager.LastName</div>
+                            <div class="col-md-3">@checkList.StartCheck?.ToString("d")</div>
+                            @if(checkList.EndCheck == null)
+                            {
+                                <div class="col-md-3"><span class="badge bg-warning rounded-pill"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-battery-half" viewBox="0 0 16 16">
+  <path d="M2 6h5v4H2z"/>
+  <path d="M2 4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm10 1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm4 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8"/>
+</svg></span></div>
+                            }
+                            @if(checkList.EndCheck != null)
+                            {
+                                <div class="col-md-3"><span class="badge bg-success rounded-pill"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-battery-full" viewBox="0 0 16 16">
+  <path d="M2 6h10v4H2z"/>
+  <path d="M2 4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm10 1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm4 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8"/>
+</svg></span></div>
+                            }
                         </div>
                     </li>
                 }
@@ -49,7 +63,32 @@
     protected override async Task OnInitializedAsync()
     {
         response = await CheckService.GetListCheckList(new GetListCheckListRequest());
+        FilterAllChecks();
         currentUserId = UserId;
         Console.WriteLine(UserId);
+    }
+    public List<CheckListView> filteredChecks = new List<CheckListView>();
+
+    private async Task FilterActiveChecks()
+    {
+        if (response != null && response.List != null)
+        {
+            filteredChecks = response.List.Where(c => c.EndCheck == null).ToList();
+        }
+    }
+    private async Task FilterDoneChecks()
+    {
+
+        if (response != null && response.List != null)
+        {
+            filteredChecks = response.List.Where(c => c.EndCheck != null).ToList();
+        }
+    }
+    private async Task FilterAllChecks()
+    {
+        if (response != null && response.List != null)
+        {
+            filteredChecks = response.List.ToList();
+        }
     }
 }

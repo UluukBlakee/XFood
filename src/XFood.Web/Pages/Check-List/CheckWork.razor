@@ -375,6 +375,7 @@ else
         PointProz = TotalPoints / MaxPoints * 100;
         setTotalPointsRequest.TotalPoints = TotalPoints;
         setTotalPointsRequest.EndCheck = DateTime.UtcNow;
+        setTotalPointsRequest.Status = "done";
         setTotalPointsRequest.Id = response.CheckList.Id;
         selectedcheckListId1 = response.CheckList.Id;
         setTotalPointsResponse = await CheckService.SetTotalPoints(setTotalPointsRequest);

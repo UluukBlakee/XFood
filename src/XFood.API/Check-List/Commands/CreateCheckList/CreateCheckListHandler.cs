@@ -37,7 +37,8 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                     StartCheck = DateTime.UtcNow,
                     TotalPoints = 0,
                     EndCheck = null,
-                    UserId = user.Id
+                    UserId = user.Id,
+                    Status = "active"
                 };
                 await _db.AddAsync(newCheckList);
                 var result = await _db.SaveChangesAsync();

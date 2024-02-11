@@ -18,5 +18,6 @@ namespace XFood.Data.Models
         public Manager? Manager { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
+        public string Status { get; set; }
     }
 }

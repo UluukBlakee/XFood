@@ -16,5 +16,6 @@ namespace XFoodBlazor.Web.Client.Services.Check_List
         public UserView? User { get; set; }
         public int UserId { get; set; }
         public List<CheckListCriteriaView>? Criteria { get; set; }
+        public string Status { get; set; }
     }
 }

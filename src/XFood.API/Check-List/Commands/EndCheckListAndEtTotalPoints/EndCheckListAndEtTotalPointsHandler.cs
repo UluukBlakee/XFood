@@ -22,6 +22,7 @@ namespace XFood.API.Check_List.Commands.EndCheckListAndEtTotalPoints
             {
                 checkList.TotalPoints = command.TotalPoints;
                 checkList.EndCheck = command.EndCheck;
+                checkList.Status = command.Status;
                 _context.Update(checkList);
                 await _context.SaveChangesAsync();
             }

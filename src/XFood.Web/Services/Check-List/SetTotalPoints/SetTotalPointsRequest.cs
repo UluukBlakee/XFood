@@ -7,5 +7,6 @@ namespace XFoodBlazor.Web.Client.Services.Check_List.SetTotalPoints
         [Required] public int Id { get; set; }
         [Required] public double TotalPoints { get; set; }
         [Required] public DateTime EndCheck { get; set; }
+        [Required] public string Status { get; set; }
     }
 }
