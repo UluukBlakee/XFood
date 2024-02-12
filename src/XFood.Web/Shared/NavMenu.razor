@@ -30,10 +30,21 @@
                 <NavLink class="nav-link" href="stats">
                     <span class="oi oi-bar-chart" aria-hidden="true"></span> Общая статистика
                 </NavLink>
+                <div class="lol text-center text-light">
+                    <p>МСК: @currentMoscowTime</p>
+                    <p>ЕКТ: @currentYekaterinburgTime</p>
+                    <p>БИШ: @currentBishkekTime</p>
+                </div>
             </AuthorizeView>
         </div>
     </nav>
 </div>
+<style>
+    .lol{
+        background-color: #3A0647;
+        margin-top: 200px;
+    }
+</style>
 
 @code {
     private bool collapseNavMenu = true;
@@ -43,6 +54,37 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    private string currentMoscowTime;
+    private string currentYekaterinburgTime;
+    private string currentBishkekTime;
+    private async Task  GetCurrentTime()
+    {
+        try
+        {
+            TimeZoneInfo moscowTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
+            TimeZoneInfo ekaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Yekaterinburg");
+            TimeZoneInfo bishkekTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Bishkek");
+            DateTime moscowTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, moscowTimeZone);
+            DateTime ekaterinburgTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ekaterinburgTimeZone);
+            DateTime bishkekTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, bishkekTimeZone);
+            currentMoscowTime = moscowTime.ToString("HH:mm");
+            currentYekaterinburgTime = ekaterinburgTime.ToString("HH:mm");
+            currentBishkekTime = bishkekTime.ToString("HH:mm");
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            currentMoscowTime = "Ошибка: часовой пояс не найден";
+        }
+        catch (InvalidTimeZoneException)
+        {
+            currentMoscowTime = "Ошибка: неверный часовой пояс";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+       await GetCurrentTime();
     }
 
 }
