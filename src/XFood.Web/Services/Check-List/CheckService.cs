@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Json;
 using XFoodBlazor.Web.Client.Services.Check_List.Create;
+using XFoodBlazor.Web.Client.Services.Check_List.GetList;
 using XFoodBlazor.Web.Client.Services.Check_List.SetTotalPoints;
+using XFoodBlazor.Web.Client.Services.Pizzeria.GetList;
 
 namespace XFoodBlazor.Web.Client.Services.Check_List
 {
@@ -8,6 +10,7 @@ namespace XFoodBlazor.Web.Client.Services.Check_List
     {
         Task<CreateCheckListResponse> Create(CreateCheckListRequest checkListModel);
         Task<SetTotalPointsResponse> SetTotalPoints(SetTotalPointsRequest checkListModel);
+        Task<GetListCheckListResponse> GetListCheckList(GetListCheckListRequest pizzeriaModel);
     }
     public class CheckService : ICheckService
     {
@@ -37,6 +40,17 @@ namespace XFoodBlazor.Web.Client.Services.Check_List
                 return response;
             }
             return new SetTotalPointsResponse(false);
+        }
+
+        public async Task<GetListCheckListResponse> GetListCheckList(GetListCheckListRequest pizzeriaModel)
+        {
+            var result = await _httpClient.GetAsync("checkList/list");
+            if (result.IsSuccessStatusCode)
+            {
+                var response = await result.Content.ReadFromJsonAsync<GetListCheckListResponse>();
+                return response;
+            }
+            return new GetListCheckListResponse(null);
         }
     }
 }

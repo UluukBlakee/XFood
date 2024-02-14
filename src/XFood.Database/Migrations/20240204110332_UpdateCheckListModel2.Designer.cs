@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using XFood.Data;
@@ -11,9 +12,10 @@ using XFood.Data;
 namespace XFood.Data.Migrations
 {
     [DbContext(typeof(XFoodContext))]
-    partial class XFoodContextModelSnapshot : ModelSnapshot
+    [Migration("20240204110332_UpdateCheckListModel2")]
+    partial class UpdateCheckListModel2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,10 +205,6 @@ namespace XFood.Data.Migrations
 
                     b.Property<DateTime?>("StartCheck")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<int>("TotalPoints")
                         .HasColumnType("integer");

@@ -6,5 +6,6 @@ namespace XFoodBlazor.Web.Client.Services.Check_List.Create
     {
         [Required] public int ManagerId { get; set; }
         [Required] public double TotalPoints { get; set; }
+        [Required] public int UserId { get; set; }
     }
 }

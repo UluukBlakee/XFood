@@ -10,7 +10,7 @@ using XFoodBlazor.Web.Client.Services.CheckListCriteria;
 using XFoodBlazor.Web.Client.Services.Stats;
 using XFoodBlazor.Web.Client.Services.Criterion;
 using XFoodBlazor.Web.Client.Services.CriticalFactor;
-
+using XFoodBlazor.Web.Client.Services.User;
 
 namespace XFoodBlazor.Web.Client
 {
@@ -33,6 +33,7 @@ namespace XFoodBlazor.Web.Client
             builder.Services.AddScoped<IStatsService, StatsService>();
             builder.Services.AddScoped<ICriterionService, CriterionService>();
             builder.Services.AddScoped<ICriticalFactorService, CriticalFactorService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/api/") });
             
             await builder
