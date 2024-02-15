@@ -33,7 +33,7 @@ namespace XFood.API.Photos.Commands.Create
                 await _context.SaveChangesAsync();
                 return new CreatePhotoResponse(true);
             }
-            else { return new CreatePhotoResponse(false); }
+            else { return new CreatePhotoResponse(true); }
         }
 
         public async Task<string> UploadPhoto(IFormFile imageFile)

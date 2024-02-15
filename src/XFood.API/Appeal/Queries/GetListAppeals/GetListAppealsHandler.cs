@@ -2,6 +2,7 @@
 using XFood.Data;
 using xFood.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using XFood.Data.Models;
 
 namespace XFood.API.Appeal.Queries.GetListAppeals
 {
@@ -19,11 +20,14 @@ namespace XFood.API.Appeal.Queries.GetListAppeals
             {
                 Id = a.Id,
                 Email = a.Email,
-                Description = a.Comment,
+                Comment = a.Comment,
                 Materials = a.Materials,
                 IsApproved = a.IsApproved,
-                ChecklistCriteriaId = a.ChecklistCriteriaId,
-                CheckListId = a.CheckListId
+                CheckListId = a.CheckListId,
+                Status = a.Status,
+                DateApplication = a.DateApplication,
+                DateReply = a.DateReply,
+                Reply = a.Reply
             }).ToList();
             return new GetListAppealsResponse(list);
         }

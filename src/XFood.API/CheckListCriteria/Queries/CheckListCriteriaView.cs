@@ -7,7 +7,6 @@ namespace XFood.API.CheckListCriteria.Queries
     {
         public int Id { get; set; }
         public CriterionView? Criterion { get; set; }
-        public CheckListView? CheckList { get; set; }
         public int ReceivedPoints { get; set; }
     }
 }

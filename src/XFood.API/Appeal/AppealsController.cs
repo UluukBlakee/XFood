@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using xFood.Infrastructure;
+using XFood.API.Appeal.Commands.Accept;
 using XFood.API.Appeal.Commands.Create;
 using XFood.API.Appeal.Commands.Delete;
+using XFood.API.Appeal.Commands.Reject;
 using XFood.API.Appeal.Queries.GetAppeal;
 using XFood.API.Appeal.Queries.GetListAppeals;
 
@@ -61,6 +63,40 @@ namespace XFood.API.Appeal
         )
         {
             var res = await commandDispatcher.Dispatch<CreateAppealRequest, Result<CreateAppealResponse>>(request, cancellationToken);
+
+            return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
+        }
+
+        [HttpPost("reject")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RejectAppealResponse))]
+        public async Task<ActionResult<Result<RejectAppealResponse>>> Reject(
+        [FromBody] RejectAppealRequest request,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        CancellationToken cancellationToken
+        )       
+        {
+            var res = await commandDispatcher.Dispatch<RejectAppealRequest, Result<RejectAppealResponse>>(request, cancellationToken);
+
+            return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
+        }
+
+        [HttpPost("accept")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AcceptAppealResponse))]
+        public async Task<ActionResult<Result<AcceptAppealResponse>>> Accept(
+        [FromBody] AcceptAppealRequest request,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        CancellationToken cancellationToken
+        )
+        {
+            var res = await commandDispatcher.Dispatch<AcceptAppealRequest, Result<AcceptAppealResponse>>(request, cancellationToken);
 
             return res.IsSuccess ? Ok(res.Value) : BadRequest(res.Error);
         }

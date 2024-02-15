@@ -1,9 +1,11 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
+using XFoodBlazor.Web.Client.Services.Appeal.Accept;
 using XFoodBlazor.Web.Client.Services.Appeal.Create;
 using XFoodBlazor.Web.Client.Services.Appeal.Delete;
 using XFoodBlazor.Web.Client.Services.Appeal.GetAppeal;
 using XFoodBlazor.Web.Client.Services.Appeal.GetListAppeals;
+using XFoodBlazor.Web.Client.Services.Appeal.Reject;
 
 namespace XFoodBlazor.Web.Client.Services.Appeal
 {
@@ -13,6 +15,8 @@ namespace XFoodBlazor.Web.Client.Services.Appeal
         Task<DeleteAppealResponse> Delete(DeleteAppealRequest appealModel);
         Task<GetAppealResponse> GetAppeal(GetAppealRequest appealModel);
         Task<GetListAppealsResponse> GetListAppeals(GetListAppealsRequest appealModel);
+        Task<AcceptAppealResponse> Accept(AcceptAppealRequest appealModel);
+        Task<RejectAppealResponse> Reject(RejectAppealRequest appealModel);
     }
     public class AppealService : IAppealService
     {
@@ -22,6 +26,18 @@ namespace XFoodBlazor.Web.Client.Services.Appeal
         {
             _httpClient = httpClient;
         }
+
+        public async Task<AcceptAppealResponse> Accept(AcceptAppealRequest appealModel)
+        {
+            var result = await _httpClient.PostAsJsonAsync("appeal/accept", appealModel);
+            if (result.IsSuccessStatusCode)
+            {
+                var response = await result.Content.ReadFromJsonAsync<AcceptAppealResponse>();
+                return response;
+            }
+            return new AcceptAppealResponse(false);
+        }
+
         public async Task<CreateAppealResponse> Create(CreateAppealRequest appealModel)
         {
             var result = await _httpClient.PostAsJsonAsync("appeal", appealModel);
@@ -64,6 +80,17 @@ namespace XFoodBlazor.Web.Client.Services.Appeal
                 return response;
             }
             return new GetListAppealsResponse(null);
+        }
+
+        public async Task<RejectAppealResponse> Reject(RejectAppealRequest appealModel)
+        {
+            var result = await _httpClient.PostAsJsonAsync("appeal/reject", appealModel);
+            if (result.IsSuccessStatusCode)
+            {
+                var response = await result.Content.ReadFromJsonAsync<RejectAppealResponse>();
+                return response;
+            }
+            return new RejectAppealResponse(false);
         }
     }
 }

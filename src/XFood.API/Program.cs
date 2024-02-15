@@ -23,7 +23,7 @@ namespace XFood.API
             var jWtOptions = new JWTSettings();
             builder.Configuration.GetSection(nameof(JWTSettings)).Bind(jWtOptions);
 
-
+            builder.Services.AddScoped<EmailService>();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(name: corsPolicy,

@@ -1,7 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using xFood.Infrastructure;
+using XFood.API.CheckListCriteria.Queries;
+using XFood.API.Criterions.Queries;
 using XFood.Data;
+using XFood.Data.Models;
 
 namespace XFood.API.Appeal.Queries.GetAppeal
 {
@@ -14,17 +17,31 @@ namespace XFood.API.Appeal.Queries.GetAppeal
         }
         public async Task<Result<GetAppealResponse>> Handle(GetAppealRequest query, CancellationToken cancellation)
         {
-            Data.Models.Appeal appeal = await _db.Appeals.FirstOrDefaultAsync(cl => cl.Id == query.Id);
+            Data.Models.Appeal appeal = await _db.Appeals.Include(c => c.ChecklistCriteria).ThenInclude(cl => cl.Criterion).FirstOrDefaultAsync(cl => cl.Id == query.Id);
             if (appeal != null)
             {
                 AppealView appealView = new AppealView
                 {
                     Id = appeal.Id,
                     Email = appeal.Email,
-                    Description = appeal.Comment,
+                    Comment = appeal.Comment,
                     Materials = appeal.Materials,
                     IsApproved = appeal.IsApproved,
-                    ChecklistCriteriaId = appeal.ChecklistCriteriaId,
+                    ChecklistCriteria = new CheckListCriteriaView()
+                    {
+                        Id = appeal.ChecklistCriteria.Id,
+                        ReceivedPoints = appeal.ChecklistCriteria.ReceivedPoints,
+                        Criterion = new CriterionView()
+                        {
+                            Name = appeal.ChecklistCriteria.Criterion.Name,
+                            MaxPoints = appeal.ChecklistCriteria.Criterion.MaxPoints,
+                            Section = appeal.ChecklistCriteria.Criterion.Section
+                        },
+                    },
+                    Status = appeal.Status,
+                    DateApplication = appeal.DateApplication, 
+                    DateReply = appeal.DateReply,
+                    Reply = appeal.Reply,
                     CheckListId = appeal.CheckListId
                 };
                 return new GetAppealResponse(appealView);

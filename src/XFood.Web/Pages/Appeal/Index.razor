@@ -22,7 +22,7 @@
             {
                 <tr>
                     <td><a href="@($"checklist/{appeal.CheckListId}")">@appeal.CheckListId</a></td>
-                    <td>@appeal.ChecklistCriteriaId</td>
+                    <td>@appeal.DateApplication</td>
                     <td>@appeal.Email</td>
                     <td>
                         <button class="btn btn-primary" @onclick="() => ShowDetails(appeal.Id)">Подробнее</button>
