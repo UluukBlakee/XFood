@@ -19,7 +19,7 @@ namespace XFood.API.Appeal.Queries.GetListAppeals
             {
                 Id = a.Id,
                 Email = a.Email,
-                Description = a.Description,
+                Description = a.Comment,
                 Materials = a.Materials,
                 IsApproved = a.IsApproved,
                 ChecklistCriteriaId = a.ChecklistCriteriaId,

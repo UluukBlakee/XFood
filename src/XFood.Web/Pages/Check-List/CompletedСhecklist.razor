@@ -1,13 +1,17 @@
 ﻿@page "/checkList/{CheckListId:int}"
+@using Microsoft.AspNetCore.Http;
 @using XFoodBlazor.Web.Client.Services.Check_List
 @using XFoodBlazor.Web.Client.Services.Check_List.GetCheckList
 @using XFoodBlazor.Web.Client.Services.CriticalFactor
 @using XFoodBlazor.Web.Client.Services.CriticalFactor.GetList;
-@using XFoodBlazor.Web.Client.Services.Appeal
-@using XFoodBlazor.Web.Client.Services.Appeal.Create
+@using XFoodBlazor.Web.Client.Services.Appeal;
+@using XFoodBlazor.Web.Client.Services.Appeal.Create;
+@using XFoodBlazor.Web.Client.Services.Photos;
+@using XFoodBlazor.Web.Client.Services.Photos.Create;
 @inject ICheckService CheckService
 @inject ICriticalFactorService CriticalFactorService
 @inject IAppealService AppealService
+@inject IPhotoService PhotoService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
@@ -68,12 +72,12 @@
                                 <p class="text-danger">@firstCriterion.ReceivedPoints</p>
                             </td>
                             <td>
-                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
-                                {
+@*                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {*@
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
                                         <span class="oi oi-bullhorn" aria-hidden="true"></span>
                                     </button>
-                                }
+@*                                }*@
                             </td>
                         </tr>
                     }
@@ -194,12 +198,6 @@ else
 
 <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        @if (isSentSuccessfully)
-        {
-            <div class="alert alert-success" role="alert">
-                Сообщение успешно отправлено!
-            </div>
-        }
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Критический фактор</h1>
@@ -248,6 +246,12 @@ else
 
 <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
+        @if (isSentSuccessfully)
+        {
+            <div class="alert alert-success" role="alert">
+                Сообщение успешно отправлено!
+            </div>
+        }
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Подать аппеляцию</h1>
@@ -256,19 +260,40 @@ else
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label">Критерий:</label>
-                    <input type="email" class="form-control" id="criterion" value="@selectedCriterion">
+                    <textarea class="form-control" id="criterion" readonly>@selectedCriterion</textarea>
                 </div>
+
                 <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
                     <input type="email" class="form-control" id="email" @bind="@emailValue">
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Комментарий:</label>
-<textarea class="form-control" id="description" rows="3" @bind="@descriptionValue"></textarea>
+                    <textarea class="form-control" id="description" rows="3" @bind="@commentValue"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="attachments" class="form-label">Материалы:</label>
-                    <input type="file" class="form-control" id="attachments" multiple>
+                    <label for="attachments" class="form-label">Фотографии:</label>
+                    @if (inputs.Count > 0)
+                    {
+                        <div>
+                            @foreach (var input in inputs)
+                            {
+                                <div class="form-group">
+                                    <input type="file" class="form-control" multiple accept="image/*" @onchange="@(e => AddPhoto(e))" />
+                                </div>
+                            }
+                        </div>
+
+                        <button class="btn btn-danger" @onclick="RemoveInput">Удалить последную фотографию</button>
+                    }
+                    @if (inputs.Count <= 4)
+                    {
+                        <button class="btn btn-success" @onclick="AddInput">Добавить фотографию</button>
+                    }
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Ссылка на материалы:</label>
+                    <input type="email" class="form-control" id="email" @bind="@materialsValue">
                 </div>
             </div>
             <div class="modal-footer">
@@ -280,6 +305,8 @@ else
 </div>
 
 
+
+
 @code {
     [Parameter]
     public int CheckListId { get; set; }
@@ -288,6 +315,9 @@ else
     GetListCriticalFactorResponse getListCriticalFactorResponse;
     CreateAppealRequest appealRequest = new CreateAppealRequest();
     CreateAppealResponse appealResponse;
+    CreatePhotoResponse photoResponse;
+    CreatePhotoRequest photoRequest = new CreatePhotoRequest();
+
     private CriticalFactorView criticalFactorView;
     double MaxPoints;
     double PointProz;
@@ -304,10 +334,11 @@ else
     private string selectedCriterion;
     private int selectedCriterionId;
     private string emailValue = "";
-    private string descriptionValue = "";
+    private string commentValue = "";
+    private string materialsValue = "";
     private bool isSentSuccessfully = false;
 
-
+    List<string> inputs = new List<string>();
 
     private List<string> fixedSectionsOrder = new List<string>
     {
@@ -396,20 +427,55 @@ else
         getTotalCriticalFactor2 = totalMaxPoints;
     }
 
+    async void AddInput()
+    {
+        inputs.Add("");
+    }
+
+    async void RemoveInput()
+    {
+        if (inputs.Count > 0)
+        {
+            inputs.RemoveAt(inputs.Count - 1);
+        }
+    }
+
+    async void AddPhoto(ChangeEventArgs e)
+    {
+        var files = e.Value as IEnumerable<IFormFile>;
+        if (files != null)
+        {
+            foreach (var file in files)
+            {
+                if (photoRequest.Photos == null)
+                {
+                    photoRequest.Photos = new List<IFormFile>();
+                }
+                photoRequest.Photos.Add(file);
+            }
+        }
+    }
+
     private async Task Appeal()
     {
         appealRequest.Email = emailValue;
-        appealRequest.Description = descriptionValue;
+        appealRequest.Comment = commentValue;
+        appealRequest.Materials = materialsValue;
         appealRequest.CheckListId = response.CheckList.Id;
         appealRequest.ChecklistCriteriaId = selectedCriterionId;
         appealResponse = await AppealService.Create(appealRequest);
         if (appealResponse.AppealId != null)
         {
-            isSentSuccessfully = true;
-            emailValue = "";
-            descriptionValue = "";
+            photoRequest.AppealId = appealResponse.AppealId;
+            photoResponse = await PhotoService.Create(photoRequest);
+            if (photoResponse.Success)
+            {
+                isSentSuccessfully = true;
+                emailValue = "";
+                commentValue = "";
+                materialsValue = "";
+            }
         }
-
     }
 }
 

@@ -20,6 +20,7 @@ namespace XFood.Data
         public DbSet<Manager> Managers { get; set; }
         public DbSet<ChecklistCriteria> ChecklistCriteria { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Photo> Photos { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
 
         public XFoodContext()

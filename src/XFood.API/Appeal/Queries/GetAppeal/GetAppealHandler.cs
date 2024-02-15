@@ -21,7 +21,7 @@ namespace XFood.API.Appeal.Queries.GetAppeal
                 {
                     Id = appeal.Id,
                     Email = appeal.Email,
-                    Description = appeal.Description,
+                    Description = appeal.Comment,
                     Materials = appeal.Materials,
                     IsApproved = appeal.IsApproved,
                     ChecklistCriteriaId = appeal.ChecklistCriteriaId,
