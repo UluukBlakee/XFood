@@ -2,36 +2,37 @@
 
 @font-face {
     font-family: "DodoRoundedRegular";
-    src: ('../DodoRounded_v2-Regular/DodoRounded_v2-Regular.ttf')
+    src: url('../fonts/DodoRounded_v2-Regular/DodoRounded_v2-Regular.ttf');
 }
 
 @font-face {
     font-family: "DodoRoundedBold";
-    src: ('../DodoRounded_v2-Bold/DodoRounded_v2-Bold.ttf')
+    src: url('../fonts/DodoRounded_v2-Bold/DodoRounded_v2-Bold.ttf');
 }
 
 @font-face {
     font-family: "DodoRoundedExtraLight";
-    src: ('../DodoRounded_v2-ExtraLight/DodoRounded_v2-ExtraLight.ttf')
+    src: url('../fonts/DodoRounded_v2-ExtraLight/DodoRounded_v2-ExtraLight.ttf');
 }
 
 @font-face {
     font-family: "DodoRoundedLight";
-    src: ('../DodoRounded_v2-Light/DodoRounded_v2-Light.ttf')
+    src: url('../fonts/DodoRounded_v2-Light/DodoRounded_v2-Light.ttf');
 }
 
 @font-face {
     font-family: "DodoRoundedMedium";
-    src: ('../DodoRounded_v2-Medium/DodoRounded_v2-Medium.ttf')
+    src: url('../fonts/DodoRounded_v2-Medium/DodoRounded_v2-Medium.ttf');
 }
 
 @font-face {
     font-family: "DodoRoundedThin";
-    src: ('../DodoRounded_v2-Thint/DodoRounded_v2-Thin.ttf')
+    src: url('../fonts/DodoRounded_v2-Thint/DodoRounded_v2-Thin.ttf');
 }
 
 html, body {
     font-family: 'DodoRoundedRegular', Helvetica, Arial, sans-serif;
+    font-style: italic;
 }
 
 h1:focus {

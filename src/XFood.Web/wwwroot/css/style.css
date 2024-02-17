@@ -1,4 +1,38 @@
-﻿.logoImg {
+﻿@font-face {
+    font-family: "DodoRoundedRegular";
+    src: url('../fonts/DodoRounded_v2-Regular/DodoRounded_v2-Regular.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedBold";
+    src: url('../fonts/DodoRounded_v2-Bold/DodoRounded_v2-Bold.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedExtraLight";
+    src: url('../fonts/DodoRounded_v2-ExtraLight/DodoRounded_v2-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedLight";
+    src: url('../fonts/DodoRounded_v2-Light/DodoRounded_v2-Light.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedMedium";
+    src: url('../fonts/DodoRounded_v2-Medium/DodoRounded_v2-Medium.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedThin";
+    src: url('../fonts/DodoRounded_v2-Thint/DodoRounded_v2-Thin.ttf');
+}
+
+* {
+    font-family: 'DodoRoundedRegular' !important;
+    font-style: italic;
+}
+.logoImg {
     width: 150px;
     height: 30px;
 }
@@ -10,7 +44,7 @@
 
 .header {
     width: 100%;
-    border: 2px solid black;
+    border: 2px solid #5c5c5c;
     border-radius: 15px 15px 15px 15px;
     margin: 0 auto;
 }
@@ -24,37 +58,43 @@
     background-color: #fff;
 }
 
-.main {
+main {
     border-radius: 15px;
-    border: 2px solid black;
+    border: 2px solid #5c5c5c;
 }
 
 
-.menu .nav .nav-item {
-    width: 90%;
+.nav-menu-custom .nav-item .nav-link {
     margin-top: 10px;
-    border: 2px dashed black;
+    border: 2px dashed #5c5c5c;
     border-radius: 10px;
     margin: 5px auto;
 }
 
+.nav-menu-custom .nav-item .nav-link {
+    color: #000 !important;
+    justify-content: center;
+}
+
+
+
 .side-bar {
-  /*  position: relative;
-    height: calc(100vh - 120px);*/
+    position: relative;
+    height: calc(100vh - 120px);
     padding: 0;
     border-radius: 15px;
-    border: 2px solid black;
-    /*overflow-y: auto;*/
+    border: 2px solid #5c5c5c;
+    overflow-y: auto;
 }
 
 .time-zones {
-    /*position: absolute;*/
-    /*bottom: 0;*/
+    position: absolute;
+    bottom: 0;
     margin-bottom: 20px;
-    border: 2px solid black;
+    border: 2px solid #5c5c5c;
     border-radius: 20px;
-/*    width: 90%;
+    width: 90%;
     left: 50%;
-    transform: translateX(-50%);*/
+    transform: translateX(-50%);
 }
 
