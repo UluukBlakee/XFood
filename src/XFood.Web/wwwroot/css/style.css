@@ -76,7 +76,9 @@ main {
     justify-content: center;
 }
 
-
+    .nav-menu-custom .nav-item  a.active {
+        background-color: #ccd5da !important;
+    }
 
 .side-bar {
     position: relative;
