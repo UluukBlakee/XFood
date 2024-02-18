@@ -1,26 +1,59 @@
 @page "/stats"
 @using XFoodBlazor.Web.Client.Services.Stats.GetList
 @using XFoodBlazor.Web.Client.Services.Stats
+@using XFoodBlazor.Web.Client.Services.Check_List
+@using XFoodBlazor.Web.Client.Services.Manager
+@using XFoodBlazor.Web.Client.Services.Pizzeria
 @inject IStatsService StatsService
 
 <PageTitle>Общая статистика</PageTitle>
 <h3>График контроллинга</h3>
-
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <select class="form-control" @bind="selectedManagerId">
+                <option value="0">Выберите менеджера</option>
+                @foreach (var manager in managers)
+                {
+                    <option value="@manager.Id">@manager.FirstName @manager.LastName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-control" @bind="selectedPizzeriaId">
+                <option value="0">Выберите пиццерию</option>
+                @foreach (var pizza in pizzeria)
+                {
+                    <option value="@pizza.Id">@pizza.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="date" class="form-control" @bind="startDate" placeholder="Дата начала проверки"/>
+        </div>
+        <div class="col-md-3">
+            <input type="date" class="form-control" @bind="endDate" placeholder="Дата завершения проверки"/>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success" @onclick="FilterCheckLists">Отфильтровать</button>
+        </div>
+    </div>
+</div>
 <table class="table hovered text-center">
     <thead>
         <tr>
             <th>КЛН Менеджера</th>
             <th>Пиццерия</th>
-            <th>Дата начала проверки</th>
-            <th>Дата завершения проверки</th>
+            <th @onclick="SortByStartDate">Дата начала проверки</th>
+            <th @onclick="SortByEndDate">Дата завершения проверки</th>
             <th>Количество баллов</th>
         </tr>
     </thead>
     <tbody>
 
-        @if (checkLists != null && checkLists.List != null && checkLists.List.Any())
+        @if (filteredCheckLists != null)
         {
-            var groupedCheckLists = checkLists.List.GroupBy(c => c.Pizzeria.Name);
+            var groupedCheckLists = filteredCheckLists.GroupBy(c => c.Pizzeria.Name);
 
             @foreach (var group in groupedCheckLists)
             {
@@ -52,9 +85,66 @@
 
 @code {
     GetListStatsResponse checkLists;
-
+    int selectedManagerId;
+    int selectedPizzeriaId;
+    public List<ManagerView> managers = new List<ManagerView>();
+    public List<PizzeriaView> pizzeria = new List<PizzeriaView>();
+    public List<CheckListView> filteredCheckLists = new List<CheckListView>();
+    DateTime? startDate;
+    DateTime? endDate;
+    private bool sortByStartDateAscending = true;
+    private bool sortByEndDateAscending = true;
     protected override async Task OnInitializedAsync()
     {
         checkLists = await StatsService.GetListStats(new GetListStatsRequest());
+        filteredCheckLists = checkLists.List;
+        managers = checkLists.List.Where(checkList => checkList.Manager != null).Select(checkList => checkList.Manager).Distinct().ToList();
+        pizzeria = checkLists.List.Where(checkList => checkList.Pizzeria != null).Select(checkList => checkList.Pizzeria).Distinct().ToList();
+        
+    }
+    private void FilterCheckLists()
+    {
+
+        if (selectedManagerId == 0 && selectedPizzeriaId == 0 && startDate == null && endDate == null)
+        {
+            filteredCheckLists = checkLists.List.ToList();
+        }
+        else
+        {
+            filteredCheckLists = checkLists.List
+                .Where(checkList =>
+                    (selectedManagerId == 0 || (checkList.Manager != null && checkList.Manager.Id == selectedManagerId)) &&
+                    (selectedPizzeriaId == 0 || (checkList.Pizzeria != null && checkList.Pizzeria.Id == selectedPizzeriaId)) &&
+                    (startDate == null || (checkList.StartCheck != null && checkList.StartCheck.Value.Date == startDate.Value.Date)) &&
+                    (endDate == null || (checkList.EndCheck != null && checkList.EndCheck.Value.Date == endDate.Value.Date)) 
+
+                )
+                .ToList();
+        }
+    }
+    private void SortByStartDate()
+    {
+        if (sortByStartDateAscending)
+        {
+            filteredCheckLists = filteredCheckLists.OrderByDescending(checkList => checkList.StartCheck).ToList();
+        }
+        else
+        {
+            filteredCheckLists = filteredCheckLists.OrderBy(checkList => checkList.StartCheck).ToList();
+        }
+        sortByStartDateAscending = !sortByStartDateAscending;
+    }
+
+    private void SortByEndDate()
+    {
+        if (sortByEndDateAscending)
+        {
+            filteredCheckLists = filteredCheckLists.OrderByDescending(checkList => checkList.EndCheck).ToList();
+        }
+        else
+        {
+            filteredCheckLists = filteredCheckLists.OrderBy(checkList => checkList.EndCheck).ToList();
+        }
+        sortByEndDateAscending = !sortByEndDateAscending;
     }
 }
