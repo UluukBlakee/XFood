@@ -89,15 +89,15 @@
        await GetCurrentTime();
        await UpdateTime(); 
        timer = new Timer(async _ =>
-    {
+        {
         await UpdateTime();
-        StateHasChanged(); // Уведомляем Blazor о необходимости перерисовки компонента
-    }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1)); // Интервал обновления - 1 минута
+        StateHasChanged();
+        }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
     }
 
     public void Dispose()
 {
-    timer?.Dispose(); // Уничтожаем таймер при удалении компонента
+    timer?.Dispose();
 }
 
     private async Task UpdateTime()
@@ -123,5 +123,4 @@
         currentMoscowTime = "Ошибка: неверный часовой пояс";
     }
 }
-
 }
