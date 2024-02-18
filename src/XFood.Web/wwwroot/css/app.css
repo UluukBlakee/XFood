@@ -1,7 +1,38 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+@font-face {
+    font-family: "DodoRoundedRegular";
+    src: url('../fonts/DodoRounded_v2-Regular/DodoRounded_v2-Regular.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedBold";
+    src: url('../fonts/DodoRounded_v2-Bold/DodoRounded_v2-Bold.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedExtraLight";
+    src: url('../fonts/DodoRounded_v2-ExtraLight/DodoRounded_v2-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedLight";
+    src: url('../fonts/DodoRounded_v2-Light/DodoRounded_v2-Light.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedMedium";
+    src: url('../fonts/DodoRounded_v2-Medium/DodoRounded_v2-Medium.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedThin";
+    src: url('../fonts/DodoRounded_v2-Thint/DodoRounded_v2-Thin.ttf');
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'DodoRoundedRegular', Helvetica, Arial, sans-serif;
+    font-style: italic;
 }
 
 h1:focus {
