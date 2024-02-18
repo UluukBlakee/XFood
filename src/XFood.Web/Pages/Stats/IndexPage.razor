@@ -8,23 +8,6 @@
 
 <PageTitle>Общая статистика</PageTitle>
 <h3>График контроллинга</h3>
-@*<select @bind="selectedManagerId">
-    <option value="0">Выберите менеджера</option>
-    @foreach (var manager in managers)
-    {
-        <option value="@manager.Id">@manager.FirstName @manager.LastName</option>
-    }
-</select>
-<select @bind="selectedPizzeriaId">
-    <option value="0">Выберите пиццерию</option>
-    @foreach (var pizza in pizzeria)
-    {
-        <option value="@pizza.Id">@pizza.Name</option>
-    }
-</select>
-<input type="date" @bind="startDate" />
-<input type="date" @bind="endDate" />
-<button class="btn btn-success" @onclick="FilterCheckLists">Отфильтровать</button>*@
 <div class="container">
     <div class="row">
         <div class="col-md-2">
