@@ -57,6 +57,42 @@
     protected override async Task OnInitializedAsync()
     {
        await GetCurrentTime();
+       await UpdateTime(); 
+       timer = new Timer(async _ =>
+    {
+        await UpdateTime();
+        StateHasChanged(); // Уведомляем Blazor о необходимости перерисовки компонента
+    }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1)); // Интервал обновления - 1 минута
     }
+
+    public void Dispose()
+{
+    timer?.Dispose(); // Уничтожаем таймер при удалении компонента
+}
+
+    private async Task UpdateTime()
+{
+    try
+    {
+        TimeZoneInfo moscowTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
+        TimeZoneInfo ekaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Yekaterinburg");
+        TimeZoneInfo bishkekTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Bishkek");
+        DateTime moscowTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, moscowTimeZone);
+        DateTime ekaterinburgTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ekaterinburgTimeZone);
+        DateTime bishkekTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, bishkekTimeZone);
+        currentMoscowTime = moscowTime.ToString("HH:mm");
+        currentYekaterinburgTime = ekaterinburgTime.ToString("HH:mm");
+        currentBishkekTime = bishkekTime.ToString("HH:mm");
+    }
+    catch (TimeZoneNotFoundException)
+    {
+        currentMoscowTime = "Ошибка: часовой пояс не найден";
+    }
+    catch (InvalidTimeZoneException)
+    {
+        currentMoscowTime = "Ошибка: неверный часовой пояс";
+    }
+}
+
 
 }
