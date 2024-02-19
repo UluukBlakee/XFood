@@ -65,7 +65,7 @@ namespace XFood.API
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<XFood.Data.Models.User>>();
                  await Adminitializer.SeedAdminUser(roleManager, userManager);
                  
             }

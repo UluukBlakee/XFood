@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization;
+@using XFoodBlazor.Web.Client.Services.Authorization;
+@using XFoodBlazor.Web.Client.Services.User;
+@inject IAuthService AuthService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject NavigationManager NavigationManager;
+@using System.Security.Claims;
+@inject IUserService UserService;
+
+<div class="header d-flex justify-content-between p-3 mt-3">
+    <div class="d-flex justify-content-center align-items-center">
+        <img class="logoImg" src="images/logoOrangeHorizontal.png" alt="logo" />
+    </div>
+    <div class="user-info d-flex justify-content-between align-items-center">
+        <AuthorizeView>
+            <Authorized>
+                <div class="btn-group">
+                    <button type="button" class="avatar-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle avatar"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="dropdown-item" href="#" @onclick="Checks">Проверки</button></li>
+                        <li><a class="dropdown-item" href="#">Карта возможностей</a></li>
+                        <li><a class="dropdown-item" href="#" @onclick="Logout"> Выход</a></li>
+                    </ul>
+                </div>
+                <p class="m-0"> @context.User.Identity.Name!</p>
+            </Authorized>
+            <NotAuthorized>
+                <a class="btn btn-primary register-btn" href="Register">Регистрация</a>
+                <a class="btn btn-warning" href="Login">Войти</a>
+            </NotAuthorized>
+        </AuthorizeView>
+        
+    </div>
+</div>
+
+@code {
+    private int currentUserId;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        currentUserId = Convert.ToInt32(user.FindFirst("sub").Value);
+    }
+    private async Task Logout()
+    {
+        await AuthService.Logout();
+    }
+    private void Checks()
+    {
+        NavigationManager.NavigateTo($"user/{currentUserId}");
+    }
+}

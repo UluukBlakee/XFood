@@ -2,6 +2,7 @@
 using XFood.API.CriticalFactors.Queries;
 using XFood.API.Manager.Queries;
 using XFood.API.Pizzeria.Queries;
+using XFood.API.User.Queries;
 
 namespace XFood.API.Check_List.Queries
 {
@@ -13,6 +14,7 @@ namespace XFood.API.Check_List.Queries
         public DateTime? EndCheck { get; set; }
         public int TotalPoints { get; set; }
         public ManagerView? Manager { get; set; }
+        public int UserId { get; set; }
         public List<CheckListCriteriaView>? Criteria { get; set; }
         public List<CriticalFactorView>? CriticalFactors { get; set; }
     }

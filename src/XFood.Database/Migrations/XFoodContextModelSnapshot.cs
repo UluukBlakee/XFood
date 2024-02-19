@@ -222,7 +222,14 @@ namespace XFood.Data.Migrations
                     b.Property<DateTime?>("StartCheck")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("TotalPoints")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -230,6 +237,8 @@ namespace XFood.Data.Migrations
                     b.HasIndex("ManagerId");
 
                     b.HasIndex("PizzeriaId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("CheckLists");
                 });
@@ -1388,9 +1397,17 @@ namespace XFood.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("XFood.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Manager");
 
                     b.Navigation("Pizzeria");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>

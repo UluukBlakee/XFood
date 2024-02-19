@@ -10,14 +10,20 @@
 @using XFoodBlazor.Web.Client.Services.CriticalFactor.GetList;
 @using XFoodBlazor.Web.Client.Services.CriticalFactor.Update;
 @using XFoodBlazor.Web.Client.Services.CriticalFactor.Delete;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using XFoodBlazor.Web.Client.Services.Authorization;
+@using XFoodBlazor.Web.Client.Services.User;
 @inject ICheckService CheckService
 @inject ICriticalFactorService CriticalFactorService
 @inject ICheckListCriteriaService CheckCriteriaService
+@inject IAuthService AuthService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject NavigationManager NavigationManager
 
 @if (response != null)
 {
     <p>Пиццерия: @response.CheckList.Pizzeria?.Name</p>
+    <p>Пиццерия: @response.CheckList.User?.Id</p>
     <p>Менеджер: @response.CheckList.Manager?.FirstName @response.CheckList.Manager?.LastName</p>
 
     <table class="table">
@@ -371,7 +377,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userId = user.FindFirst("sub").Value;
         request.ManagerId = ManagerId;
+        request.UserId = Convert.ToInt32(userId);
         response = await CheckService.Create(request);
         getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
         await RefreshCriticalFactorsList();
@@ -403,6 +413,11 @@ else
         TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);
         TotalPoints = getTotalCriticalFactor2 + getTotalCriticalFactor;
         PointProz = TotalPoints / MaxPoints * 100;
+        setTotalPointsRequest.TotalPoints = TotalPoints;
+        setTotalPointsRequest.EndCheck = DateTime.UtcNow;
+        setTotalPointsRequest.Id = response.CheckList.Id;
+        selectedcheckListId1 = response.CheckList.Id;
+        setTotalPointsResponse = await CheckService.SetTotalPoints(setTotalPointsRequest);
     }
 
     private async Task EditCriticalFactor(CriticalFactorView criticalFactor)

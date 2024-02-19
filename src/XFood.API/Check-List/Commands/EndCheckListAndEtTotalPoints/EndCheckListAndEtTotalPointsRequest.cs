@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public int TotalPoints { get; set; }
         public DateTime? EndCheck { get; set; }
+        public string Status { get; set; }
     }
 }

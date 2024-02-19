@@ -1,35 +1,18 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">XFoodBlazor.Web</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
+﻿<div class="@NavMenuCssClass nav-scrollable nav-menu-custom" @onclick="ToggleNavMenu">
+    <nav class="flex-column side-bar">
         <div class="nav-item px-3">
             <AuthorizeView>
-                <NavLink class="nav-link" href="fetchdata">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-                </NavLink>
                 <NavLink class="nav-link" href="pizzerias">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Пиццерии
+                    Пиццерии
                 </NavLink>
                 <NavLink class="nav-link" href="stats">
-                    <span class="oi oi-bar-chart" aria-hidden="true"></span> Общая статистика
+                    Общая статистика
                 </NavLink>
+                <div class="text-center time-zones p-2">
+                    <p>МСК: @currentMoscowTime</p>
+                    <p>ЕКТ: @currentYekaterinburgTime</p>
+                    <p>БИШ: @currentBishkekTime</p>
+                </div>
             </AuthorizeView>
             <AuthorizeView Roles="admin">
                 <NavLink class="nav-link" href="appeals">
@@ -40,13 +23,82 @@
     </nav>
 </div>
 
+
 @code {
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    private Timer timer;
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    private string currentMoscowTime;
+    private string currentYekaterinburgTime;
+    private string currentBishkekTime;
+    private async Task  GetCurrentTime()
+    {
+        try
+        {
+            TimeZoneInfo moscowTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
+            TimeZoneInfo ekaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Yekaterinburg");
+            TimeZoneInfo bishkekTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Bishkek");
+            DateTime moscowTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, moscowTimeZone);
+            DateTime ekaterinburgTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ekaterinburgTimeZone);
+            DateTime bishkekTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, bishkekTimeZone);
+            currentMoscowTime = moscowTime.ToString("HH:mm");
+            currentYekaterinburgTime = ekaterinburgTime.ToString("HH:mm");
+            currentBishkekTime = bishkekTime.ToString("HH:mm");
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            currentMoscowTime = "Ошибка: часовой пояс не найден";
+        }
+        catch (InvalidTimeZoneException)
+        {
+            currentMoscowTime = "Ошибка: неверный часовой пояс";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCurrentTime();
+        await UpdateTime(); 
+        timer = new Timer(async _ =>
+     {
+         await UpdateTime();
+         StateHasChanged();
+     }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+
+    private async Task UpdateTime()
+    {
+        try
+        {
+            TimeZoneInfo moscowTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
+            TimeZoneInfo ekaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Yekaterinburg");
+            TimeZoneInfo bishkekTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Bishkek");
+            DateTime moscowTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, moscowTimeZone);
+            DateTime ekaterinburgTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ekaterinburgTimeZone);
+            DateTime bishkekTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, bishkekTimeZone);
+            currentMoscowTime = moscowTime.ToString("HH:mm");
+            currentYekaterinburgTime = ekaterinburgTime.ToString("HH:mm");
+            currentBishkekTime = bishkekTime.ToString("HH:mm");
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            currentMoscowTime = "Ошибка: часовой пояс не найден";
+        }
+        catch (InvalidTimeZoneException)
+        {
+            currentMoscowTime = "Ошибка: неверный часовой пояс";
+        }
     }
 }
