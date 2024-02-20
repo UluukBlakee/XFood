@@ -10,6 +10,7 @@ namespace XFood.Data
     public class XFoodContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Time> Time { get; set; }
         public DbSet<Pizzeria> Pizzerias { get; set; }
         public DbSet<CheckList> CheckLists { get; set; }
         public DbSet<Criterion> Criteria { get; set; }

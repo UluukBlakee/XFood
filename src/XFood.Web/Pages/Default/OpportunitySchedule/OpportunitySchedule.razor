@@ -1,0 +1,192 @@
+﻿@page "/schedule"
+@using XFoodBlazor.Web.Client.Services.Schedule;
+
+
+<h1>Карта возможностей</h1>
+
+@if (displayModal)
+{
+    <div class="divModal" id="divModal">
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading modalHeading">Выберите период работы</div>
+                <div class="panel-body">
+                    <h2> @w : @d   </h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>C :</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="time" style="width:100%;" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>По :</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="time" style="width:100%;" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom:10px">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6" style="text-align:right;">
+                            <button class="btn btn-success" style="float:left;margin-right:5px;">Сохранить</button>
+                            <button class="btn btn-danger" @onclick="CloseModal" style="float:left;">Отмена</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<select @onchange="LoadCalender">
+    @foreach (string month in monthes)
+    {
+        <option>@month</option>
+    }
+</select>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            @for (var dayIndex = 0; dayIndex < days.Count(); dayIndex++)
+            {
+                <th>
+                    @days[dayIndex]
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (var weekIndex = 0; weekIndex < weeks.Count(); weekIndex++)
+        {
+            <tr>
+                @for (var dayIndex = 0; dayIndex < weeks[weekIndex].Schedules.Count(); dayIndex++)
+                {
+                    <td @ondblclick="@(()=>OpenModal(weekIndex,dayIndex))">
+                        @weeks[weekIndex].Schedules[dayIndex].DayNumber
+                        <br/><br/>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    bool displayModal = false;
+    List<string> monthes = new List<string>();
+    List<string> days = new List<string>() { "пн", "вт", "ср", "чт", "пт", "сб", "вс" };
+    List<Week> weeks = new List<Week>();
+    DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+    DateTime endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
+
+
+    protected override void OnInitialized()
+    {
+        monthes = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthGenitiveNames.ToList();
+
+        GenerateCalendarBody();
+    }
+    private void LoadCalender(ChangeEventArgs e)
+    {
+        var month = e.Value.ToString();
+        int monthIndex = DateTime.ParseExact(month, "MMMM", System.Globalization.CultureInfo.CurrentCulture).Month;
+        startDate = new DateTime(DateTime.Now.Year, monthIndex, 1);
+        endDate = new DateTime(DateTime.Now.Year, monthIndex, 1).AddMonths(1).AddDays(-1);
+
+        GenerateCalendarBody();
+    }
+
+
+    private void GenerateCalendarBody()
+    {
+        {
+            weeks = new List<Week>();
+            int flag = 0;
+            Week week = new Week();
+            List<Day> dates = new List<Day>();
+            var totalDays = (int)(endDate - startDate).TotalDays;
+            int countdays = 0;
+            int myFlag = 0;
+
+            for (var dt = startDate; dt <= endDate; dt = dt.AddDays(1))
+            {
+                if (dt == startDate)
+                {
+                    switch (startDate.DayOfWeek)
+                    {
+                        case DayOfWeek.Monday:
+                            break;
+                        default:
+                            int daysToAdd = ((int)startDate.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
+                            for (int i = 0; i < daysToAdd; i++)
+                            {
+                                dates.Add(new Day() { DayNumber = null, DayName = null });
+                                flag++;
+                            }
+                            break;
+                    }
+                }
+                flag++;
+                dates.Add(new Day()
+                    {
+                        DayNumber = dt.ToString("dd-MMM-yyyy"),
+                        DayName = dt.ToString("dddd")
+                    });
+                if (flag == 7)
+                {
+                    week = new Week();
+                    week.Schedules = dates;
+                    weeks.Add(week);
+                    dates = new List<Day>();
+                    flag = 0;
+                }
+                if (countdays == totalDays)
+                {
+                    week = new Week();
+                    week.Schedules = dates;
+                    weeks.Add(week);
+                    break;
+                }
+                countdays++;
+                switch (startDate.DayOfWeek)
+                {
+                    case (DayOfWeek.Monday):
+
+                        break;
+                    case (DayOfWeek.Tuesday):
+                        break;
+                    case (DayOfWeek.Wednesday):
+                        break;
+                    case (DayOfWeek.Thursday):
+                        break;
+                    case (DayOfWeek.Friday):
+                        break;
+                    case (DayOfWeek.Saturday):
+                        break;
+                    case (DayOfWeek.Sunday):
+                        break;
+                }
+            }
+
+
+        }
+    }
+
+    private void CloseModal()
+    {
+        displayModal = false;
+    }
+    public int d;
+    public int w;
+    private void OpenModal(int wIndex, int dIndex)
+    {
+        w = wIndex;
+        d = dIndex;
+        displayModal = true;
+    }
+}
