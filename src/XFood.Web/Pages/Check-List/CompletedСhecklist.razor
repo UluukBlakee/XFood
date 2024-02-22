@@ -72,12 +72,12 @@
                                 <p class="text-danger">@firstCriterion.ReceivedPoints</p>
                             </td>
                             <td>
-@*                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
-                                {*@
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
                                         <span class="oi oi-bullhorn" aria-hidden="true"></span>
                                     </button>
-@*                                }*@
+                                }
                             </td>
                         </tr>
                     }
@@ -258,43 +258,45 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Критерий:</label>
-                    <textarea class="form-control" id="criterion" readonly>@selectedCriterion required</textarea>
-                </div>
+                <form class="mt-5 pt-5" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Критерий:</label>
+                        <textarea class="form-control" id="criterion" readonly>@selectedCriterion" required</textarea>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" @bind="@emailValue" required>
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Комментарий:</label>
-                    <textarea class="form-control" id="description" rows="3" @bind="@commentValue" required></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="attachments" class="form-label">Фотографии:</label>
-                    @if (inputs.Count > 0)
-                    {
-                        <div>
-                            @foreach (var input in inputs)
-                            {
-                                <div class="form-group">
-                                    <input type="file" class="form-control" multiple accept="image/*" @onchange="@(e => AddPhoto(e))" />
-                                </div>
-                            }
-                        </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" @bind="@emailValue" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Комментарий:</label>
+                        <textarea class="form-control" id="description" rows="3" @bind="@commentValue" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="attachments" class="form-label">Фотографии:</label>
+                        @if (inputs.Count > 0)
+                        {
+                            <div>
+                                @foreach (var input in inputs)
+                                {
+                                    <div class="form-group">
+                                        <input type="file" class="form-control" multiple accept="image/*" @onchange="@(e => AddPhoto(e))"/>
+                                    </div>
+                                }
+                            </div>
 
-                        <button class="btn btn-danger" @onclick="RemoveInput">Удалить последную фотографию</button>
-                    }
-                    @if (inputs.Count <= 4)
-                    {
-                        <button class="btn btn-success" @onclick="AddInput">Добавить фотографию</button>
-                    }
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Ссылка на материалы:</label>
-                    <input type="email" class="form-control" id="email" @bind="@materialsValue">
-                </div>
+                            <button class="btn btn-danger" @onclick="RemoveInput">Удалить последную фотографию</button>
+                        }
+                        @if (inputs.Count < 4)
+                        {
+                            <button class="btn btn-success" @onclick="AddInput">Добавить фотографию</button>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Ссылка на материалы:</label>
+                        <input type="email" class="form-control" id="email" @bind="@materialsValue">
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>

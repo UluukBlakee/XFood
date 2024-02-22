@@ -1,4 +1,5 @@
 ﻿@page "/endCheck/{CheckListId:int}"
+@attribute [Authorize]
 @using XFoodBlazor.Web.Client.Services.Check_List
 @using XFoodBlazor.Web.Client.Services.Check_List.GetCheckList
 @inject ICheckService CheckService

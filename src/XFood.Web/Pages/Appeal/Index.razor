@@ -1,4 +1,5 @@
 ﻿@page "/appeals"
+@attribute [Authorize(Roles = "admin")]
 @using XFoodBlazor.Web.Client.Services.Appeal.GetListAppeals
 @using XFoodBlazor.Web.Client.Services.Appeal
 @inject IAppealService AppealService
@@ -6,24 +7,82 @@
 
 <PageTitle>Аппеляции</PageTitle>
 
+<div class="d-flex justify-content-evenly mb-3">
+    <button class="btn btn-success" @onclick="() => FilterByStatus(newStatus)">Новые</button>
+    <button class="btn btn-danger" @onclick="() => FilterByStatus(doneStatus)">Проверенные</button>
+</div>
+
+@if (filteredAppeals != null && filteredAppeals.Any())
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <select class="form-control" @bind="CheckListIdFilter">
+                    <option value="0">Выберите Чек-Лист</option>
+                    @foreach (var appeal in filteredAppeals)
+                    {
+                        <option value="@appeal.CheckListId">@appeal.CheckListId</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" @bind="startDate" placeholder="Дата начала проверки" />
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" @bind="endDate" placeholder="Дата завершения проверки" />
+            </div>
+            @if (currentStatus == doneStatus)
+            {
+                <div class="col-md-3">
+                    <input type="date" class="form-control" @bind="replyDateFrom" placeholder="Дата начала проверки" />
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" @bind="replyDateTo" placeholder="Дата завершения проверки" />
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control" @bind="approvedFilter">
+                        <option value="">Одобрено</option>
+                        <option value="Да">Да</option>
+                        <option value="Нет">Нет</option>
+                    </select>
+                </div>
+            }
+            <div class="col-md-2">
+                <button class="btn btn-success" @onclick="FilterAppeals">Отфильтровать</button>
+            </div>
+        </div>
+    </div>
+}
+
 <table class="table hovered text-center">
     <thead>
         <tr>
             <th>Чек-лист</th>
-            <th>Критерий</th>
+            <th><button class="btn btn-link" @onclick="SortByDateApplication">Дата подачи</button></th>
             <th>Email</th>
+            @if (currentStatus == doneStatus)
+            {
+                <th><button class="btn btn-link" @onclick="SortByDateReply">Дата ответа</button></th>
+                <th>Одобрения</th>
+            }
             <th>Действия</th>
         </tr>
     </thead>
     <tbody>
-        @if (response != null && response.Appeals != null && response.Appeals.Any())
+        @if (filteredAppeals != null && filteredAppeals.Any())
         {
-            @foreach (var appeal in response.Appeals)
+            @foreach (var appeal in filteredAppeals)
             {
                 <tr>
                     <td><a href="@($"checklist/{appeal.CheckListId}")">@appeal.CheckListId</a></td>
                     <td>@appeal.DateApplication</td>
                     <td>@appeal.Email</td>
+                    @if (currentStatus == doneStatus)
+                    {
+                        <td>@appeal.DateReply</td>
+                        <td>@(appeal.IsApproved ? "Да" : "Нет")</td>
+
+                    }
                     <td>
                         <button class="btn btn-primary" @onclick="() => ShowDetails(appeal.Id)">Подробнее</button>
                     </td>
@@ -33,7 +92,7 @@
         else
         {
             <tr>
-                <td colspan="4">Нету данных</td>
+                <td colspan="4">Нет данных</td>
             </tr>
         }
     </tbody>
@@ -42,13 +101,101 @@
 @code {
     GetListAppealsResponse response;
 
+    string newStatus = "New";
+    string doneStatus = "Done";
+    string currentStatus;
+    int CheckListIdFilter;
+    string approvedFilter;
+    DateTime? startDate;
+    DateTime? endDate;
+    DateTime? replyDateFrom;
+    DateTime? replyDateTo;
+    private List<AppealView>? filteredAppeals;
+    bool sortByDateApplicationAscending = true;
+    bool sortByDateReplyAscending = true;
+
     protected override async Task OnInitializedAsync()
     {
         response = await AppealService.GetListAppeals(new GetListAppealsRequest());
+        FilterByStatus(newStatus);
     }
 
     private void ShowDetails(int appealId)
     {
         NavigationManager.NavigateTo($"/appeals/details/{appealId}");
     }
+
+    private void FilterByStatus(string status)
+    {
+        currentStatus = status;
+        filteredAppeals = response.Appeals.Where(a => a.Status == status).ToList();
+    }
+
+    private void FilterAppeals()
+    {
+        if (CheckListIdFilter == 0 || startDate.HasValue! || endDate.HasValue! || replyDateFrom.HasValue! || replyDateTo.HasValue! || approvedFilter == null)
+            filteredAppeals = response.Appeals.Where(a => a.Status == currentStatus).ToList();
+
+        if (CheckListIdFilter != 0)
+        {
+            filteredAppeals = filteredAppeals.Where(a => a.CheckListId == CheckListIdFilter && a.Status == currentStatus).ToList();
+            CheckListIdFilter = 0;
+        }
+        if (startDate.HasValue)
+        {
+            filteredAppeals = filteredAppeals.Where(a => a.DateApplication >= startDate && a.Status == currentStatus).ToList();
+            startDate = null;
+        }
+        if (endDate.HasValue)
+        {
+            filteredAppeals = filteredAppeals.Where(a => a.DateApplication <= endDate && a.Status == currentStatus).ToList();
+            endDate = null;
+        }
+        if (replyDateFrom.HasValue)
+        {
+            filteredAppeals = filteredAppeals.Where(a => a.DateReply >= replyDateFrom && a.Status == currentStatus).ToList();
+            replyDateFrom = null;
+        }
+        if (replyDateTo.HasValue)
+        {
+            filteredAppeals = filteredAppeals.Where(a => a.DateReply <= replyDateTo && a.Status == currentStatus).ToList();
+            replyDateTo = null;
+        }
+        if (approvedFilter != null)
+        {
+            if (approvedFilter == "Да")
+                filteredAppeals = filteredAppeals.Where(a => a.IsApproved == true && a.Status == currentStatus).ToList();
+            else
+                filteredAppeals = filteredAppeals.Where(a => a.IsApproved == false && a.Status == currentStatus).ToList();
+
+            approvedFilter = null;
+        }
+    }
+
+    private void SortByDateApplication()
+    {
+        if (sortByDateApplicationAscending)
+        {
+            filteredAppeals = filteredAppeals.OrderByDescending(appeal => appeal.DateApplication).ToList();
+        }
+        else
+        {
+            filteredAppeals = filteredAppeals.OrderBy(appeal => appeal.DateApplication).ToList();
+        }
+        sortByDateApplicationAscending = !sortByDateApplicationAscending;
+    }
+
+    private void SortByDateReply()
+    {
+        if (sortByDateReplyAscending)
+        {
+            filteredAppeals = filteredAppeals.OrderByDescending(appeal => appeal.DateReply).ToList();
+        }
+        else
+        {
+            filteredAppeals = filteredAppeals.OrderBy(appeal => appeal.DateReply).ToList();
+        }
+        sortByDateReplyAscending = !sortByDateReplyAscending;
+    }
+
 }

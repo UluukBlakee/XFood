@@ -1,4 +1,5 @@
 ﻿@page "/pizzeria/managers/{PizzeriaId:int}"
+@attribute [Authorize(Roles = "admin, user")]
 @using XFoodBlazor.Web.Client.Services.Pizzeria
 @using XFoodBlazor.Web.Client.Services.Pizzeria.GetPizzeria
 @inject IPizzeriaService PizzeriaService

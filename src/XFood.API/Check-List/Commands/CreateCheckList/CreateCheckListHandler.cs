@@ -25,6 +25,7 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
             try
             {
                 Data.Models.Manager manager = await _db.Managers.Include(m => m.Pizzeria).FirstOrDefaultAsync(m => m.Id == command.ManagerId);
+                Data.Models.User user = await _db.Users.FirstOrDefaultAsync(u => u.Id == command.UserId);
                 if (manager == null)
                     return Result.Failure<CreateCheckListResponse>("Менеджер не найден");
 
@@ -32,7 +33,7 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                 if (criteriaList == null || !criteriaList.Any())
                     return Result.Failure<CreateCheckListResponse>("Критерии не найдены");
 
-                CheckList newCheckList = await CreateNewCheckList(manager);
+                CheckList newCheckList = await CreateNewCheckList(manager, user);
                 if (newCheckList == null)
                     return Result.Failure<CreateCheckListResponse>("Ошибка при создании нового списка проверки");
 
@@ -50,7 +51,7 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
             }
         }
 
-        private async Task<CheckList> CreateNewCheckList(Data.Models.Manager manager)
+        private async Task<CheckList> CreateNewCheckList(Data.Models.Manager manager, Data.Models.User user)
         {
             CheckList newCheckList = new CheckList
             {
@@ -58,7 +59,9 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                 ManagerId = manager.Id,
                 StartCheck = DateTime.UtcNow,
                 TotalPoints = 0,
-                EndCheck = null
+                EndCheck = null,
+                UserId = user.Id,
+                Status = "active"
             };
             _db.Add(newCheckList);
             int result = await _db.SaveChangesAsync();

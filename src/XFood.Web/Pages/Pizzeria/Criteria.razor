@@ -1,4 +1,5 @@
 ﻿@page "/pizzeria/criteria/{PizzeriaId:int}"
+@attribute [Authorize(Roles = "admin")]
 @using XFoodBlazor.Web.Client.Services.Criterion;
 @using XFoodBlazor.Web.Client.Services.Criterion.Create;
 @using XFoodBlazor.Web.Client.Services.Criterion.Delete;
