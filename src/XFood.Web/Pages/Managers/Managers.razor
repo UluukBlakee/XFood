@@ -2,9 +2,16 @@
 @using XFoodBlazor.Web.Client.Services.Manager.GetList;
 @using XFoodBlazor.Web.Client.Services.Manager;
 @using XFoodBlazor.Web.Client.Services.Manager.Delete;
+@using XFoodBlazor.Web.Client.Services.Manager.Create;
+@using XFoodBlazor.Web.Client.Services.Pizzeria.GetList
+@using XFoodBlazor.Web.Client.Services.Pizzeria
+@inject IPizzeriaService PizzeriaService
 @inject IManagerService ManagerService
 
-<h3>Список менеджеров</h3>
+<div class="d-flex">
+    <h3>Список менеджеров</h3>
+<button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#exampleModal2">Добавить менеджера</button>
+</div>
 <table class="table hovered text-center">
     <thead>
         <tr>
@@ -53,15 +60,77 @@
   </div>
 </div>
 
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Добавить менеджера</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">First Name:</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" @bind="@FirstName">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Last Name:</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" @bind="@LastName">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Telegram:</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" @bind="@Telegram">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Email:</label>
+          <input type="email" class="form-control" id="exampleFormControlInput1" @bind="@Email">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Pizzerias:</label>
+        <select class="form-select" @bind="@PizzeriaId">
+             <option>Выберите пиццерию</option>
+            @if(pizzeriaResponse != null)
+            {
+                @foreach (var pizzeria in pizzeriaResponse.List)
+                {
+                    <option value="@pizzeria.Id">@pizzeria.Name</option>
+                }
+            }
+            else
+            {
+                    <option>Нету данных</option>
+            }
+        </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" @onclick="CreateManager" data-bs-dismiss="modal" class="btn btn-primary">Добавить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @code {
     GetManagersResponse managers;
     DeleteManagersRequest deleteManagersRequest = new DeleteManagersRequest();
     DeleteManagersResponse deleteManagersResponse;
-    public ManagerView managerView;
+    CreateManagerRequest createManagerRequest = new CreateManagerRequest();
+    CreateManagerResponse createManagerResponse;
+    private ManagerView managerView;
+    private string FirstName;
+    private string LastName;
+    private string Telegram;
+    private string Email;
+    private int PizzeriaId;
+
+    GetListPizzeriaResponse pizzeriaResponse;
+
 
     protected override async Task OnInitializedAsync()
     {
-       await RefreshManagersList();
+        await RefreshManagersList();
+        pizzeriaResponse = await PizzeriaService.GetListPizzeria(new GetListPizzeriaRequest());
     }
     private async Task DeleteManager()
     {
@@ -77,4 +146,17 @@
     {
         managerView = manager;
     }
+    private async Task CreateManager()
+    {
+        createManagerRequest.FirstName = FirstName;
+        createManagerRequest.LastName = LastName;
+        createManagerRequest.PizzeriaId = PizzeriaId;
+        createManagerRequest.Telegram = Telegram;
+        createManagerRequest.Email = Email;
+        createManagerResponse = await ManagerService.Create(createManagerRequest);
+        FirstName = LastName = Telegram = Email = string.Empty;
+        PizzeriaId = 0;
+        await RefreshManagersList();
+    }
 }
+
