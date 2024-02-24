@@ -7,6 +7,7 @@
 @using XFoodBlazor.Web.Client.Services.Pizzeria
 @inject IPizzeriaService PizzeriaService
 @inject IManagerService ManagerService
+@inject NavigationManager NavigationManager
 
 <div class="d-flex">
     <h3>Список менеджеров</h3>
@@ -30,7 +31,7 @@
                     <td>@m.FirstName</td>
                     <td>@m.LastName</td>      
                     <td>
-                        <a class="btn btn-warning"><i class="bi bi-eye-fill"></i></a>
+                        <a class="btn btn-warning" href="@($"manager/{m.Id}")"><i class="bi bi-eye-fill"></i></a>
                         <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="@(async () => await SetSelectedManager(m))" ><i class="bi bi-trash3-fill"></i></a>
                     </td>
                 </tr>

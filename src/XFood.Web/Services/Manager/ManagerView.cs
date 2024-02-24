@@ -1,6 +1,4 @@
-﻿using XFoodBlazor.Web.Client.Services.Pizzeria;
-
-namespace XFoodBlazor.Web.Client.Services.Manager
+﻿namespace XFoodBlazor.Web.Client.Services.Manager
 {
     public class ManagerView
     {
