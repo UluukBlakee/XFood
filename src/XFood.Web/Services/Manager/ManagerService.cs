@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using XFoodBlazor.Web.Client.Services.Manager.Delete;
 using XFoodBlazor.Web.Client.Services.Manager.GetList;
 
 namespace XFoodBlazor.Web.Client.Services.Manager
@@ -6,6 +7,7 @@ namespace XFoodBlazor.Web.Client.Services.Manager
     public interface IManagerService
     {
         Task<GetManagersResponse> GetManagers(GetManagersRequest managerModel);
+        Task<DeleteManagersResponse> Delete(DeleteManagersRequest criticalFactorModel);
     }
     public class ManagerService : IManagerService
     {
@@ -23,6 +25,16 @@ namespace XFoodBlazor.Web.Client.Services.Manager
                 return response;
             }
             return new GetManagersResponse(null);
+        }
+        public async Task<DeleteManagersResponse> Delete(DeleteManagersRequest criticalFactorModel)
+        {
+            var result = await _httpClient.DeleteAsync($"manager/{criticalFactorModel.Id}");
+            if (result.IsSuccessStatusCode)
+            {
+                var response = await result.Content.ReadFromJsonAsync<DeleteManagersResponse>();
+                return response;
+            }
+            return new DeleteManagersResponse(false);
         }
     }
 }

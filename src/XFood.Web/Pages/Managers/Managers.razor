@@ -1,6 +1,7 @@
 ﻿@page "/managers"
 @using XFoodBlazor.Web.Client.Services.Manager.GetList;
 @using XFoodBlazor.Web.Client.Services.Manager;
+@using XFoodBlazor.Web.Client.Services.Manager.Delete;
 @inject IManagerService ManagerService
 
 <h3>Список менеджеров</h3>
@@ -23,7 +24,7 @@
                     <td>@m.LastName</td>      
                     <td>
                         <a class="btn btn-warning"><i class="bi bi-eye-fill"></i></a>
-                        <a class="btn btn-danger"><i class="bi bi-trash3-fill"></i></a>
+                        <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="@(async () => await SetSelectedManager(m))" ><i class="bi bi-trash3-fill"></i></a>
                     </td>
                 </tr>
             }
@@ -35,12 +36,45 @@
     </tbody>
 </table>
 
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <p>Вы действительно хотите удалить этого менеджера?</p>
+      </div>
+      <div class="modal-footer">
+          <button type="button" @onclick="DeleteManager" data-bs-dismiss="modal" class="btn btn-primary">Да</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @code {
     GetManagersResponse managers;
+    DeleteManagersRequest deleteManagersRequest = new DeleteManagersRequest();
+    DeleteManagersResponse deleteManagersResponse;
+    public ManagerView managerView;
 
     protected override async Task OnInitializedAsync()
     {
-       managers = await ManagerService.GetManagers(new GetManagersRequest());
+       await RefreshManagersList();
     }
-    
+    private async Task DeleteManager()
+    {
+        deleteManagersRequest.Id = managerView.Id;
+        deleteManagersResponse = await ManagerService.Delete(deleteManagersRequest);
+        await RefreshManagersList();
+    }
+    private async Task RefreshManagersList()
+    {
+        managers = await ManagerService.GetManagers(new GetManagersRequest());
+    }
+    private async Task SetSelectedManager(ManagerView manager)
+    {
+        managerView = manager;
+    }
 }
