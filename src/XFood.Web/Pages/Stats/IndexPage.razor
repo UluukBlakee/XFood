@@ -102,9 +102,13 @@
     {
         checkLists = await StatsService.GetListStats(new GetListStatsRequest());
         filteredCheckLists = checkLists.List;
-        managers = checkLists.List.Where(checkList => checkList.Manager != null).Select(checkList => checkList.Manager).Distinct().ToList();
-        pizzeria = checkLists.List.Where(checkList => checkList.Pizzeria != null).Select(checkList => checkList.Pizzeria).Distinct().ToList();
-        
+        managers = checkLists.List.Where(checkList => checkList.Manager != null).GroupBy(checkList => new { checkList.Manager.FirstName, checkList.Manager.LastName }).Select(group => group.First().Manager).ToList();
+        pizzeria = checkLists.List.Where(checkList => checkList.Pizzeria != null).GroupBy(checkList => new { checkList.Pizzeria.Name}).Select(group => group.First().Pizzeria).ToList();
+
+        foreach(var m in managers)
+        {
+            Console.WriteLine(m.FirstName + " "+ m.LastName);
+        }
     }
     private void FilterCheckLists()
     {
