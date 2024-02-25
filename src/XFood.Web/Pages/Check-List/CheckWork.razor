@@ -137,17 +137,17 @@ else
                             @if (c != criticalFactorView)
                             {
                                 <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriticalFactor(c))">
-                                    <span class="oi oi-pencil" aria-hidden="true"></span>
+                                    <span class="bi bi-pencil" aria-hidden="true"></span>
                                 </button>
                             }
                             else
                             {
                                 <button class="btn btn-sm btn-success" @onclick="SaveEditedCriticalFactor">
-                                    <span class="oi oi-check" aria-hidden="true"></span>
+                                    <span class="bi bi-pencil" aria-hidden="true"></span>
                                 </button>
                             }
                             <button class="btn btn-sm btn-danger ms-3" @onclick="@(async () => await DeleteCriticalFactor(c))">
-                                <span class="oi oi-trash" aria-hidden="true"></span>
+                                <span class="bi bi-trash" aria-hidden="true"></span>
                             </button>
                          </div>
                                 
@@ -213,17 +213,17 @@ else
                         <div>@if (c != criticalFactorView)
                         {
                             <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriticalFactor(c))">
-                                <span class="oi oi-pencil" aria-hidden="true"></span>
+                                <span class="bi bi-pencil" aria-hidden="true"></span>
                             </button>
                         }
                         else
                         {
                             <button class="btn btn-sm btn-success" @onclick="SaveEditedCriticalFactor2">
-                                <span class="oi oi-check" aria-hidden="true"></span>
+                                <span class="bi bi-pencil" aria-hidden="true"></span>
                             </button>
                         }
                         <button class="btn btn-sm btn-danger ms-3" @onclick="@(async () => await DeleteCriticalFactor(c))">
-                            <span class="oi oi-trash" aria-hidden="true"></span>
+                            <span class="bi bi-trash" aria-hidden="true"></span>
                         </button></div>
 
                         

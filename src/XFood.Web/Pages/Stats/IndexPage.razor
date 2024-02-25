@@ -104,11 +104,6 @@
         filteredCheckLists = checkLists.List;
         managers = checkLists.List.Where(checkList => checkList.Manager != null).GroupBy(checkList => new { checkList.Manager.FirstName, checkList.Manager.LastName }).Select(group => group.First().Manager).ToList();
         pizzeria = checkLists.List.Where(checkList => checkList.Pizzeria != null).GroupBy(checkList => new { checkList.Pizzeria.Name}).Select(group => group.First().Pizzeria).ToList();
-
-        foreach(var m in managers)
-        {
-            Console.WriteLine(m.FirstName + " "+ m.LastName);
-        }
     }
     private void FilterCheckLists()
     {
@@ -157,46 +152,46 @@
     }
 
     private async Task DownloadExcel()
-{
-    using (var libro = new XLWorkbook())
     {
-        IXLWorksheet table = libro.Worksheets.Add("StatsData");
-        string[] headers = { "КЛН Менеджера", "Пиццерия", "Дата начала проверки", "Дата завершения проверки", "Количество баллов", "Средний балл" };
-        for (int i = 0; i < headers.Length; i++)
+        using (var libro = new XLWorkbook())
         {
-            table.Cell(1, i + 1).Value = headers[i];
-            table.Cell(1, i + 1).Style.Font.SetBold();
-        }
-        int line = 2; 
-        var groupedCheckLists = filteredCheckLists.GroupBy(c => c.Pizzeria.Name);
-        foreach (var group in groupedCheckLists)
-        {
-            foreach (var checkList in group)
+            IXLWorksheet table = libro.Worksheets.Add("StatsData");
+            string[] headers = { "КЛН Менеджера", "Пиццерия", "Дата начала проверки", "Дата завершения проверки", "Количество баллов", "Средний балл" };
+            for (int i = 0; i < headers.Length; i++)
             {
-                table.Cell(line, 1).Value = $"{checkList.Manager?.FirstName} {checkList.Manager?.LastName}";
-                table.Cell(line, 2).Value = checkList.Pizzeria?.Name;
-                table.Cell(line, 3).Value = checkList?.StartCheck;
-                table.Cell(line, 4).Value = checkList?.EndCheck;
-                table.Cell(line, 5).Value = checkList?.TotalPoints;
+                table.Cell(1, i + 1).Value = headers[i];
+                table.Cell(1, i + 1).Style.Font.SetBold();
+            }
+            int line = 2; 
+            var groupedCheckLists = filteredCheckLists.GroupBy(c => c.Pizzeria.Name);
+            foreach (var group in groupedCheckLists)
+            {
+                foreach (var checkList in group)
+                {
+                    table.Cell(line, 1).Value = $"{checkList.Manager?.FirstName} {checkList.Manager?.LastName}";
+                    table.Cell(line, 2).Value = checkList.Pizzeria?.Name;
+                    table.Cell(line, 3).Value = checkList?.StartCheck;
+                    table.Cell(line, 4).Value = checkList?.EndCheck;
+                    table.Cell(line, 5).Value = checkList?.TotalPoints;
+                    line++;
+                }
+                var averageTotalPoints = group.Average(c => c.TotalPoints);
+                table.Cell(line, 6).Value = averageTotalPoints;
+                table.Cell(line, 6).Style.Font.SetBold();
                 line++;
             }
-            var averageTotalPoints = group.Average(c => c.TotalPoints);
-            table.Cell(line, 6).Value = averageTotalPoints;
-            table.Cell(line, 6).Style.Font.SetBold();
-            line++;
-        }
 
-        using (var memoria = new MemoryStream())
-        {
-            libro.SaveAs(memoria);
-            var nombreExcel = $"StatsData_{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
+            using (var memoria = new MemoryStream())
+            {
+                libro.SaveAs(memoria);
+                var nombreExcel = $"StatsData_{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
 
-            await JS.InvokeAsync<object>(
-                "saveAsFile",
-                nombreExcel,
-                Convert.ToBase64String(memoria.ToArray())
-            );
+                await JS.InvokeAsync<object>(
+                    "saveAsFile",
+                    nombreExcel,
+                    Convert.ToBase64String(memoria.ToArray())
+                );
+            }
         }
     }
-}
 }
