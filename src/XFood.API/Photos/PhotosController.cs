@@ -11,13 +11,13 @@ namespace XFood.API.Photos
     public class PhotosController : ControllerBase
     {
         [HttpPost("")]
-        [Produces("application/json")]
+        [Consumes("multipart/form-data")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ProblemDetails))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreatePhotoResponse))]
         public async Task<ActionResult<Result<CreatePhotoResponse>>> Create(
-           [FromBody] CreatePhotoRequest request,
+           [FromForm] CreatePhotoRequest request,
            [FromServices] ICommandDispatcher commandDispatcher,
            CancellationToken cancellationToken
         )

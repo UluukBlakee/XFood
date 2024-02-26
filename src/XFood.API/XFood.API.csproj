@@ -29,5 +29,6 @@
 	<ItemGroup>
 		<Folder Include="Account\Queries\" />
 		<Folder Include="Test\Commands" />
+		<Folder Include="images\" />
 	</ItemGroup>
 </Project>

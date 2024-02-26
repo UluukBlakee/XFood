@@ -258,13 +258,11 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="mt-5 pt-5" enctype="multipart/form-data">
-                    <div class="mb-3">
+                    <div class="form-group mb-3">
                         <label class="form-label">Критерий:</label>
                         <textarea class="form-control" id="criterion" readonly>@selectedCriterion" required</textarea>
                     </div>
-
-                    <div class="mb-3">
+                    <div class="form-group mb-3">
                         <label for="email" class="form-label">Email:</label>
                         <input type="email" class="form-control" id="email" @bind="@emailValue" required>
                     </div>
@@ -272,31 +270,14 @@ else
                         <label for="description" class="form-label">Комментарий:</label>
                         <textarea class="form-control" id="description" rows="3" @bind="@commentValue" required></textarea>
                     </div>
-                    <div class="mb-3">
+                    <div class="form-group mb-3">
                         <label for="attachments" class="form-label">Фотографии:</label>
-                        @if (inputs.Count > 0)
-                        {
-                            <div>
-                                @foreach (var input in inputs)
-                                {
-                                    <div class="form-group">
-                                        <input type="file" class="form-control" multiple accept="image/*" @onchange="@(e => AddPhoto(e))"/>
-                                    </div>
-                                }
-                            </div>
-
-                            <button class="btn btn-danger" @onclick="RemoveInput">Удалить последную фотографию</button>
-                        }
-                        @if (inputs.Count < 4)
-                        {
-                            <button class="btn btn-success" @onclick="AddInput">Добавить фотографию</button>
-                        }
-                    </div>
-                    <div class="mb-3">
+                    <InputFile OnChange="@UploadFiles" multiple />
+                </div>
+                <div class="mb-3">
                         <label for="email" class="form-label">Ссылка на материалы:</label>
-                        <input type="email" class="form-control" id="email" @bind="@materialsValue">
+                        <input type="text" class="form-control" id="materials" @bind="@materialsValue">
                     </div>
-                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -305,8 +286,6 @@ else
         </div>
     </div>
 </div>
-
-
 
 
 @code {
@@ -340,7 +319,7 @@ else
     private string materialsValue = "";
     private bool isSentSuccessfully = false;
 
-    List<string> inputs = new List<string>();
+    public int AppealId { get; set; }
 
     private List<string> fixedSectionsOrder = new List<string>
     {
@@ -356,6 +335,27 @@ else
         "Wow Фактор",
         "Критический фактор"
     };
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            using (var stream = file.OpenReadStream())
+            {
+                var memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                var bytes = memoryStream.ToArray();
+                var formFile = new Microsoft.AspNetCore.Http.Internal.FormFile(memoryStream, 0, bytes.Length, null, file.Name);
+
+                if (photoRequest.Photos == null)
+                {
+                    photoRequest.Photos = new List<IFormFile>();
+                }
+                photoRequest.Photos.Add(formFile);
+            }
+        }
+    }
+
 
     private async Task OpenModal1(int criterionId, int checkListId)
     {
@@ -429,35 +429,6 @@ else
         getTotalCriticalFactor2 = totalMaxPoints;
     }
 
-    async void AddInput()
-    {
-        inputs.Add("");
-    }
-
-    async void RemoveInput()
-    {
-        if (inputs.Count > 0)
-        {
-            inputs.RemoveAt(inputs.Count - 1);
-        }
-    }
-
-    async void AddPhoto(ChangeEventArgs e)
-    {
-        var files = e.Value as IEnumerable<IFormFile>;
-        if (files != null)
-        {
-            foreach (var file in files)
-            {
-                if (photoRequest.Photos == null)
-                {
-                    photoRequest.Photos = new List<IFormFile>();
-                }
-                photoRequest.Photos.Add(file);
-            }
-        }
-    }
-
     private async Task Appeal()
     {
         appealRequest.Email = emailValue;
@@ -468,6 +439,7 @@ else
         appealResponse = await AppealService.Create(appealRequest);
         if (appealResponse.AppealId != null)
         {
+            Console.WriteLine(photoRequest.Photos.Count);
             photoRequest.AppealId = appealResponse.AppealId;
             photoResponse = await PhotoService.Create(photoRequest);
             if (photoResponse.Success)

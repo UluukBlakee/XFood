@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using XFoodBlazor.Web.Client.Services.Photos.Create;
 
