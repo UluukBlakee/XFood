@@ -1,0 +1,84 @@
+﻿@page "/manager/{ManagerId:int}"
+@using XFoodBlazor.Web.Client.Services.Manager;
+@using XFoodBlazor.Web.Client.Services.Manager.Get;
+@using XFoodBlazor.Web.Client.Services.Stats.GetList;
+@using XFoodBlazor.Web.Client.Services.Stats;
+@using XFoodBlazor.Web.Client.Services.Check_List;
+@inject IManagerService ManagerService
+@inject IStatsService StatsService
+
+<h3>Detail</h3>
+<div class="card">
+  <ul class="list-group list-group-flush">
+        @if(response != null)
+        {
+            <li class="list-group-item">Имя: @response.ManagerView.FirstName</li>
+            <li class="list-group-item">Фамилия: @response.ManagerView.LastName</li>
+            <li class="list-group-item">Email: @response.ManagerView.Email</li>
+            <li class="list-group-item">Telegram: @response.ManagerView.Telegram</li>
+        }
+  </ul>
+</div>
+<h3 class="mt-5">Проверки</h3>
+<table class="table hovered text-center">
+    <thead>
+        <tr>
+            <th>КЛН Менеджера</th>
+            <th>Пиццерия</th>
+            <th>Дата начала проверки</th>
+            <th>Дата завершения проверки</th>
+            <th>Количество баллов</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (filteredCheckLists != null && filteredCheckLists.Any())
+        {
+            var groupedCheckLists = filteredCheckLists.GroupBy(c => c.Pizzeria.Name);
+
+            @foreach (var group in groupedCheckLists)
+            {
+                <tr>
+                    <td colspan="5"><b>@group.Key</b></td>
+                </tr>
+                @foreach (var checkList in group)
+                {
+                    <tr>
+                        <td>@checkList.Manager?.FirstName @checkList.Manager?.LastName</td>
+                        <td>@checkList.Pizzeria?.Name</td>
+                        <td>@checkList?.StartCheck</td>
+                        <td>@checkList?.EndCheck</td>
+                        <td>@checkList?.TotalPoints</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="4" style="text-align: right;"><b>Средний балл</b></td>
+                    <td>@group.Average(c => c.TotalPoints)</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+            <td colspan="5" class="text-center fw-bold">Нету данных</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public int ManagerId { get; set; }
+    GetManagerRequest request = new GetManagerRequest();
+    GetManagerResponse response;
+    GetListStatsResponse checkLists;
+    public List<CheckListView> filteredCheckLists = new List<CheckListView>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        request.Id = ManagerId;
+        response = await ManagerService.GetManager(request);
+        checkLists = await StatsService.GetListStats(new GetListStatsRequest());
+        filteredCheckLists = checkLists.List.Where(checkList => checkList.Manager.Id == ManagerId).ToList();;
+    }
+}

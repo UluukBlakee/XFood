@@ -8,6 +8,13 @@
                 <NavLink class="nav-link" href="stats">
                     Общая статистика
                 </NavLink>
+            </AuthorizeView>
+            <AuthorizeView Roles="admin">
+                <NavLink class="nav-link" href="managers">
+                    Менеджеры
+                </NavLink>
+            </AuthorizeView>
+            <AuthorizeView>
                 <div class="text-center time-zones p-2">
                     <p>МСК: @currentMoscowTime</p>
                     <p>ЕКТ: @currentYekaterinburgTime</p>
