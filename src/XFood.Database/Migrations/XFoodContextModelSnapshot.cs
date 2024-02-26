@@ -204,7 +204,14 @@ namespace XFood.Data.Migrations
                     b.Property<DateTime?>("StartCheck")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("TotalPoints")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -212,6 +219,8 @@ namespace XFood.Data.Migrations
                     b.HasIndex("ManagerId");
 
                     b.HasIndex("PizzeriaId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("CheckLists");
                 });
@@ -521,21 +530,13 @@ namespace XFood.Data.Migrations
                         {
                             Id = 32,
                             MaxPoints = -8,
-                            Name = "Критическое нарушение пищевой безопасности.",
+                            Name = "Критическое нарушение пищевой безопасности. \r\nОпоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.",
                             PizzeriaId = 1,
                             Section = "Критический фактор"
                         },
                         new
                         {
                             Id = 33,
-                            MaxPoints = -8,
-                            Name = "Опоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.",
-                            PizzeriaId = 1,
-                            Section = "Критический фактор"
-                        },
-                        new
-                        {
-                            Id = 34,
                             MaxPoints = 2,
                             Name = "Форма всех сотрудников соответствует стандарту. \r\nСотрудники кухни (кассир при работе на упаковке) с бородой на всех станциях носят набородник",
                             PizzeriaId = 8,
@@ -543,7 +544,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 35,
+                            Id = 34,
                             MaxPoints = 2,
                             Name = "Менеджер смены делает обходы.",
                             PizzeriaId = 8,
@@ -551,7 +552,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 36,
+                            Id = 35,
                             MaxPoints = 2,
                             Name = "Сотрудники не используют личные телефоны в зеленой зоне пиццерии, не носят их в карманах.",
                             PizzeriaId = 8,
@@ -559,7 +560,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 37,
+                            Id = 36,
                             MaxPoints = 4,
                             Name = "Продукт готовится по стандарту. Соблюдаются стандарты начинения и упаковки. Нет перерасхода ингредиентов. До 3-х ошибок, 4 и более - крит. фактор",
                             PizzeriaId = 8,
@@ -567,7 +568,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 38,
+                            Id = 37,
                             MaxPoints = 2,
                             Name = "При приемке товар взвешивается, пересчитывается. Товар на пол не ставится.  \r\nРазбор поставки не более 1,5 часов (ВЗ), не более 1 часа - тесто",
                             PizzeriaId = 8,
@@ -575,7 +576,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 39,
+                            Id = 38,
                             MaxPoints = 4,
                             Name = "Продукты не размораживаются в ГЦ и ХЦ, мойке, на печи. Не лежат на столах более чем 30 минут. Одновременная заготовка не более 1 ингредиента одним сотрудником.",
                             PizzeriaId = 8,
@@ -583,7 +584,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 40,
+                            Id = 39,
                             MaxPoints = 1,
                             Name = "На линии начинения на каждый сыпучий ингредиент есть отдельный стаканчик. Используются актуальные стаканчики.",
                             PizzeriaId = 8,
@@ -591,7 +592,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 41,
+                            Id = 40,
                             MaxPoints = 1,
                             Name = "У всех сумок есть место для хранения ,не хранятся на полу.",
                             PizzeriaId = 8,
@@ -599,7 +600,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 42,
+                            Id = 41,
                             MaxPoints = 1,
                             Name = "Внешний вид курьеров соответствует стандарту",
                             PizzeriaId = 8,
@@ -607,7 +608,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 43,
+                            Id = 42,
                             MaxPoints = 1,
                             Name = "Ответственный сотрудник не оставляет открытым денежный ящик.",
                             PizzeriaId = 8,
@@ -615,7 +616,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 44,
+                            Id = 43,
                             MaxPoints = 3,
                             Name = "Кассир дружелюбен, моментально реагирует на гостя. \r\nПринимает заказы быстро, помогает с выбором. \r\nНе игнорирует гостя, не стоит спиной к нему, в закрытой позе. \r\nРеакция на звонок не более 30 секунд.",
                             PizzeriaId = 8,
@@ -623,7 +624,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 45,
+                            Id = 44,
                             MaxPoints = 2,
                             Name = "Тесто хранится по стандарту.",
                             PizzeriaId = 8,
@@ -631,7 +632,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 46,
+                            Id = 45,
                             MaxPoints = 2,
                             Name = "Заказы в ресторан выданы на подносе согласно стандарту комплектации заказов. Гостю выдан чек (РБ). Пицца на металлическом подносе выдана согласно стандарту.",
                             PizzeriaId = 8,
@@ -639,7 +640,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 47,
+                            Id = 46,
                             MaxPoints = 2,
                             Name = "Линия полностью заполнена гастроемкостями - герметична. \r\nПри отсутствии заказов линия и гастроемкости закрыты.",
                             PizzeriaId = 8,
@@ -647,7 +648,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 48,
+                            Id = 47,
                             MaxPoints = 4,
                             Name = "Условия хранения продуктов и расходников соответствует стандартам \r\n(температура, 15 см от пола, пищевое/непищевое). \r\nВ желтой зоне нет вскрытых упаковок с напитками.",
                             PizzeriaId = 8,
@@ -655,7 +656,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 49,
+                            Id = 48,
                             MaxPoints = 3,
                             Name = "Овощи моются по стандарту, необработанные овощи не кладут на столы в ГЦ и ХЦ.",
                             PizzeriaId = 8,
@@ -663,7 +664,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 50,
+                            Id = 49,
                             MaxPoints = 2,
                             Name = "Пиццы готовятся согласно принципу конвейера. ",
                             PizzeriaId = 8,
@@ -671,7 +672,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 51,
+                            Id = 50,
                             MaxPoints = 2,
                             Name = "Зал: чистый пол, нет следов от ботинок, сильных загрязнений.",
                             PizzeriaId = 8,
@@ -679,7 +680,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 52,
+                            Id = 51,
                             MaxPoints = 2,
                             Name = "Чистые столы. Подносы убираются в течение трех минут, нет остатков еды на убранных столах.",
                             PizzeriaId = 8,
@@ -687,7 +688,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 53,
+                            Id = 52,
                             MaxPoints = 4,
                             Name = "Руки моются и обрабатываются антисептиком в соответствии со стандартом мытья рук.",
                             PizzeriaId = 8,
@@ -695,7 +696,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 54,
+                            Id = 53,
                             MaxPoints = 3,
                             Name = "Посуду моют согласно стандарту",
                             PizzeriaId = 8,
@@ -703,7 +704,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 55,
+                            Id = 54,
                             MaxPoints = 2,
                             Name = "Чистая линия начинения и стол раскатки, убирается вовремя и по стандарту.\r\n- если мусор собрали в руку - руки помыты.",
                             PizzeriaId = 8,
@@ -711,7 +712,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 56,
+                            Id = 55,
                             MaxPoints = 2,
                             Name = "Пицца-соус и альфредо закрывают крышкой при отстутствии заказов. \r\nПоловник меняют каждые два часа. - если хранится в соусе.",
                             PizzeriaId = 8,
@@ -719,7 +720,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 57,
+                            Id = 56,
                             MaxPoints = 2,
                             Name = "Сотрудники кухни используют перчатки по стандарту: уборка происходит только в перчатках. \r\nУборка без перчаток только без использования химии. ",
                             PizzeriaId = 8,
@@ -727,7 +728,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 58,
+                            Id = 57,
                             MaxPoints = 1,
                             Name = "Чисто в пищевой зоне (столы,полки, стены, пол, раковины, микроволновки, урна не переполнена)",
                             PizzeriaId = 8,
@@ -735,7 +736,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 59,
+                            Id = 58,
                             MaxPoints = 1,
                             Name = "Чисто в непищевой зоне (двери, колодец, стыки, стены, пол).",
                             PizzeriaId = 8,
@@ -743,7 +744,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 60,
+                            Id = 59,
                             MaxPoints = 1,
                             Name = "Менеджерской зона: чистота и порядок, отсутствуют напитки рядом с оборудованием.",
                             PizzeriaId = 8,
@@ -751,7 +752,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 61,
+                            Id = 60,
                             MaxPoints = 1,
                             Name = "Все проходы свободны , не захламлены , отсутствуют мусорные мешки, можно пройти без препятствий.",
                             PizzeriaId = 8,
@@ -759,7 +760,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 62,
+                            Id = 61,
                             MaxPoints = 1,
                             Name = "Химия и уборочный инвентарь хранится согласно стандарту. Уборочный инвентарь чистый.",
                             PizzeriaId = 8,
@@ -767,7 +768,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 63,
+                            Id = 62,
                             MaxPoints = 2,
                             Name = "",
                             PizzeriaId = 1,
@@ -775,7 +776,7 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 64,
+                            Id = 63,
                             MaxPoints = -4,
                             Name = "Уберите балл, за то, что считаете особо важным, чему не уделяют на смене внимание.",
                             PizzeriaId = 8,
@@ -783,17 +784,9 @@ namespace XFood.Data.Migrations
                         },
                         new
                         {
-                            Id = 65,
+                            Id = 64,
                             MaxPoints = -8,
-                            Name = "Критическое нарушение пищевой безопасности.",
-                            PizzeriaId = 8,
-                            Section = "Критический фактор"
-                        },
-                        new
-                        {
-                            Id = 66,
-                            MaxPoints = -8,
-                            Name = "Опоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.",
+                            Name = "Критическое нарушение пищевой безопасности. \r\nОпоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.",
                             PizzeriaId = 8,
                             Section = "Критический фактор"
                         });
@@ -807,6 +800,9 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CheckListId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("CriterionId")
                         .HasColumnType("integer");
 
@@ -817,6 +813,8 @@ namespace XFood.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CheckListId");
 
                     b.HasIndex("CriterionId");
 
@@ -1375,9 +1373,17 @@ namespace XFood.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("XFood.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Manager");
 
                     b.Navigation("Pizzeria");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>
@@ -1412,11 +1418,19 @@ namespace XFood.Data.Migrations
 
             modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
                 {
+                    b.HasOne("XFood.Data.Models.CheckList", "CheckList")
+                        .WithMany()
+                        .HasForeignKey("CheckListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("XFood.Data.Models.Criterion", "Criterion")
                         .WithMany()
                         .HasForeignKey("CriterionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CheckList");
 
                     b.Navigation("Criterion");
                 });

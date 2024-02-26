@@ -27,7 +27,8 @@
 
 	<ItemGroup>
 		<Folder Include="Account\Queries\" />
+		<Folder Include="OpportunitySchedule\Commands\EditSchedule\" />
 		<Folder Include="Test\Commands" />
-		<Folder Include="OpportunitySchedule\" />
+		<Folder Include="Time\Commands\" />
 	</ItemGroup>
 </Project>

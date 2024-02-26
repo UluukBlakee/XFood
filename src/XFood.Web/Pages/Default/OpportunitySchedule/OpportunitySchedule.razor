@@ -1,4 +1,4 @@
-﻿@page "/schedule"
+﻿@page "/schedule/{UserId:int}"
 @using XFoodBlazor.Web.Client.Services.Schedule;
 
 
@@ -97,7 +97,6 @@
         int monthIndex = DateTime.ParseExact(month, "MMMM", System.Globalization.CultureInfo.CurrentCulture).Month;
         startDate = new DateTime(DateTime.Now.Year, monthIndex, 1);
         endDate = new DateTime(DateTime.Now.Year, monthIndex, 1).AddMonths(1).AddDays(-1);
-
         GenerateCalendarBody();
     }
 

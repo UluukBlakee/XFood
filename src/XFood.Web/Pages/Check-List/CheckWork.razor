@@ -5,12 +5,24 @@
 @using XFoodBlazor.Web.Client.Services.Check_List
 @using XFoodBlazor.Web.Client.Services.Check_List.Create
 @using XFoodBlazor.Web.Client.Services.Criterion;
+@using XFoodBlazor.Web.Client.Services.CriticalFactor
+@using XFoodBlazor.Web.Client.Services.CriticalFactor.Create;
+@using XFoodBlazor.Web.Client.Services.CriticalFactor.GetList;
+@using XFoodBlazor.Web.Client.Services.CriticalFactor.Update;
+@using XFoodBlazor.Web.Client.Services.CriticalFactor.Delete;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using XFoodBlazor.Web.Client.Services.Authorization;
+@using XFoodBlazor.Web.Client.Services.User;
 @inject ICheckService CheckService
+@inject ICriticalFactorService CriticalFactorService
 @inject ICheckListCriteriaService CheckCriteriaService
+@inject IAuthService AuthService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 @if (response != null)
 {
     <p>Пиццерия: @response.CheckList.Pizzeria?.Name</p>
+    <p>Пиццерия: @response.CheckList.User?.Id</p>
     <p>Менеджер: @response.CheckList.Manager?.FirstName @response.CheckList.Manager?.LastName</p>
 
     <table class="table">
@@ -27,23 +39,50 @@
         @foreach (var group in response.CheckList.Criteria.GroupBy(c => c.Criterion.Section))
         {
             var firstCriterion = group.First();
-            <tr>
-                <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
-                <td>@firstCriterion.Criterion.Name</td>
-                <td>@firstCriterion.Criterion.MaxPoints</td>
-                <td>
-                    <input type="number" class="form-control" @bind="firstCriterion.ReceivedPoints" min="0" max="@firstCriterion.Criterion.MaxPoints" />
-                </td>
-            </tr>
-            @foreach (var criterion in group.Skip(1))
-            {
+                    @if(@firstCriterion.Criterion.Section == "Критический фактор")
+                    {
+                         <tr>
+                            <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
+                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal"  @onclick="() => OpenModal1(firstCriterion.Criterion.Id, response.CheckList.Id)">@firstCriterion.Criterion.Name</a></td>
+                            <td>@firstCriterion.Criterion.MaxPoints</td>
+                            <td>
+                                <p class="form-control text-warning">@getTotalCriticalFactor</p>
+                            </td>
+                    </tr>
+                }
+                else
+                {   
                 <tr>
-                    <td>@criterion.Criterion.Name</td>
-                    <td>@criterion.Criterion.MaxPoints</td>
+                    <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
+                    <td>@firstCriterion.Criterion.Name</td>
+                    <td>@firstCriterion.Criterion.MaxPoints</td>
                     <td>
-                        <input type="number" class="form-control" @bind="criterion.ReceivedPoints" min="0" max="@criterion.Criterion.MaxPoints" />
+                        <input type="number" class="form-control text-warning" @bind="firstCriterion.ReceivedPoints" min="0" max="@firstCriterion.Criterion.MaxPoints" />
                     </td>
                 </tr>
+                }
+            @foreach (var criterion in group.Skip(1))
+            {
+                    @if (criterion.Criterion.Section == "Критический фактор")
+                    {
+                        <tr>
+                        <td><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2"  @onclick="() => OpenModal2(criterion.Criterion.Id, response.CheckList.Id)">@criterion.Criterion.Name</a></td>
+                        <td>@criterion.Criterion.MaxPoints</td>
+                        <td>
+                            <p class="form-control text-warning">@getTotalCriticalFactor2</p>
+                        </td>
+                        </tr>
+                    }
+                    else
+                    { 
+                        <tr>
+                        <td>@criterion.Criterion.Name</td>
+                        <td>@criterion.Criterion.MaxPoints</td>
+                        <td>
+                            <input type="number" class="form-control text-danger" @bind="criterion.ReceivedPoints" min="0" max="@criterion.Criterion.MaxPoints" />
+                        </td>
+                        </tr>
+                    }
             }
         }
     </tbody>
@@ -67,6 +106,151 @@ else
 
 <button type="button" class="btn btn-primary" @onclick="SaveScore">Закончить проверку</button>
 
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Критический фактор</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          @if (getListCriticalFactorResponse != null && getListCriticalFactorResponse.List != null && getListCriticalFactorResponse.List.Any())
+        {
+            var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId1 && c.CriterionId == selectedCriterionId1).GroupBy(c => c.CriterionId);
+            foreach (var group in groupedCriterions)
+            {      
+            <ul class="list-group">
+                    @foreach (var c in group)
+                    {   <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            @if (c != criticalFactorView)
+                                {
+                                    @c.Description
+                                }
+                                else
+                                {
+                                    
+                                    <input @bind="criticalFactorView.Description" class="form-control">
+                                }
+                        </div>
+                         <div>
+                            @if (c != criticalFactorView)
+                            {
+                                <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriticalFactor(c))">
+                                    <span class="oi oi-pencil" aria-hidden="true"></span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-success" @onclick="SaveEditedCriticalFactor">
+                                    <span class="oi oi-check" aria-hidden="true"></span>
+                                </button>
+                            }
+                            <button class="btn btn-sm btn-danger ms-3" @onclick="@(async () => await DeleteCriticalFactor(c))">
+                                <span class="oi oi-trash" aria-hidden="true"></span>
+                            </button>
+                         </div>
+                                
+                        </li>
+                    }
+            </ul>
+            }
+        }
+        else
+        {
+                <tr>
+                    <td colspan="2">Нету данных</td>
+                </tr>
+                
+        }
+       <div class="input-group mb-3 mt-4">
+        @if (getTotalCriticalFactor == -12)
+        {
+            <div class="alert alert-danger" role="alert">
+                Нельзя добавить критический фактор, так как MaxPoint = -12
+            </div>
+        }
+        else
+        {
+            <input type="text" class="form-control" placeholder="Введите критический фактор" @bind="@CriticalFactor"  aria-describedby="button-addon2">
+            <button class="btn btn-success" type="button" @onclick="SaveModal1" id="button-addon2">Добавить</button>
+        }
+        </div>
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Критический фактор</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @if (getListCriticalFactorResponse != null && getListCriticalFactorResponse.List != null && getListCriticalFactorResponse.List.Any())
+        {
+            var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId2 && c.CriterionId == selectedCriterionId2).GroupBy(c => c.CriterionId);
+            foreach (var group in groupedCriterions)
+            {      
+            <ul class="list-group">
+                    @foreach (var c in group)
+                    {   <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>@if (c != criticalFactorView)
+                                {
+                                    @c.Description
+                                }
+                                else
+                                {
+                                    
+                                    <input @bind="criticalFactorView.Description" class="form-control">
+                                }</div>
+                        <div>@if (c != criticalFactorView)
+                        {
+                            <button class="btn btn-sm btn-primary" @onclick="@(async () => await EditCriticalFactor(c))">
+                                <span class="oi oi-pencil" aria-hidden="true"></span>
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-success" @onclick="SaveEditedCriticalFactor2">
+                                <span class="oi oi-check" aria-hidden="true"></span>
+                            </button>
+                        }
+                        <button class="btn btn-sm btn-danger ms-3" @onclick="@(async () => await DeleteCriticalFactor(c))">
+                            <span class="oi oi-trash" aria-hidden="true"></span>
+                        </button></div>
+
+                        
+                        </li>
+                    }
+            </ul>
+            }
+        }
+        else
+        {
+                <tr>
+                    <td colspan="2">Нету данных</td>
+                </tr>
+                
+        }
+       <div class="input-group mb-3 mt-4">
+            <input type="text" class="form-control" placeholder="Введите критический фактор" @bind="@CriticalFactor"  aria-describedby="button-addon2">
+            <button class="btn btn-success" type="button" @onclick="SaveModal2" id="button-addon2">Добавить</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @code {
     [Parameter]
     public int ManagerId { get; set; }
@@ -76,16 +260,93 @@ else
     SetPointsResponse setPointsResponse;
     SetTotalPointsRequest setTotalPointsRequest = new SetTotalPointsRequest();
     SetTotalPointsResponse setTotalPointsResponse;
+    CreateCriticalFactorRequest createCriticalFactorRequest = new CreateCriticalFactorRequest();
+    CreateCriticalFactorResponse createCriticalFactorResponse;
+    GetListCriticalFactorResponse getListCriticalFactorResponse;
+    UpdateCriticalFactorRequest updateCriticalFactorRequest = new UpdateCriticalFactorRequest();
+    UpdateCriticalFactorResponse updateCriticalFactorResponse;
+    DeleteCriticalFactorRequest deleteCriticalFactorRequest = new DeleteCriticalFactorRequest();
+    DeleteCriticalFactorResponse deleteCriticalFactorResponse;
+    private CriticalFactorView criticalFactorView;
     double MaxPoints;
     double TotalPoints;
     double PointProz;
+    int getTotalCriticalFactor;
+    int getTotalCriticalFactor2;
+    private bool _error1 = false;
+    private string CriticalFactor { get; set; }
+
+    private int selectedCriterionId1;
+    private int selectedcheckListId1;
+    private int selectedCriterionId2;
+    private int selectedcheckListId2;
+
+    private async Task RefreshCriticalFactorsList()
+    {
+        getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
+        GetTotalMaxPoint();
+        GetTotalMaxPoint2();
+    }
+    private async Task OpenModal1(int criterionId, int checkListId)
+    {
+        selectedCriterionId1 = criterionId;
+        selectedcheckListId1 = checkListId;
+        await RefreshCriticalFactorsList();
+    }
+    private async Task OpenModal2(int criterionId, int checkListId)
+    {
+        selectedCriterionId2 = criterionId;
+        selectedcheckListId2 = checkListId;
+        await RefreshCriticalFactorsList();
+    }
+    private async Task SaveModal1()
+    {
+        await RefreshCriticalFactorsList();
+        if (getTotalCriticalFactor == -12)
+        {
+            _error1 = true;
+        }
+        else
+        {
+            _error1 = false;
+            createCriticalFactorRequest.CriterionId = selectedCriterionId1;
+            createCriticalFactorRequest.Description = CriticalFactor;
+            createCriticalFactorRequest.MaxPoints = -4;
+            createCriticalFactorRequest.CheckListId = selectedcheckListId1;
+            createCriticalFactorResponse = await CriticalFactorService.Create(createCriticalFactorRequest);
+            CriticalFactor = "";
+            await RefreshCriticalFactorsList();
+        }
+    }
+    private async Task SaveModal2()
+    {
+        createCriticalFactorRequest.CriterionId = selectedCriterionId2;
+        createCriticalFactorRequest.Description = CriticalFactor;
+        createCriticalFactorRequest.MaxPoints = -8;
+        createCriticalFactorRequest.CheckListId = selectedcheckListId2;
+        createCriticalFactorResponse = await CriticalFactorService.Create(createCriticalFactorRequest);
+        CriticalFactor = "";
+        await RefreshCriticalFactorsList();
+
+    }
 
     private async Task SaveScore()
     {
         foreach (var criterion in response.CheckList.Criteria)
         {
             setPointsRequest.Id = criterion.Id;
-            setPointsRequest.ReceivedPoints = criterion.ReceivedPoints;
+            if (criterion.Criterion.Section == "Критический фактор" && criterion.Criterion.Id == selectedCriterionId1)
+            {
+                setPointsRequest.ReceivedPoints = getTotalCriticalFactor;
+            }
+            else if (criterion.Criterion.Section == "Критический фактор" && criterion.Criterion.Id == selectedCriterionId2)
+            {
+                setPointsRequest.ReceivedPoints = getTotalCriticalFactor2;
+            }
+            else
+            {
+                setPointsRequest.ReceivedPoints = criterion.ReceivedPoints;
+            }
             setPointsResponse = await CheckCriteriaService.SetPoints(setPointsRequest);
         }
         UpdatePoints();
@@ -93,21 +354,90 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userId = user.FindFirst("sub").Value;
         request.ManagerId = ManagerId;
+        request.UserId = Convert.ToInt32(userId);
         response = await CheckService.Create(request);
-        UpdatePoints();
+        getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
+        await RefreshCriticalFactorsList();
     }
+
 
     private async void UpdatePoints()
     {
+        RefreshCriticalFactorsList();
         MaxPoints = response.CheckList.Criteria
             .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
             .Sum(c => c.Criterion.MaxPoints);
         TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);
         PointProz = TotalPoints / MaxPoints * 100;
-        setTotalPointsRequest.TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);;
+        setTotalPointsRequest.TotalPoints = TotalPoints;
         setTotalPointsRequest.EndCheck = DateTime.UtcNow;
+        setTotalPointsRequest.Status = "done";
         setTotalPointsRequest.Id = response.CheckList.Id;
+        selectedcheckListId1 = response.CheckList.Id;
         setTotalPointsResponse = await CheckService.SetTotalPoints(setTotalPointsRequest);
+    }
+
+    private async Task EditCriticalFactor(CriticalFactorView criticalFactor)
+    {
+        criticalFactorView = criticalFactor;
+    }
+
+    private async Task SaveEditedCriticalFactor()
+    {
+        updateCriticalFactorRequest.Id = criticalFactorView.Id;
+        updateCriticalFactorRequest.Description = criticalFactorView.Description;
+        updateCriticalFactorRequest.MaxPoints = -4;
+        updateCriticalFactorResponse = await CriticalFactorService.Update(updateCriticalFactorRequest);
+        await RefreshCriticalFactorsList();
+        criticalFactorView = null;
+
+    }
+    private async Task SaveEditedCriticalFactor2()
+    {
+        updateCriticalFactorRequest.Id = criticalFactorView.Id;
+        updateCriticalFactorRequest.Description = criticalFactorView.Description;
+        updateCriticalFactorRequest.MaxPoints = -8;
+        updateCriticalFactorResponse = await CriticalFactorService.Update(updateCriticalFactorRequest);
+        await RefreshCriticalFactorsList();
+        criticalFactorView = null;
+
+    }
+
+    private async Task DeleteCriticalFactor(CriticalFactorView criticalFactor)
+    {
+        deleteCriticalFactorRequest.Id = criticalFactor.Id;
+        deleteCriticalFactorResponse = await CriticalFactorService.Delete(deleteCriticalFactorRequest);
+        await RefreshCriticalFactorsList();
+    }
+
+    private  async Task GetTotalMaxPoint()
+    {
+        var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId1 && c.CriterionId == selectedCriterionId1).GroupBy(c => c.CriterionId);
+        int totalMaxPoints = 0;
+        foreach (var group in groupedCriterions)
+        {
+            foreach (var c in group)
+            {
+                totalMaxPoints += c.MaxPoints;
+            }
+        }
+        getTotalCriticalFactor = totalMaxPoints;
+    }
+    private  async Task GetTotalMaxPoint2()
+    {
+        var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId2 && c.CriterionId == selectedCriterionId2).GroupBy(c => c.CriterionId);
+        int totalMaxPoints = 0;
+        foreach (var group in groupedCriterions)
+        {
+            foreach (var c in group)
+            {
+                totalMaxPoints += c.MaxPoints;
+            }
+        }
+        getTotalCriticalFactor2 = totalMaxPoints;
     }
 }

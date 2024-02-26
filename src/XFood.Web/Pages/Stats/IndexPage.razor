@@ -1,0 +1,198 @@
+@page "/stats"
+@using XFoodBlazor.Web.Client.Services.Stats.GetList
+@using XFoodBlazor.Web.Client.Services.Stats
+@using XFoodBlazor.Web.Client.Services.Check_List
+@using XFoodBlazor.Web.Client.Services.Manager
+@using XFoodBlazor.Web.Client.Services.Pizzeria
+@using ClosedXML.Excel;
+@inject IStatsService StatsService
+@inject IJSRuntime JS
+
+<PageTitle>Общая статистика</PageTitle>
+<h3>График контроллинга</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <select class="form-control" @bind="selectedManagerId">
+                <option value="0">Выберите менеджера</option>
+                @foreach (var manager in managers)
+                {
+                    <option value="@manager.Id">@manager.FirstName @manager.LastName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-control" @bind="selectedPizzeriaId">
+                <option value="0">Выберите пиццерию</option>
+                @foreach (var pizza in pizzeria)
+                {
+                    <option value="@pizza.Id">@pizza.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="date" class="form-control" @bind="startDate" placeholder="Дата начала проверки"/>
+        </div>
+        <div class="col-md-3">
+            <input type="date" class="form-control" @bind="endDate" placeholder="Дата завершения проверки"/>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success" @onclick="FilterCheckLists">Отфильтровать</button>
+        </div>
+    </div>
+</div>
+<table class="table hovered text-center">
+    <thead>
+        <tr>
+            <th>КЛН Менеджера</th>
+            <th>Пиццерия</th>
+            <th @onclick="SortByStartDate">Дата начала проверки</th>
+            <th @onclick="SortByEndDate">Дата завершения проверки</th>
+            <th>Количество баллов</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (filteredCheckLists != null)
+        {
+            var groupedCheckLists = filteredCheckLists.GroupBy(c => c.Pizzeria.Name);
+
+            @foreach (var group in groupedCheckLists)
+            {
+                <tr>
+                    <td colspan="5"><b>@group.Key</b></td>
+                </tr>
+                @foreach (var checkList in group)
+                {
+                    <tr>
+                        <td>@checkList.Manager?.FirstName @checkList.Manager?.LastName</td>
+                        <td>@checkList.Pizzeria?.Name</td>
+                        <td>@checkList?.StartCheck</td>
+                        <td>@checkList?.EndCheck</td>
+                        <td>@checkList?.TotalPoints</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="4" style="text-align: right;"><b>Средний балл</b></td>
+                    <td>@group.Average(c => c.TotalPoints)</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <span>Нету данных</span>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-success" @onclick="DownloadExcel">Export Excel</button>
+
+@code {
+    GetListStatsResponse checkLists;
+    int selectedManagerId;
+    int selectedPizzeriaId;
+    public List<ManagerView> managers = new List<ManagerView>();
+    public List<PizzeriaView> pizzeria = new List<PizzeriaView>();
+    public List<CheckListView> filteredCheckLists = new List<CheckListView>();
+    DateTime? startDate;
+    DateTime? endDate;
+    private bool sortByStartDateAscending = true;
+    private bool sortByEndDateAscending = true;
+    protected override async Task OnInitializedAsync()
+    {
+        checkLists = await StatsService.GetListStats(new GetListStatsRequest());
+        filteredCheckLists = checkLists.List;
+        managers = checkLists.List.Where(checkList => checkList.Manager != null).Select(checkList => checkList.Manager).Distinct().ToList();
+        pizzeria = checkLists.List.Where(checkList => checkList.Pizzeria != null).Select(checkList => checkList.Pizzeria).Distinct().ToList();
+        
+    }
+    private void FilterCheckLists()
+    {
+
+        if (selectedManagerId == 0 && selectedPizzeriaId == 0 && startDate == null && endDate == null)
+        {
+            filteredCheckLists = checkLists.List.ToList();
+        }
+        else
+        {
+            filteredCheckLists = checkLists.List
+                .Where(checkList =>
+                    (selectedManagerId == 0 || (checkList.Manager != null && checkList.Manager.Id == selectedManagerId)) &&
+                    (selectedPizzeriaId == 0 || (checkList.Pizzeria != null && checkList.Pizzeria.Id == selectedPizzeriaId)) &&
+                    (startDate == null || (checkList.StartCheck != null && checkList.StartCheck.Value.Date == startDate.Value.Date)) &&
+                    (endDate == null || (checkList.EndCheck != null && checkList.EndCheck.Value.Date == endDate.Value.Date)) 
+
+                )
+                .ToList();
+        }
+    }
+    private void SortByStartDate()
+    {
+        if (sortByStartDateAscending)
+        {
+            filteredCheckLists = filteredCheckLists.OrderByDescending(checkList => checkList.StartCheck).ToList();
+        }
+        else
+        {
+            filteredCheckLists = filteredCheckLists.OrderBy(checkList => checkList.StartCheck).ToList();
+        }
+        sortByStartDateAscending = !sortByStartDateAscending;
+    }
+
+    private void SortByEndDate()
+    {
+        if (sortByEndDateAscending)
+        {
+            filteredCheckLists = filteredCheckLists.OrderByDescending(checkList => checkList.EndCheck).ToList();
+        }
+        else
+        {
+            filteredCheckLists = filteredCheckLists.OrderBy(checkList => checkList.EndCheck).ToList();
+        }
+        sortByEndDateAscending = !sortByEndDateAscending;
+    }
+
+    private async Task DownloadExcel()
+{
+    using (var libro = new XLWorkbook())
+    {
+        IXLWorksheet table = libro.Worksheets.Add("StatsData");
+        string[] headers = { "КЛН Менеджера", "Пиццерия", "Дата начала проверки", "Дата завершения проверки", "Количество баллов", "Средний балл" };
+        for (int i = 0; i < headers.Length; i++)
+        {
+            table.Cell(1, i + 1).Value = headers[i];
+            table.Cell(1, i + 1).Style.Font.SetBold();
+        }
+        int line = 2; 
+        var groupedCheckLists = filteredCheckLists.GroupBy(c => c.Pizzeria.Name);
+        foreach (var group in groupedCheckLists)
+        {
+            foreach (var checkList in group)
+            {
+                table.Cell(line, 1).Value = $"{checkList.Manager?.FirstName} {checkList.Manager?.LastName}";
+                table.Cell(line, 2).Value = checkList.Pizzeria?.Name;
+                table.Cell(line, 3).Value = checkList?.StartCheck;
+                table.Cell(line, 4).Value = checkList?.EndCheck;
+                table.Cell(line, 5).Value = checkList?.TotalPoints;
+                line++;
+            }
+            var averageTotalPoints = group.Average(c => c.TotalPoints);
+            table.Cell(line, 6).Value = averageTotalPoints;
+            table.Cell(line, 6).Style.Font.SetBold();
+            line++;
+        }
+
+        using (var memoria = new MemoryStream())
+        {
+            libro.SaveAs(memoria);
+            var nombreExcel = $"StatsData_{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
+
+            await JS.InvokeAsync<object>(
+                "saveAsFile",
+                nombreExcel,
+                Convert.ToBase64String(memoria.ToArray())
+            );
+        }
+    }
+}
+}

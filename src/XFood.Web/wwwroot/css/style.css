@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿
 .tb1Parent tbody tr td {
     width: 200px;
@@ -23,3 +24,113 @@
     text-decoration:underline;
     margin-bottom:36px;
 }
+=======
+﻿@font-face {
+    font-family: "DodoRoundedRegular";
+    src: url('../fonts/DodoRounded_v2-Regular/DodoRounded_v2-Regular.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedBold";
+    src: url('../fonts/DodoRounded_v2-Bold/DodoRounded_v2-Bold.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedExtraLight";
+    src: url('../fonts/DodoRounded_v2-ExtraLight/DodoRounded_v2-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedLight";
+    src: url('../fonts/DodoRounded_v2-Light/DodoRounded_v2-Light.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedMedium";
+    src: url('../fonts/DodoRounded_v2-Medium/DodoRounded_v2-Medium.ttf');
+}
+
+@font-face {
+    font-family: "DodoRoundedThin";
+    src: url('../fonts/DodoRounded_v2-Thint/DodoRounded_v2-Thin.ttf');
+}
+
+* {
+    font-family: 'DodoRoundedRegular' !important;
+    font-style: italic;
+}
+.logoImg {
+    width: 150px;
+    height: 30px;
+}
+
+.avatar {
+    font-size: 32px;
+    margin-right: 10px;
+}
+
+.header {
+    width: 100%;
+    border: 2px solid #5c5c5c;
+    border-radius: 15px 15px 15px 15px;
+    margin: 0 auto;
+}
+
+.register-btn {
+    margin-right: 10px;
+}
+
+.avatar-btn {
+    border: none;
+    background-color: #fff;
+}
+
+main {
+    border-radius: 15px;
+    border: 2px solid #5c5c5c;
+}
+
+
+.nav-menu-custom .nav-item .nav-link {
+    margin-top: 10px;
+    border: 2px dashed #5c5c5c;
+    border-radius: 10px;
+    margin: 5px auto;
+}
+
+.nav-menu-custom .nav-item .nav-link {
+    color: #000 !important;
+    justify-content: center;
+}
+
+    .nav-menu-custom .nav-item  a.active {
+        background-color: #ccd5da !important;
+    }
+
+.side-bar {
+    position: relative;
+    height: calc(100vh - 120px);
+    padding: 0;
+    border-radius: 15px;
+    border: 2px solid #5c5c5c;
+    overflow-y: auto;
+}
+
+.time-zones {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 20px;
+    border: 2px solid #5c5c5c;
+    border-radius: 20px;
+    width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.gradient-custom-3 {
+    background: #84fab0;
+    background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
+    background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
+}
+
+>>>>>>> 510c483712f879d014ecfb625017762b1ed8f9b0
