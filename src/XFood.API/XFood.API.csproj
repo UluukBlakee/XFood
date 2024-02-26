@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CSharpFunctionalExtensions" Version="2.40.3" />
+		<PackageReference Include="MailKit" Version="4.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.25" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.25" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.25" />
@@ -28,5 +29,6 @@
 	<ItemGroup>
 		<Folder Include="Account\Queries\" />
 		<Folder Include="Test\Commands" />
+		<Folder Include="images\" />
 	</ItemGroup>
 </Project>

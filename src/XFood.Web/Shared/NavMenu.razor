@@ -21,6 +21,11 @@
                     <p>БИШ: @currentBishkekTime</p>
                 </div>
             </AuthorizeView>
+            <AuthorizeView Roles="admin">
+                <NavLink class="nav-link" href="appeals">
+                    <span class="oi oi-bullhorn" aria-hidden="true"></span> Аппеляции
+                </NavLink>
+            </AuthorizeView>
         </div>
     </nav>
 </div>

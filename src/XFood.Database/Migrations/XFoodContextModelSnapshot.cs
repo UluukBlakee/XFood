@@ -165,8 +165,17 @@ namespace XFood.Data.Migrations
                     b.Property<int>("CheckListId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Description")
+                    b.Property<int>("ChecklistCriteriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comment")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("DateApplication")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateReply")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -177,9 +186,18 @@ namespace XFood.Data.Migrations
                     b.Property<string>("Materials")
                         .HasColumnType("text");
 
+                    b.Property<string>("Reply")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CheckListId");
+
+                    b.HasIndex("ChecklistCriteriaId");
 
                     b.ToTable("Appeals");
                 });
@@ -771,7 +789,7 @@ namespace XFood.Data.Migrations
                             Id = 62,
                             MaxPoints = 2,
                             Name = "",
-                            PizzeriaId = 1,
+                            PizzeriaId = 8,
                             Section = "Wow Фактор"
                         },
                         new
@@ -1093,6 +1111,28 @@ namespace XFood.Data.Migrations
                     b.ToTable("OpportunitySchedules");
                 });
 
+            modelBuilder.Entity("XFood.Data.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppealId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppealId");
+
+                    b.ToTable("Photos");
+                });
+
             modelBuilder.Entity("XFood.Data.Models.Pizzeria", b =>
                 {
                     b.Property<int>("Id")
@@ -1332,7 +1372,15 @@ namespace XFood.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("XFood.Data.Models.ChecklistCriteria", "ChecklistCriteria")
+                        .WithMany()
+                        .HasForeignKey("ChecklistCriteriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("CheckList");
+
+                    b.Navigation("ChecklistCriteria");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
@@ -1365,7 +1413,7 @@ namespace XFood.Data.Migrations
             modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>
                 {
                     b.HasOne("XFood.Data.Models.CheckList", "CheckList")
-                        .WithMany()
+                        .WithMany("Criteria")
                         .HasForeignKey("CheckListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1395,7 +1443,7 @@ namespace XFood.Data.Migrations
             modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
                 {
                     b.HasOne("XFood.Data.Models.CheckList", "CheckList")
-                        .WithMany()
+                        .WithMany("CriticalFactor")
                         .HasForeignKey("CheckListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1444,6 +1492,17 @@ namespace XFood.Data.Migrations
                     b.Navigation("Expert");
                 });
 
+            modelBuilder.Entity("XFood.Data.Models.Photo", b =>
+                {
+                    b.HasOne("XFood.Data.Models.Appeal", "Appeal")
+                        .WithMany("Photos")
+                        .HasForeignKey("AppealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appeal");
+                });
+
             modelBuilder.Entity("XFood.Data.Models.Schedule", b =>
                 {
                     b.HasOne("XFood.Data.Models.User", "Expert")
@@ -1461,6 +1520,18 @@ namespace XFood.Data.Migrations
                     b.Navigation("Expert");
 
                     b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.Appeal", b =>
+                {
+                    b.Navigation("Photos");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
+                {
+                    b.Navigation("Criteria");
+
+                    b.Navigation("CriticalFactor");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Pizzeria", b =>

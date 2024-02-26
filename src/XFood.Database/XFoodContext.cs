@@ -20,6 +20,7 @@ namespace XFood.Data
         public DbSet<Manager> Managers { get; set; }
         public DbSet<ChecklistCriteria> ChecklistCriteria { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Photo> Photos { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
 
         public XFoodContext()
@@ -127,7 +128,7 @@ namespace XFood.Data
                 new Criterion { Id = 59, Name = "Менеджерской зона: чистота и порядок, отсутствуют напитки рядом с оборудованием.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
                 new Criterion { Id = 60, Name = "Все проходы свободны , не захламлены , отсутствуют мусорные мешки, можно пройти без препятствий.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
                 new Criterion { Id = 61, Name = "Химия и уборочный инвентарь хранится согласно стандарту. Уборочный инвентарь чистый.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 62, Name = "", MaxPoints = 2, Section = "Wow Фактор", PizzeriaId = 1 },
+                new Criterion { Id = 62, Name = "", MaxPoints = 2, Section = "Wow Фактор", PizzeriaId = 8 },
                 new Criterion { Id = 63, Name = "Уберите балл, за то, что считаете особо важным, чему не уделяют на смене внимание.", MaxPoints = -4, Section = "Критический фактор", PizzeriaId = 8 },
                 new Criterion { Id = 64, Name = "Критическое нарушение пищевой безопасности. \r\nОпоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 8 }
             );

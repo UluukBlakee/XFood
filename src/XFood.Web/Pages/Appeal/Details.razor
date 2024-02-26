@@ -1,0 +1,156 @@
+﻿@page "/appeals/details/{AppealId:int}"
+@attribute [Authorize(Roles = "admin")]
+@using XFoodBlazor.Web.Client.Services.Appeal
+@using XFoodBlazor.Web.Client.Services.Appeal.GetAppeal
+@using XFoodBlazor.Web.Client.Services.Appeal.Delete
+@using XFoodBlazor.Web.Client.Services.Appeal.Accept
+@using XFoodBlazor.Web.Client.Services.Appeal.Reject
+@inject IAppealService AppealService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Детали аппеляции</PageTitle>
+
+@if (response != null && response.Appeal != null)
+{
+    <div class="d-flex justify-content-center align-items-center vh-50">
+        <div class="card shadow" style="width: 50rem;">
+            <div class="card-body">
+                <h5 class="card-title text-center">Детали аппеляции</h5>
+                <p class="card-text">Чек-лист: <a href="@($"checklist/{response.Appeal.CheckListId}")">@response.Appeal.CheckListId</a></p>
+                <p class="card-text">Название критерия: @response.Appeal.ChecklistCriteria.Criterion.Name</p>
+                <p class="card-text">Email: @response.Appeal.Email</p>
+                @if (response.Appeal.PhotosUrl != null)
+                {
+                    @foreach (var photoUrl in response.Appeal.PhotosUrl)
+                    {
+                        <img src="@photoUrl" alt="Photo" class="img-thumbnail">
+                    }
+                }
+                <p class="card-text">Комментарий: @response.Appeal.Comment</p>
+                <p class="card-text"><a href="@response.Appeal.Materials">Ccылка на материалы</a></p>
+                <div class="text-center mt-3">
+                    @if (response.Appeal.Status != "Done")
+                    {
+                        <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Одобрить
+                        </button>
+                        <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                            Отклонить
+                        </button>
+                    }
+                    <button class="btn btn-danger me-2" @onclick="DeleteAppeal">Удалить</button>
+                    <button class="btn btn-secondary" @onclick="GoBack">Назад</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Принятие апелляции</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Комментарий:</label>
+                        <textarea class="form-control" id="description" rows="3" @bind="@acceptRequest.Reply" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Изменение балла критерия:</label>
+                        <tr>
+                            <td>@response.Appeal.ChecklistCriteria.Criterion.Name</td>
+                            <td>
+                                <input type="number" class="form-control text-danger" @bind="acceptRequest.ReceivedPoints" min="0" max="@response.Appeal.ChecklistCriteria.Criterion.MaxPoints" />
+                            </td>
+                        </tr>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button class="btn btn-success" @onclick="AcceptAppeal">Подтвердить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Отклонение апелляции</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Комментарий:</label>
+                        <textarea class="form-control" id="description" rows="3" @bind="@rejectRequest.Reply" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button class="btn btn-success me-2" @onclick="RejectAppeal">Подтвердить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-center">Данные аппеляции не найдены</p>
+}
+
+
+@code {
+    [Parameter]
+    public int AppealId { get; set; }
+
+    GetAppealResponse response;
+    DeleteAppealResponse deleteResponse;
+    AcceptAppealRequest acceptRequest = new AcceptAppealRequest();
+    AcceptAppealResponse acceptResponse;
+    RejectAppealRequest rejectRequest = new RejectAppealRequest();
+    RejectAppealResponse rejectResponse;
+    public string commentValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await AppealService.GetAppeal(new GetAppealRequest { Id = AppealId });
+    }
+
+    private async Task AcceptAppeal()
+    {
+        acceptRequest.AppealId = response.Appeal.Id;
+        acceptResponse = await AppealService.Accept(acceptRequest);
+        if (acceptResponse.Success)
+        {
+            NavigationManager.NavigateTo("/appeals", forceLoad: true);
+        }
+    }
+
+    private async Task RejectAppeal()
+    {
+        rejectRequest.AppealId = response.Appeal.Id;
+        rejectResponse = await AppealService.Reject(rejectRequest);
+        if (rejectResponse.Success)
+        {
+            NavigationManager.NavigateTo("/appeals", forceLoad: true);
+        }
+        
+    }
+
+    private async Task DeleteAppeal()
+    {
+        deleteResponse = await AppealService.Delete(new DeleteAppealRequest { Id = AppealId });
+        if (deleteResponse.Success == true)
+        {
+            NavigationManager.NavigateTo("/appeals");
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/appeals");
+    }
+}
