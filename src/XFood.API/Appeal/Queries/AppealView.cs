@@ -16,6 +16,5 @@ namespace XFood.API.Appeal.Queries
         public string Status { get; set; }
         public DateTime DateApplication { get; set; }
         public DateTime DateReply { get; set; }
-        public List<string>? PhotosUrl { get; set; }
     }
 }

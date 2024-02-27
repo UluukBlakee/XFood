@@ -5,7 +5,10 @@
 @using XFoodBlazor.Web.Client.Services.Appeal.Delete
 @using XFoodBlazor.Web.Client.Services.Appeal.Accept
 @using XFoodBlazor.Web.Client.Services.Appeal.Reject
+@using XFoodBlazor.Web.Client.Services.Photos
+@using XFoodBlazor.Web.Client.Services.Photos.GetListPhoto
 @inject IAppealService AppealService
+@inject IPhotoService PhotoService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Детали аппеляции</PageTitle>
@@ -19,15 +22,21 @@
                 <p class="card-text">Чек-лист: <a href="@($"checklist/{response.Appeal.CheckListId}")">@response.Appeal.CheckListId</a></p>
                 <p class="card-text">Название критерия: @response.Appeal.ChecklistCriteria.Criterion.Name</p>
                 <p class="card-text">Email: @response.Appeal.Email</p>
-                @if (response.Appeal.PhotosUrl != null)
-                {
-                    @foreach (var photoUrl in response.Appeal.PhotosUrl)
-                    {
-                        <img src="@photoUrl" alt="Photo" class="img-thumbnail">
-                    }
-                }
                 <p class="card-text">Комментарий: @response.Appeal.Comment</p>
                 <p class="card-text"><a href="@response.Appeal.Materials">Ccылка на материалы</a></p>
+                <div class="row">
+                    @if (photoResponse.ImagesUrl != null)
+                    {
+                        @foreach (var photoUrl in photoResponse.ImagesUrl)
+                        {
+                            <div class="col-md-4 mb-3">
+                                <a href="@photoUrl" target="_blank">
+                                    <img src="@photoUrl" alt="Photo" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                </a>
+                            </div>
+                        }
+                    }
+                </div>
                 <div class="text-center mt-3">
                     @if (response.Appeal.Status != "Done")
                     {
@@ -112,11 +121,20 @@ else
     AcceptAppealResponse acceptResponse;
     RejectAppealRequest rejectRequest = new RejectAppealRequest();
     RejectAppealResponse rejectResponse;
+    GetListPhotoResponse photoResponse;
     public string commentValue;
+
+    private List<string> imageDataList = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
         response = await AppealService.GetAppeal(new GetAppealRequest { Id = AppealId });
+        if (response.Appeal != null)
+        {
+            GetListPhotoRequest photoRequest = new GetListPhotoRequest();
+            photoRequest.AppealId = AppealId;
+            photoResponse = await PhotoService.GetList(photoRequest);
+        }
     }
 
     private async Task AcceptAppeal()
@@ -153,4 +171,20 @@ else
     {
         NavigationManager.NavigateTo("/appeals");
     }
+
+    //private async Task LoadPhotos()
+    //{
+
+    //    foreach (var fileName in FileNames)
+    //    {
+    //            var contentType = response.Content.Headers.ContentType.MediaType;
+    //            if (contentType == "image/jpeg" || contentType == "image/png")
+    //            {
+    //                var bytes = await response.Content.ReadAsByteArrayAsync();
+    //                var imageData = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+    //                imageDataList.Add(imageData);
+    //            }
+    //        }
+    //    }
+    //}
 }

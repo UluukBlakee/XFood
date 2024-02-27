@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="wwwroot\images\logoOrangeHorizontal.png" />
-	  <None Include="wwwroot\images\LogoOrangeSvg.svg" />
+	  <None Include="wwwroot\fonts\images\logoOrangeHorizontal.png" />
+	  <None Include="wwwroot\fonts\images\LogoOrangeSvg.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\images\appeals\" />
+	  <Folder Include="wwwroot\fonts\images\appeals\" />
 	</ItemGroup>
 
 </Project>
