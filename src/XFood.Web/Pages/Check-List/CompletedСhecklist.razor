@@ -272,7 +272,7 @@ else
                     </div>
                     <div class="form-group mb-3">
                         <label for="attachments" class="form-label">Фотографии:</label>
-                    <InputFile OnChange="@UploadFiles" multiple />
+                    <InputFile accept="image/jpeg,image/png" OnChange="@UploadFiles" multiple />
                 </div>
                 <div class="mb-3">
                         <label for="email" class="form-label">Ссылка на материалы:</label>
@@ -338,21 +338,13 @@ else
 
     private async Task UploadFiles(InputFileChangeEventArgs e)
     {
-        foreach (var file in e.GetMultipleFiles())
+        foreach (var file in e.GetMultipleFiles(4))
         {
-            using (var stream = file.OpenReadStream())
+            if (photoRequest.Photos == null)
             {
-                var memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                var bytes = memoryStream.ToArray();
-                var formFile = new Microsoft.AspNetCore.Http.Internal.FormFile(memoryStream, 0, bytes.Length, null, file.Name);
-
-                if (photoRequest.Photos == null)
-                {
-                    photoRequest.Photos = new List<IFormFile>();
-                }
-                photoRequest.Photos.Add(formFile);
+                photoRequest.Photos = new List<IBrowserFile>();
             }
+            photoRequest.Photos.Add(file);
         }
     }
 
@@ -375,6 +367,10 @@ else
     {
         selectedCriterion = criterionName;
         selectedCriterionId = criterionId;
+        isSentSuccessfully = false;
+        emailValue = "";
+        commentValue = "";
+        materialsValue = "";
     }
 
     private async Task RefreshCriticalFactorsList()
@@ -439,16 +435,16 @@ else
         appealResponse = await AppealService.Create(appealRequest);
         if (appealResponse.AppealId != null)
         {
-            Console.WriteLine(photoRequest.Photos.Count);
-            photoRequest.AppealId = appealResponse.AppealId;
-            photoResponse = await PhotoService.Create(photoRequest);
-            if (photoResponse.Success)
+            if (photoRequest.Photos != null)
             {
-                isSentSuccessfully = true;
-                emailValue = "";
-                commentValue = "";
-                materialsValue = "";
+                photoRequest.AppealId = appealResponse.AppealId;
+                photoResponse = await PhotoService.Create(photoRequest);
             }
+            isSentSuccessfully = true;
+            emailValue = "";
+            commentValue = "";
+            materialsValue = "";
+            photoRequest.Photos = null;
         }
     }
 }
