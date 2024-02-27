@@ -18,7 +18,7 @@ namespace XFood.Data.Models
         public Manager? Manager { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
         public List<ChecklistCriteria>? Criteria { get; set; }
         public List<CriticalFactor>? CriticalFactor { get; set; }
     }

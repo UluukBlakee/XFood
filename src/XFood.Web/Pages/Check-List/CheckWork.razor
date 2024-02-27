@@ -411,7 +411,7 @@ else
             .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
             .Sum(c => c.Criterion.MaxPoints);
         TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);
-        TotalPoints = getTotalCriticalFactor2 + getTotalCriticalFactor;
+        TotalPoints += getTotalCriticalFactor2 + getTotalCriticalFactor;
         PointProz = TotalPoints / MaxPoints * 100;
         setTotalPointsRequest.TotalPoints = TotalPoints;
         setTotalPointsRequest.EndCheck = DateTime.UtcNow;
