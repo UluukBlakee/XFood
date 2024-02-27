@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace XFood.API.Photos.Queries.GetListPhoto
 {
-    public class GetListPhotoHandler : ICommandHandler<GetListPhotoRequest, Result<GetListPhotoResponse>>
+    public class GetListPhotoHandler : IQueryHandler<GetListPhotoRequest, Result<GetListPhotoResponse>>
     {
         private readonly XFoodContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -26,7 +26,7 @@ namespace XFood.API.Photos.Queries.GetListPhoto
 
                 foreach (var photo in photos)
                 {
-                    var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, photo.Url);
+                    var filePath = _webHostEnvironment.ContentRootPath + photo.Url;
                     if (System.IO.File.Exists(filePath))
                     {
                         var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
