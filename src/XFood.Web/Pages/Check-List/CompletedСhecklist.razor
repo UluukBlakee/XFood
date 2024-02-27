@@ -54,7 +54,7 @@
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
-                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
+                                        <i class="bi bi-megaphone-fill"></i>
                                     </button>
                                 }
                             </td>
@@ -75,7 +75,7 @@
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
-                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
+                                        <i class="bi bi-megaphone-fill"></i>
                                     </button>
                                 }
                             </td>
@@ -101,7 +101,7 @@
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(criterion.Id, criterion.Criterion.Name)">
-                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
+                                        <i class="bi bi-megaphone-fill"></i>
                                     </button>
                                 }
                             </td>
@@ -121,7 +121,7 @@
                                 @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
                                 {
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(criterion.Id, criterion.Criterion.Name)">
-                                        <span class="oi oi-bullhorn" aria-hidden="true"></span>
+                                        <i class="bi bi-megaphone-fill"></i>
                                     </button>
                                 }
                             </td>
@@ -260,7 +260,7 @@ else
             <div class="modal-body">
                     <div class="form-group mb-3">
                         <label class="form-label">Критерий:</label>
-                        <textarea class="form-control" id="criterion" readonly>@selectedCriterion" required</textarea>
+                        <textarea class="form-control" id="criterion" readonly>@selectedCriterion"</textarea>
                     </div>
                     <div class="form-group mb-3">
                         <label for="email" class="form-label">Email:</label>

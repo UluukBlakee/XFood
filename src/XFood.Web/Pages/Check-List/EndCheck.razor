@@ -39,7 +39,7 @@
 {
     <div class="result-container">
         <span class="copy-icon" @onclick="CopyToClipboard">📋</span>
-        <p><strong>Дата:</strong> @response.CheckList.EndCheck.Value.ToString("dd.MM.yyyy")</p>
+        <p><strong>Дата:</strong> @response.CheckList.EndCheck?.ToString("dd.MM.yyyy")</p>
         <p><strong>Пиццерия:</strong> @response.CheckList.Pizzeria?.Name</p>
         <p><strong>Менеджер:</strong> @response.CheckList.Manager?.FirstName @response.CheckList.Manager?.LastName</p>
         <p><strong>Результат проверки:</strong> @Math.Round(PointProz) %</p>
@@ -48,9 +48,6 @@
         <textarea class="feedback-input" @bind="TextInput" placeholder="Напишите положительную обратную связь"></textarea>
 
         <p><strong>Критический фактор:</strong> @(response.CheckList.CriticalFactors?.Count() ?? 0)</p>
-        <p>WOW-фактор:</p>
-        <p>@@</p>
-
         <p>Поделитесь с результатами проверки с командой - отправьте результаты в общий чат команды</p>
 
         <p><a href="@("/checklist/" + response.CheckList.Id)"><strong>Критерии</strong></a></p>
@@ -99,9 +96,8 @@ else
                    $"**Положительная обратная связь:**\n" +
                    $"**{TextInput}**\n\n" +
                    $"**Критический фактор:** {response.CheckList.Criteria?.Count(c => c.Criterion?.Section != "Критический фактор") ?? 0}\n" +
-                   $"WOW-фактор:\n\n @\n" +
-                   "*Поделитесь с результатами проверки с командой - отправьте результаты в общий чат команды*\n\n" +
-                   $"[Критерии](https://localhost:7270/checkList/{response.CheckList.Id})";
+                   "Поделитесь с результатами проверки с командой - отправьте результаты в общий чат команды*\n\n" +
+                   $"Ссылка на критерии: (https://localhost:7270/checkList/{response.CheckList.Id})";
 
 
         await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", text);
