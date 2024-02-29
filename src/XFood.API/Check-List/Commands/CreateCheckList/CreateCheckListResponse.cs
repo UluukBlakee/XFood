@@ -4,5 +4,5 @@ using XFood.Data.Models;
 
 namespace XFood.API.Check_List.Commands.CreateCheckList
 {
-    public record CreateCheckListResponse(CheckListView CheckList);
+    public record CreateCheckListResponse(bool IsSuccess);
 }

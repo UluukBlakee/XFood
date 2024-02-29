@@ -84,7 +84,7 @@ namespace XFood.API.Appeal.Commands.Accept
                             <h3>Дмитрий Улыбин</h3>
                             <р>Лидер команды онлайн-контроллинга</p>
                             <p>d.ulybin.dodo@gmail.com</p>
-                            <img src='https://upload.wikimedia.org/wikipedia/ru/thumb/9/91/Dodo_Logo.svg/1200px-Dodo_Logo.svg.png' alt='Dodo' />
+                            <img src='https://crm-media-bucket.s3.amazonaws.com/media/2023-11-28/7f4a55eb-e5bd-4ff3-a3c7-96ee66c601c51701163760186.png' alt='Dodo' />
                         </div>
                     </body>
                     </html>
