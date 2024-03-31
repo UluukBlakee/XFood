@@ -168,12 +168,17 @@ else
                                     <div>
                                         @if (c != criticalFactorView)
                                         {
-                                            @c.Description
+                                           @foreach (var description in c.Descriptions)
+                        {
+                            <p>@description.Description</p>
+                        }
                                         }
-                                        else
+                                       else
                                         {
-
-                                            <input @bind="criticalFactorView.Description" class="form-control">
+                                            @foreach (var description in criticalFactorView.Descriptions)
+                                            {
+                                                <input @bind="description.Description" class="form-control" />
+                                            }
                                         }
                                     </div>
                                 </li>
@@ -216,12 +221,18 @@ else
                                     <div>
                                         @if (c != criticalFactorView)
                                         {
-                                            @c.Description
+                                            @foreach (var description in c.Descriptions)
+                        {
+                            <p>@description.Description</p>
+                        }
                                         }
                                         else
                                         {
 
-                                            <input @bind="criticalFactorView.Description" class="form-control">
+                                            @foreach (var description in criticalFactorView.Descriptions)
+                                            {
+                                                <input @bind="description.Description" class="form-control" />
+                                            }
                                         }
                                     </div>
                                 </li>

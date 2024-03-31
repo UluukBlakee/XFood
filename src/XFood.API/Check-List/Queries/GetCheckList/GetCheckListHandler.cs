@@ -70,10 +70,8 @@ namespace XFood.API.Check_List.Queries.GetCheckList
             return criticalFactors.Select(c => new CriticalFactorView
             {
                 Id = c.Id,
-                CriterionId = c.CriterionId,
-                Description = c.Description,
+                CriterionId = c.CriterionId,   
                 MaxPoints = c.MaxPoints,
-                CheckListId = c.CheckListId
             }).ToList();
         }
 
