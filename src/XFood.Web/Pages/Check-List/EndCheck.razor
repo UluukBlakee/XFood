@@ -1,0 +1,106 @@
+﻿@page "/endCheck/{CheckListId:int}"
+@attribute [Authorize]
+@using XFoodBlazor.Web.Client.Services.Check_List
+@using XFoodBlazor.Web.Client.Services.Check_List.GetCheckList
+@inject ICheckService CheckService
+@inject IJSRuntime JSRuntime
+
+<style>
+    .result-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f8f8f8;
+        position: relative;
+    }
+
+        .result-container p {
+            margin: 10px 0;
+        }
+
+    .feedback-input {
+        width: 100%;
+        padding: 5px;
+    }
+
+    .copy-icon {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        cursor: pointer;
+    }
+</style>
+
+<h3 class="text-center">Результаты проверки</h3>
+
+@if (response != null && response.CheckList != null)
+{
+    <div class="result-container">
+        <span class="copy-icon" @onclick="CopyToClipboard">📋</span>
+        <p><strong>Дата:</strong> @response.CheckList.EndCheck?.ToString("dd.MM.yyyy")</p>
+        <p><strong>Пиццерия:</strong> @response.CheckList.Pizzeria?.Name</p>
+        <p><strong>Менеджер:</strong> @response.CheckList.Manager?.FirstName @response.CheckList.Manager?.LastName</p>
+        <p><strong>Результат проверки:</strong> @Math.Round(PointProz) %</p>
+
+        <p><strong>Положительная обратная связь:</strong></p>
+        <textarea class="feedback-input" @bind="TextInput" placeholder="Напишите положительную обратную связь"></textarea>
+
+        <p><strong>Критический фактор:</strong> @(response.CheckList.CriticalFactors?.Count() ?? 0)</p>
+        <p>Поделитесь с результатами проверки с командой - отправьте результаты в общий чат команды</p>
+
+        <p><a href="@("/checklist/" + response.CheckList.Id)"><strong>Критерии</strong></a></p>
+    </div>
+}
+else
+{
+    <p><span class="oi oi-warning" aria-hidden="true"></span> Ошибка при загрузке данных.</p>
+}
+
+
+
+@code {
+    [Parameter]
+    public int CheckListId { get; set; }
+    GetCheckListRequest request = new GetCheckListRequest();
+    GetCheckListResponse response;
+    double MaxPoints;
+    double PointProz;
+    string TextInput;
+
+    protected override async Task OnInitializedAsync()
+    {
+        request.Id = CheckListId;
+        response = await CheckService.GetCheckList(request);
+        GetTotalPointsProz();
+    }
+
+    private void GetTotalPointsProz()
+    {
+        if (response != null && response.CheckList != null)
+        {
+            MaxPoints = response.CheckList.Criteria
+                .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
+                .Sum(c => c.Criterion.MaxPoints);
+            PointProz = response.CheckList.TotalPoints / MaxPoints * 100;
+        }
+    }
+
+    private async Task CopyToClipboard()
+    {
+        var text = $"**Дата:** {response.CheckList.EndCheck.Value.ToString("dd.MM.yyyy")}\n" +
+                   $"**Пиццерия:** {response.CheckList.Pizzeria?.Name}\n" +
+                   $"**Менеджер:** {response.CheckList.Manager?.FirstName} {response.CheckList.Manager?.LastName}\n" +
+                   $"**Результаты проверки:** {Math.Floor(PointProz)}%\n" +
+                   $"**Положительная обратная связь:**\n" +
+                   $"**{TextInput}**\n\n" +
+                   $"**Критический фактор:** {response.CheckList.Criteria?.Count(c => c.Criterion?.Section != "Критический фактор") ?? 0}\n" +
+                   "Поделитесь с результатами проверки с командой - отправьте результаты в общий чат команды*\n\n" +
+                   $"Ссылка на критерии: (https://localhost:7270/checkList/{response.CheckList.Id})";
+
+
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", text);
+    }
+
+}

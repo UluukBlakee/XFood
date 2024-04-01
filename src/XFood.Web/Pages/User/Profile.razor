@@ -1,4 +1,5 @@
 ﻿@page "/user/{UserId:int}"
+@attribute [Authorize]
 @using XFoodBlazor.Web.Client.Services.Check_List.GetList
 @using XFoodBlazor.Web.Client.Services.Check_List
 @inject ICheckService CheckService

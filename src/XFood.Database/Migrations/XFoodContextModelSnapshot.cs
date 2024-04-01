@@ -165,8 +165,17 @@ namespace XFood.Data.Migrations
                     b.Property<int>("CheckListId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Description")
+                    b.Property<int>("ChecklistCriteriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comment")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("DateApplication")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateReply")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -177,9 +186,18 @@ namespace XFood.Data.Migrations
                     b.Property<string>("Materials")
                         .HasColumnType("text");
 
+                    b.Property<string>("Reply")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CheckListId");
+
+                    b.HasIndex("ChecklistCriteriaId");
 
                     b.ToTable("Appeals");
                 });
@@ -205,7 +223,6 @@ namespace XFood.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("TotalPoints")
@@ -771,7 +788,7 @@ namespace XFood.Data.Migrations
                             Id = 62,
                             MaxPoints = 2,
                             Name = "",
-                            PizzeriaId = 1,
+                            PizzeriaId = 8,
                             Section = "Wow Фактор"
                         },
                         new
@@ -800,14 +817,11 @@ namespace XFood.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CheckListId")
+                    b.Property<int?>("CheckListId")
                         .HasColumnType("integer");
 
                     b.Property<int>("CriterionId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
 
                     b.Property<int>("MaxPoints")
                         .HasColumnType("integer");
@@ -819,6 +833,128 @@ namespace XFood.Data.Migrations
                     b.HasIndex("CriterionId");
 
                     b.ToTable("CriticalFactors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CriterionId = 31,
+                            MaxPoints = -4
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CriterionId = 31,
+                            MaxPoints = -4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CriterionId = 31,
+                            MaxPoints = -4
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CriterionId = 32,
+                            MaxPoints = -8
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CriterionId = 32,
+                            MaxPoints = -8
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CriterionId = 32,
+                            MaxPoints = -8
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CriterionId = 32,
+                            MaxPoints = -8
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CriterionId = 32,
+                            MaxPoints = -8
+                        });
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.CriticalFactorDescription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CriticalFactorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CriticalFactorId");
+
+                    b.ToTable("CriticalFactorDescriptions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CriticalFactorId = 1,
+                            Description = "лотки на печи"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CriticalFactorId = 2,
+                            Description = "продукт достали ранее чем он выехал на 2/3 из печи"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CriticalFactorId = 3,
+                            Description = "пиццу достали ранее чем она выехала на 2/3 из печи"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CriticalFactorId = 4,
+                            Description = "Руки перед работой с продуктом помыты без антисептика."
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CriticalFactorId = 5,
+                            Description = "Нарушен принцип пищевое/непищевое:\r\nповерхность не опищевили после этого. \r\nво время уборки в перчатках касаются пищевых лотков/посуды/продуктов."
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CriticalFactorId = 6,
+                            Description = "Использование просроченных ингредиентов, перемаркировка."
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CriticalFactorId = 7,
+                            Description = "Заготовка ингредиента в грязную (или со старым ингредиентом) гастроемкость/бутылку."
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CriticalFactorId = 8,
+                            Description = "Использование теста с утра, которое ранее выносили на нагрев и занесли обратно в холодильник (вечером в конце смены)."
+                        });
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Employee", b =>
@@ -1093,6 +1229,28 @@ namespace XFood.Data.Migrations
                     b.ToTable("OpportunitySchedules");
                 });
 
+            modelBuilder.Entity("XFood.Data.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppealId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppealId");
+
+                    b.ToTable("Photos");
+                });
+
             modelBuilder.Entity("XFood.Data.Models.Pizzeria", b =>
                 {
                     b.Property<int>("Id")
@@ -1332,7 +1490,15 @@ namespace XFood.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("XFood.Data.Models.ChecklistCriteria", "ChecklistCriteria")
+                        .WithMany()
+                        .HasForeignKey("ChecklistCriteriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("CheckList");
+
+                    b.Navigation("ChecklistCriteria");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
@@ -1365,7 +1531,7 @@ namespace XFood.Data.Migrations
             modelBuilder.Entity("XFood.Data.Models.ChecklistCriteria", b =>
                 {
                     b.HasOne("XFood.Data.Models.CheckList", "CheckList")
-                        .WithMany()
+                        .WithMany("Criteria")
                         .HasForeignKey("CheckListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1394,11 +1560,9 @@ namespace XFood.Data.Migrations
 
             modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
                 {
-                    b.HasOne("XFood.Data.Models.CheckList", "CheckList")
-                        .WithMany()
-                        .HasForeignKey("CheckListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("XFood.Data.Models.CheckList", null)
+                        .WithMany("CriticalFactor")
+                        .HasForeignKey("CheckListId");
 
                     b.HasOne("XFood.Data.Models.Criterion", "Criterion")
                         .WithMany()
@@ -1406,9 +1570,18 @@ namespace XFood.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CheckList");
-
                     b.Navigation("Criterion");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.CriticalFactorDescription", b =>
+                {
+                    b.HasOne("XFood.Data.Models.CriticalFactor", "CriticalFactor")
+                        .WithMany("Descriptions")
+                        .HasForeignKey("CriticalFactorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CriticalFactor");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Employee", b =>
@@ -1444,6 +1617,17 @@ namespace XFood.Data.Migrations
                     b.Navigation("Expert");
                 });
 
+            modelBuilder.Entity("XFood.Data.Models.Photo", b =>
+                {
+                    b.HasOne("XFood.Data.Models.Appeal", "Appeal")
+                        .WithMany("Photos")
+                        .HasForeignKey("AppealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appeal");
+                });
+
             modelBuilder.Entity("XFood.Data.Models.Schedule", b =>
                 {
                     b.HasOne("XFood.Data.Models.User", "Expert")
@@ -1461,6 +1645,23 @@ namespace XFood.Data.Migrations
                     b.Navigation("Expert");
 
                     b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.Appeal", b =>
+                {
+                    b.Navigation("Photos");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.CheckList", b =>
+                {
+                    b.Navigation("Criteria");
+
+                    b.Navigation("CriticalFactor");
+                });
+
+            modelBuilder.Entity("XFood.Data.Models.CriticalFactor", b =>
+                {
+                    b.Navigation("Descriptions");
                 });
 
             modelBuilder.Entity("XFood.Data.Models.Pizzeria", b =>

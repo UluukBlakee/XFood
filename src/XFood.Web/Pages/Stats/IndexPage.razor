@@ -1,3 +1,4 @@
+@page "/"
 @page "/stats"
 @using XFoodBlazor.Web.Client.Services.Stats.GetList
 @using XFoodBlazor.Web.Client.Services.Stats
@@ -65,13 +66,14 @@
                 @foreach (var checkList in group)
                 {
                     <tr>
-                        <td>@checkList.Manager?.FirstName @checkList.Manager?.LastName</td>
-                        <td>@checkList.Pizzeria?.Name</td>
-                        <td>@checkList?.StartCheck</td>
-                        <td>@checkList?.EndCheck</td>
-                        <td>@checkList?.TotalPoints</td>
+                        <td><a href="@($"checklist/{checkList.Id}")" style="text-decoration: none; color: inherit;">@checkList.Manager?.FirstName @checkList.Manager?.LastName</a></td>
+                        <td><a href="@($"checklist/{checkList.Id}")" style="text-decoration: none; color: inherit;">@checkList.Pizzeria?.Name</a></td>
+                        <td><a href="@($"checklist/{checkList.Id}")" style="text-decoration: none; color: inherit;">@checkList?.StartCheck</a></td>
+                        <td><a href="@($"checklist/{checkList.Id}")" style="text-decoration: none; color: inherit;">@checkList?.EndCheck</a></td>
+                        <td><a href="@($"checklist/{checkList.Id}")" style="text-decoration: none; color: inherit;">@checkList?.TotalPoints</a></td>
                     </tr>
                 }
+
                 <tr>
                     <td colspan="4" style="text-align: right;"><b>Средний балл</b></td>
                     <td>@group.Average(c => c.TotalPoints)</td>

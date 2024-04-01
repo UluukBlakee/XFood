@@ -20,6 +20,8 @@ namespace XFood.Data
         public DbSet<Manager> Managers { get; set; }
         public DbSet<ChecklistCriteria> ChecklistCriteria { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Photo> Photos { get; set; }
+        public DbSet<CriticalFactorDescription> CriticalFactorDescriptions { get; set; }
         public XFoodContext(DbContextOptions<XFoodContext> options) : base(options) { }
 
         public XFoodContext()
@@ -127,24 +129,36 @@ namespace XFood.Data
                 new Criterion { Id = 59, Name = "Менеджерской зона: чистота и порядок, отсутствуют напитки рядом с оборудованием.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
                 new Criterion { Id = 60, Name = "Все проходы свободны , не захламлены , отсутствуют мусорные мешки, можно пройти без препятствий.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
                 new Criterion { Id = 61, Name = "Химия и уборочный инвентарь хранится согласно стандарту. Уборочный инвентарь чистый.", MaxPoints = 1, Section = "Прочие", PizzeriaId = 8 },
-                new Criterion { Id = 62, Name = "", MaxPoints = 2, Section = "Wow Фактор", PizzeriaId = 1 },
+                new Criterion { Id = 62, Name = "", MaxPoints = 2, Section = "Wow Фактор", PizzeriaId = 8 },
                 new Criterion { Id = 63, Name = "Уберите балл, за то, что считаете особо важным, чему не уделяют на смене внимание.", MaxPoints = -4, Section = "Критический фактор", PizzeriaId = 8 },
                 new Criterion { Id = 64, Name = "Критическое нарушение пищевой безопасности. \r\nОпоздание менеджера на смену позже открытия продаж.\r\n4 и более ошибок в начинении/ на упаковке.", MaxPoints = -8, Section = "Критический фактор", PizzeriaId = 8 }
             );
 
-            //builder.Entity<CriticalFactor>().HasData(
-            //    new CriticalFactor { Id = 1, CriterionId = 31, Description = "лотки на печи", MaxPoints = -4 },
-            //    new CriticalFactor { Id = 2, CriterionId = 31, Description = "продукт достали ранее чем он выехал на 2/3 из печи", MaxPoints = -4 },
-            //    new CriticalFactor { Id = 3, CriterionId = 31, Description = "пиццу достали ранее чем она выехала на 2/3 из печи", MaxPoints = -4 }
-            //);
+            builder.Entity<CriticalFactor>().HasData(
+                new CriticalFactor { Id = 1, CriterionId = 31, MaxPoints = -4 },
+                new CriticalFactor { Id = 2, CriterionId = 31, MaxPoints = -4 },
+                new CriticalFactor { Id = 3, CriterionId = 31, MaxPoints = -4 },
+                new CriticalFactor { Id = 4, CriterionId = 32, MaxPoints = -8 },
+                new CriticalFactor { Id = 5, CriterionId = 32, MaxPoints = -8 },
+                new CriticalFactor { Id = 6, CriterionId = 32, MaxPoints = -8 },
+                new CriticalFactor { Id = 7, CriterionId = 32, MaxPoints = -8 },
+                new CriticalFactor { Id = 8, CriterionId = 32, MaxPoints = -8 }
+            );
 
-            //builder.Entity<CriticalFactor>().HasData(
-            //    new CriticalFactor { Id = 4, CriterionId = 32, Description = "Руки перед работой с продуктом помыты без антисептика.", MaxPoints = -8 },
-            //    new CriticalFactor { Id = 5, CriterionId = 32, Description = "Нарушен принцип пищевое/непищевое:\r\nповерхность не опищевили после этого. \r\nво время уборки в перчатках касаются пищевых лотков/посуды/продуктов.", MaxPoints = -8 },
-            //    new CriticalFactor { Id = 6, CriterionId = 32, Description = "Использование просроченных ингредиентов, перемаркировка.", MaxPoints = -8 },
-            //    new CriticalFactor { Id = 7, CriterionId = 32, Description = "Заготовка ингредиента в грязную (или со старым ингредиентом) гастроемкость/бутылку.", MaxPoints = -8 },
-            //    new CriticalFactor { Id = 8, CriterionId = 32, Description = "Использование теста с утра, которое ранее выносили на нагрев и занесли обратно в холодильник (вечером в конце смены).", MaxPoints = -8 }
-            //);
+            builder.Entity<CriticalFactorDescription>().HasData(
+                new CriticalFactorDescription { Id = 1, CriticalFactorId = 1, Description = "лотки на печи" },
+                new CriticalFactorDescription { Id = 2, CriticalFactorId = 2, Description = "продукт достали ранее чем он выехал на 2/3 из печи" },
+                new CriticalFactorDescription { Id = 3, CriticalFactorId = 3, Description = "пиццу достали ранее чем она выехала на 2/3 из печи" }
+            );
+
+            builder.Entity<CriticalFactorDescription>().HasData(
+                new CriticalFactorDescription { Id = 4, CriticalFactorId = 4, Description = "Руки перед работой с продуктом помыты без антисептика." },
+                new CriticalFactorDescription { Id = 5, CriticalFactorId = 5, Description = "Нарушен принцип пищевое/непищевое:\r\nповерхность не опищевили после этого. \r\nво время уборки в перчатках касаются пищевых лотков/посуды/продуктов." },
+                new CriticalFactorDescription { Id = 6, CriticalFactorId = 6, Description = "Использование просроченных ингредиентов, перемаркировка." },
+                new CriticalFactorDescription { Id = 7, CriticalFactorId = 7, Description = "Заготовка ингредиента в грязную (или со старым ингредиентом) гастроемкость/бутылку." },
+                new CriticalFactorDescription { Id = 8, CriticalFactorId = 8, Description = "Использование теста с утра, которое ранее выносили на нагрев и занесли обратно в холодильник (вечером в конце смены)." }
+            );
+
 
             base.OnModelCreating(builder);
         }

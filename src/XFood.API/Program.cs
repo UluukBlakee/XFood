@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -5,6 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using xFood.Infrastructure;
 using XFood.API.Configuration.Application;
+using XFood.API.Photos;
+using XFood.API.Photos.Queries.GetListPhoto;
 using XFood.Data;
 using XFood.Data.Configuration;
 using XFood.Data.Models;
@@ -23,7 +26,7 @@ namespace XFood.API
             var jWtOptions = new JWTSettings();
             builder.Configuration.GetSection(nameof(JWTSettings)).Bind(jWtOptions);
 
-
+            builder.Services.AddScoped<EmailService>();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(name: corsPolicy,

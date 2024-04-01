@@ -61,11 +61,11 @@
 
         if (result.IsSuccess)
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/", forceLoad: true);
         }
         else
         {
-            _error = result.Error;
+            _error = "Ошибка при авторизации, проверьте правильность введенных данных.";
             _showErrors = true;
         }
     }

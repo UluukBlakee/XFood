@@ -15,7 +15,14 @@ namespace XFood.API.CriticalFactors.Commands.CreateCriticalFactor
         }
         public async Task<Result<CreateCriticalFactorResponse>> Handle(CreateCriticalFactorRequest command, CancellationToken cancellationToken)
         {
-            var newCriticalFactor = new CriticalFactor { MaxPoints = command.MaxPoints, Description = command.Description, CriterionId = command.CriterionId, CheckListId = command.CheckListId};
+            var newCriticalFactor = new CriticalFactor { MaxPoints = command.MaxPoints, CriterionId = command.CriterionId };
+            var descriptions = command.Descriptions.Select(d => new XFood.Data.Models.CriticalFactorDescription
+            {
+                Description = d.Description
+            }).ToList();
+
+            newCriticalFactor.Descriptions.AddRange(descriptions);
+
             var result = await _context.AddAsync(newCriticalFactor);
             await _context.SaveChangesAsync();
             if (result.Entity == null)
@@ -24,5 +31,6 @@ namespace XFood.API.CriticalFactors.Commands.CreateCriticalFactor
             }
             return new CreateCriticalFactorResponse(true);
         }
+
     }
 }

@@ -1,12 +1,12 @@
 ﻿<div class="@NavMenuCssClass nav-scrollable nav-menu-custom" @onclick="ToggleNavMenu">
     <nav class="flex-column side-bar">
         <div class="nav-item px-3">
+            <NavLink class="nav-link" href="stats">
+                Общая статистика
+            </NavLink>
             <AuthorizeView>
                 <NavLink class="nav-link" href="pizzerias">
                     Пиццерии
-                </NavLink>
-                <NavLink class="nav-link" href="stats">
-                    Общая статистика
                 </NavLink>
             </AuthorizeView>
             <AuthorizeView Roles="admin">
@@ -20,6 +20,11 @@
                     <p>ЕКТ: @currentYekaterinburgTime</p>
                     <p>БИШ: @currentBishkekTime</p>
                 </div>
+            </AuthorizeView>
+            <AuthorizeView Roles="admin">
+                <NavLink class="nav-link" href="appeals">
+                    Аппеляции
+                </NavLink>
             </AuthorizeView>
         </div>
     </nav>

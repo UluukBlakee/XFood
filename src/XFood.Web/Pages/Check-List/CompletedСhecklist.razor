@@ -1,0 +1,462 @@
+﻿@page "/checkList/{CheckListId:int}"
+@using Microsoft.AspNetCore.Http;
+@using XFoodBlazor.Web.Client.Services.Check_List
+@using XFoodBlazor.Web.Client.Services.Check_List.GetCheckList
+@using XFoodBlazor.Web.Client.Services.CriticalFactor
+@using XFoodBlazor.Web.Client.Services.CriticalFactor.GetList;
+@using XFoodBlazor.Web.Client.Services.Appeal;
+@using XFoodBlazor.Web.Client.Services.Appeal.Create;
+@using XFoodBlazor.Web.Client.Services.Photos;
+@using XFoodBlazor.Web.Client.Services.Photos.Create;
+@inject ICheckService CheckService
+@inject ICriticalFactorService CriticalFactorService
+@inject IAppealService AppealService
+@inject IPhotoService PhotoService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+@if (response != null)
+{
+    <p>Пиццерия: @response.CheckList.Pizzeria?.Name</p>
+    <p>Менеджер: @response.CheckList.Manager?.FirstName @response.CheckList.Manager?.LastName</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Раздел</th>
+                <th>Что проверить</th>
+                <th>MaxPoints</th>
+                <th>Оценка</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var section in fixedSectionsOrder)
+            {
+                var group = response.CheckList.Criteria.Where(c => c.Criterion.Section == section).OrderBy(c => c.Id);
+                if (group.Any())
+                {
+                    var firstCriterion = group.First();
+                    @if (firstCriterion.Criterion.Section == "Критический фактор")
+                    {
+                        <tr>
+                            <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
+                            <td>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="() => OpenModal1(firstCriterion.Criterion.Id, response.CheckList.Id)">
+                                    @firstCriterion.Criterion.Name
+                                </a>
+                            </td>
+                            <td>@firstCriterion.Criterion.MaxPoints</td>
+                            <td>
+                                <p class="text-warning">@getTotalCriticalFactor</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
+                                        <i class="bi bi-megaphone-fill"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td rowspan="@group.Count()">@firstCriterion.Criterion.Section</td>
+                            <td>
+                                @firstCriterion.Criterion.Name
+                            </td>
+                            <td>@firstCriterion.Criterion.MaxPoints</td>
+                            <td>
+                                <p class="text-danger">@firstCriterion.ReceivedPoints</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(firstCriterion.Id, firstCriterion.Criterion.Name)">
+                                        <i class="bi bi-megaphone-fill"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                @foreach (var criterion in group.Skip(1))
+                {
+                    @if (criterion.Criterion.Section == "Критический фактор")
+                    {
+                        <tr>
+                            <td>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2" @onclick="() => OpenModal2(criterion.Criterion.Id, response.CheckList.Id)">
+                                    @criterion.Criterion.Name
+                                </a>
+
+                            </td>
+                            <td>@criterion.Criterion.MaxPoints</td>
+                            <td>
+                                <p class="text-warning">@getTotalCriticalFactor2</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(criterion.Id, criterion.Criterion.Name)">
+                                        <i class="bi bi-megaphone-fill"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>
+                                @criterion.Criterion.Name
+                            </td>
+                            <td>@criterion.Criterion.MaxPoints</td>
+                            <td>
+                                <p class="text-danger">@criterion.ReceivedPoints</p>
+                            </td>
+                            <td>
+                                @if (response.CheckList.EndCheck?.AddHours(24) <= DateTime.Now)
+                                {
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal3" @onclick="() => OpenModal3(criterion.Id, criterion.Criterion.Name)">
+                                        <i class="bi bi-megaphone-fill"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+    <p>Максимальный балл: @MaxPoints</p>
+    <p>Общее количество баллов: @response.CheckList.TotalPoints</p>
+    @if (response.CheckList.TotalPoints != 0)
+    {
+        <p>Общее количество баллов в процентах:@Math.Round(PointProz) %</p>
+    }
+    else
+    {
+        <p>Общее количество баллов в процентах: 0%</p>
+    }
+}
+else
+{
+    <p>Ошибка при загрузке данных.</p>
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Критический фактор</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (getListCriticalFactorResponse != null && getListCriticalFactorResponse.List != null && getListCriticalFactorResponse.List.Any())
+                {
+                    var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId1 && c.CriterionId == selectedCriterionId1).GroupBy(c => c.CriterionId);
+                    foreach (var group in groupedCriterions)
+                    {
+                        <ul class="list-group">
+                            @foreach (var c in group)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        @if (c != criticalFactorView)
+                                        {
+                                           @foreach (var description in c.Descriptions)
+                        {
+                            <p>@description.Description</p>
+                        }
+                                        }
+                                       else
+                                        {
+                                            @foreach (var description in criticalFactorView.Descriptions)
+                                            {
+                                                <input @bind="description.Description" class="form-control" />
+                                            }
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="2">Нету данных</td>
+                    </tr>
+
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Критический фактор</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (getListCriticalFactorResponse != null && getListCriticalFactorResponse.List != null && getListCriticalFactorResponse.List.Any())
+                {
+                    var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId2 && c.CriterionId == selectedCriterionId2).GroupBy(c => c.CriterionId);
+                    foreach (var group in groupedCriterions)
+                    {
+                        <ul class="list-group">
+                            @foreach (var c in group)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        @if (c != criticalFactorView)
+                                        {
+                                            @foreach (var description in c.Descriptions)
+                        {
+                            <p>@description.Description</p>
+                        }
+                                        }
+                                        else
+                                        {
+
+                                            @foreach (var description in criticalFactorView.Descriptions)
+                                            {
+                                                <input @bind="description.Description" class="form-control" />
+                                            }
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="2">Нету данных</td>
+                    </tr>
+
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        @if (isSentSuccessfully)
+        {
+            <div class="alert alert-success" role="alert">
+                Апелляция успешно отправлено!
+            </div>
+        }
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Подать аппеляцию</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Критерий:</label>
+                        <textarea class="form-control" id="criterion" readonly>@selectedCriterion"</textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" @bind="@emailValue" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Комментарий:</label>
+                        <textarea class="form-control" id="description" rows="3" @bind="@commentValue" required></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="attachments" class="form-label">Фотографии:</label>
+                    <InputFile accept="image/jpeg,image/png" OnChange="@UploadFiles" multiple />
+                </div>
+                <div class="mb-3">
+                        <label for="email" class="form-label">Ссылка на материалы:</label>
+                        <input type="text" class="form-control" id="materials" @bind="@materialsValue">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" @onclick="() => Appeal()">Отправить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int CheckListId { get; set; }
+    GetCheckListRequest request = new GetCheckListRequest();
+    GetCheckListResponse response;
+    GetListCriticalFactorResponse getListCriticalFactorResponse;
+    CreateAppealRequest appealRequest = new CreateAppealRequest();
+    CreateAppealResponse appealResponse;
+    CreatePhotoResponse photoResponse;
+    CreatePhotoRequest photoRequest = new CreatePhotoRequest();
+
+    private CriticalFactorView criticalFactorView;
+    double MaxPoints;
+    double PointProz;
+    int getTotalCriticalFactor;
+    int getTotalCriticalFactor2;
+    private bool _error1 = false;
+    private string CriticalFactor { get; set; }
+
+    private int selectedCriterionId1;
+    private int selectedcheckListId1;
+    private int selectedCriterionId2;
+    private int selectedcheckListId2;
+
+    private string selectedCriterion;
+    private int selectedCriterionId;
+    private string emailValue = "";
+    private string commentValue = "";
+    private string materialsValue = "";
+    private bool isSentSuccessfully = false;
+
+    public int AppealId { get; set; }
+
+    private List<string> fixedSectionsOrder = new List<string>
+    {
+        "",
+        "Потери",
+        "Курьеры",
+        "Кассир",
+        "Тесто",
+        "Кухня",
+        "Ресторан",
+        "Сотрудник",
+        "Прочие",
+        "Wow Фактор",
+        "Критический фактор"
+    };
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles(4))
+        {
+            if (photoRequest.Photos == null)
+            {
+                photoRequest.Photos = new List<IBrowserFile>();
+            }
+            photoRequest.Photos.Add(file);
+        }
+    }
+
+
+    private async Task OpenModal1(int criterionId, int checkListId)
+    {
+        selectedCriterionId1 = criterionId;
+        selectedcheckListId1 = checkListId;
+        await RefreshCriticalFactorsList();
+    }
+
+    private async Task OpenModal2(int criterionId, int checkListId)
+    {
+        selectedCriterionId2 = criterionId;
+        selectedcheckListId2 = checkListId;
+        await RefreshCriticalFactorsList();
+    }
+
+    private async Task OpenModal3(int criterionId, string criterionName)
+    {
+        selectedCriterion = criterionName;
+        selectedCriterionId = criterionId;
+        isSentSuccessfully = false;
+        emailValue = "";
+        commentValue = "";
+        materialsValue = "";
+    }
+
+    private async Task RefreshCriticalFactorsList()
+    {
+        getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
+        GetTotalMaxPoint();
+        GetTotalMaxPoint2();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        request.Id = CheckListId;
+        response = await CheckService.GetCheckList(request);
+        getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
+        await RefreshCriticalFactorsList();
+        await UpdatePoints();
+    }
+
+    private async Task UpdatePoints()
+    {
+        MaxPoints = response.CheckList.Criteria
+            .Where(c => c.Criterion.Section != "Критический фактор" && c.Criterion.Section != "Wow Фактор")
+            .Sum(c => c.Criterion.MaxPoints);
+        PointProz = response.CheckList.TotalPoints / MaxPoints * 100;
+    }
+
+    private async Task GetTotalMaxPoint()
+    {
+        var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId1 && c.CriterionId == selectedCriterionId1).GroupBy(c => c.CriterionId);
+        int totalMaxPoints = 0;
+        foreach (var group in groupedCriterions)
+        {
+            foreach (var c in group)
+            {
+                totalMaxPoints += c.MaxPoints;
+            }
+        }
+        getTotalCriticalFactor = totalMaxPoints;
+    }
+
+    private async Task GetTotalMaxPoint2()
+    {
+        var groupedCriterions = getListCriticalFactorResponse.List.Where(c => c.CheckListId == selectedcheckListId2 && c.CriterionId == selectedCriterionId2).GroupBy(c => c.CriterionId);
+        int totalMaxPoints = 0;
+        foreach (var group in groupedCriterions)
+        {
+            foreach (var c in group)
+            {
+                totalMaxPoints += c.MaxPoints;
+            }
+        }
+        getTotalCriticalFactor2 = totalMaxPoints;
+    }
+
+    private async Task Appeal()
+    {
+        appealRequest.Email = emailValue;
+        appealRequest.Comment = commentValue;
+        appealRequest.Materials = materialsValue;
+        appealRequest.CheckListId = response.CheckList.Id;
+        appealRequest.ChecklistCriteriaId = selectedCriterionId;
+        appealResponse = await AppealService.Create(appealRequest);
+        if (appealResponse.AppealId != null)
+        {
+            if (photoRequest.Photos != null)
+            {
+                photoRequest.AppealId = appealResponse.AppealId;
+                photoResponse = await PhotoService.Create(photoRequest);
+            }
+            isSentSuccessfully = true;
+            emailValue = "";
+            commentValue = "";
+            materialsValue = "";
+            photoRequest.Photos = null;
+        }
+    }
+}
+
