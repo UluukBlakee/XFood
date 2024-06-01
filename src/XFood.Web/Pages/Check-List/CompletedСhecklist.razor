@@ -395,6 +395,10 @@ else
     {
         request.Id = CheckListId;
         response = await CheckService.GetCheckList(request);
+        if (response.CheckList.EndCheck == null)
+        {
+            NavigationManager.NavigateTo($"/checkWork/{CheckListId}");
+        }
         getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
         await RefreshCriticalFactorsList();
         await UpdatePoints();

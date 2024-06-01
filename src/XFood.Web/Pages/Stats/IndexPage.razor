@@ -1,4 +1,3 @@
-@page "/"
 @page "/stats"
 @using XFoodBlazor.Web.Client.Services.Stats.GetList
 @using XFoodBlazor.Web.Client.Services.Stats
@@ -55,7 +54,7 @@
     <tbody>
 
         @if (filteredCheckLists != null)
-        {
+        {;
             var groupedCheckLists = filteredCheckLists.GroupBy(c => c.Pizzeria.Name);
 
             @foreach (var group in groupedCheckLists)
@@ -103,7 +102,7 @@
     protected override async Task OnInitializedAsync()
     {
         checkLists = await StatsService.GetListStats(new GetListStatsRequest());
-        filteredCheckLists = checkLists.List;
+        filteredCheckLists = checkLists.List.Where(c => c.EndCheck != null).ToList();
         managers = checkLists.List.Where(checkList => checkList.Manager != null).GroupBy(checkList => new { checkList.Manager.FirstName, checkList.Manager.LastName }).Select(group => group.First().Manager).ToList();
         pizzeria = checkLists.List.Where(checkList => checkList.Pizzeria != null).GroupBy(checkList => new { checkList.Pizzeria.Name}).Select(group => group.First().Pizzeria).ToList();
     }

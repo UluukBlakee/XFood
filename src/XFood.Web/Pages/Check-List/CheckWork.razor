@@ -1,10 +1,10 @@
-﻿@page "/checkWork/{ManagerId:int}"
+﻿@page "/checkWork/{CheckListId:int}"
 @attribute [Authorize]
 @using XFoodBlazor.Web.Client.Services.CheckListCriteria.SetPoints;
 @using XFoodBlazor.Web.Client.Services.Check_List.SetTotalPoints;
 @using XFoodBlazor.Web.Client.Services.CheckListCriteria;
 @using XFoodBlazor.Web.Client.Services.Check_List
-@using XFoodBlazor.Web.Client.Services.Check_List.Create
+@using XFoodBlazor.Web.Client.Services.Check_List.GetCheckList
 @using XFoodBlazor.Web.Client.Services.Criterion;
 @using XFoodBlazor.Web.Client.Services.CriticalFactor
 @using XFoodBlazor.Web.Client.Services.CriticalFactor.Create;
@@ -276,9 +276,9 @@ else
 
 @code {
     [Parameter]
-    public int ManagerId { get; set; }
-    CreateCheckListRequest request = new CreateCheckListRequest();
-    CreateCheckListResponse response;
+    public int CheckListId { get; set; }
+    GetCheckListRequest request = new GetCheckListRequest();
+    GetCheckListResponse response;
     SetPointsRequest setPointsRequest = new SetPointsRequest();
     SetPointsResponse setPointsResponse;
     SetTotalPointsRequest setTotalPointsRequest = new SetTotalPointsRequest();
@@ -411,12 +411,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        var userId = user.FindFirst("sub").Value;
-        request.ManagerId = ManagerId;
-        request.UserId = Convert.ToInt32(userId);
-        response = await CheckService.Create(request);
+        request.Id = CheckListId;
+        response = await CheckService.GetCheckList(request);
+        if (response.CheckList.EndCheck != null)
+        {
+            NavigationManager.NavigateTo($"/checkList/{CheckListId}");
+        }
         getListCriticalFactorResponse = await CriticalFactorService.GetCriticalFactors(new GetListCriticalFactorRequest());
         await RefreshCriticalFactorsList();
         timer = new Timer(UpdatePointsCallback, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
@@ -447,11 +447,6 @@ else
         TotalPoints = response.CheckList.Criteria.Sum(c => c.ReceivedPoints);
         TotalPoints += getTotalCriticalFactor2 + getTotalCriticalFactor;
         PointProz = TotalPoints / MaxPoints * 100;
-        setTotalPointsRequest.TotalPoints = TotalPoints;
-        setTotalPointsRequest.EndCheck = DateTime.UtcNow;
-        setTotalPointsRequest.Id = response.CheckList.Id;
-        selectedcheckListId1 = response.CheckList.Id;
-        setTotalPointsResponse = await CheckService.SetTotalPoints(setTotalPointsRequest);
     }
 
     private async Task EditCriticalFactor(CriticalFactorView criticalFactor)

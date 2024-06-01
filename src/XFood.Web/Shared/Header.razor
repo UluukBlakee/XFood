@@ -24,7 +24,7 @@
                         <li><a class="dropdown-item" href="#" @onclick="Logout"> Выход</a></li>
                     </ul>
                 </div>
-                <p class="m-0"> @context.User.Identity.Name!</p>
+                <p class="m-0"> @context.User?.Identity?.Name!</p>
             </Authorized>
             <NotAuthorized>
                 <a class="btn btn-primary register-btn" href="Register">Регистрация</a>
@@ -41,7 +41,7 @@
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        currentUserId = Convert.ToInt32(user.FindFirst("sub").Value);
+        currentUserId = Convert.ToInt32(user?.FindFirst("sub")?.Value);
     }
     private async Task Logout()
     {

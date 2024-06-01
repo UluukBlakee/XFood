@@ -22,7 +22,6 @@ namespace XFood.API.Check_List.Queries.GetCheckListAll
                 .Include(cl => cl.Pizzeria)
                 .Include(cl => cl.Manager)
                 .Include(cl => cl.User)
-                .Where(cl => cl.Status == null)
                 .ToListAsync();
 
             List<CheckListView> list = checkLists.Select(cl => new CheckListView

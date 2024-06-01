@@ -30,7 +30,7 @@ namespace XFoodBlazor.Web.Client.Services.Check_List
                 var response = await result.Content.ReadFromJsonAsync<CreateCheckListResponse>();
                 return response;
             }
-            return new CreateCheckListResponse(null, await result.Content.ReadAsStringAsync());
+            return new CreateCheckListResponse(false);
         }
 
         public async Task<SetTotalPointsResponse> SetTotalPoints(SetTotalPointsRequest checkListModel)

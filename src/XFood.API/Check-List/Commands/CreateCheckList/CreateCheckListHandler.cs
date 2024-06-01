@@ -33,17 +33,15 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                 if (criteriaList == null || !criteriaList.Any())
                     return Result.Failure<CreateCheckListResponse>("Критерии не найдены");
 
-                CheckList newCheckList = await CreateNewCheckList(manager, user);
-                if (newCheckList == null)
+                int newCHeckListId = await CreateNewCheckList(manager, user);
+                if (newCHeckListId == 0)
                     return Result.Failure<CreateCheckListResponse>("Ошибка при создании нового списка проверки");
 
-                List<CheckListCriteriaView> checkListCriteria = await CreateCheckListCriteria(criteriaList, newCheckList.Id);
-                if (checkListCriteria == null || !checkListCriteria.Any())
+                bool areCriteriaCreated = await CreateCheckListCriteria(criteriaList, newCHeckListId);
+                if (!areCriteriaCreated)
                     return Result.Failure<CreateCheckListResponse>("Ошибка при создании критериев списка проверки");
 
-                CheckListView checkListView = CreateCheckListView(newCheckList, manager, checkListCriteria);
-
-                return new CreateCheckListResponse(checkListView);
+                return new CreateCheckListResponse(true);
             }
             catch (Exception ex)
             {
@@ -51,7 +49,7 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
             }
         }
 
-        private async Task<CheckList> CreateNewCheckList(Data.Models.Manager manager, Data.Models.User user)
+        private async Task<int> CreateNewCheckList(Data.Models.Manager manager, Data.Models.User user)
         {
             CheckList newCheckList = new CheckList
             {
@@ -65,12 +63,11 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
             };
             _db.Add(newCheckList);
             int result = await _db.SaveChangesAsync();
-            return result > 0 ? newCheckList : null;
+            return result > 0 ? newCheckList.Id : 0;
         }
 
-        private async Task<List<CheckListCriteriaView>> CreateCheckListCriteria(List<Criterion> criteriaList, int checkListId)
+        private async Task<bool> CreateCheckListCriteria(List<Criterion> criteriaList, int checkListId)
         {
-            List<CheckListCriteriaView> checkListCriteria = new List<CheckListCriteriaView>();
             foreach (var criterion in criteriaList)
             {
                 ChecklistCriteria checklistCriteria = new ChecklistCriteria
@@ -80,41 +77,9 @@ namespace XFood.API.Check_List.Commands.CreateCheckList
                     ReceivedPoints = 0
                 };
                 _db.Add(checklistCriteria);
-                await _db.SaveChangesAsync();
-                CheckListCriteriaView criteriaView = new CheckListCriteriaView
-                {
-                    Id = checklistCriteria.Id,
-                    Criterion = new CriterionView
-                    {
-                        Id = criterion.Id,
-                        Name = criterion.Name,
-                        Section = criterion.Section,
-                        MaxPoints = criterion.MaxPoints
-                    },
-                    ReceivedPoints = 0
-                };
-                checkListCriteria.Add(criteriaView);
             }
-            return checkListCriteria;
-        }
-
-        private CheckListView CreateCheckListView(CheckList newCheckList, Data.Models.Manager manager, List<CheckListCriteriaView> checkListCriteria)
-        {
-            return new CheckListView
-            {
-                Id = newCheckList.Id,
-                Pizzeria = new PizzeriaView
-                {
-                    Name = manager.Pizzeria.Name
-                },
-                StartCheck = newCheckList.StartCheck,
-                Manager = new ManagerView
-                {
-                    FirstName = manager.FirstName,
-                    LastName = manager.LastName
-                },
-                Criteria = checkListCriteria
-            };
+            int result = await _db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

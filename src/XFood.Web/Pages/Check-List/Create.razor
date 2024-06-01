@@ -1,5 +1,113 @@
-﻿<h3>Create</h3>
+﻿@page "/checkList/create"
+@attribute [Authorize(Roles = "admin")]
+@using XFoodBlazor.Web.Client.Services.Pizzeria
+@using XFoodBlazor.Web.Client.Services.Pizzeria.GetList
+@using XFoodBlazor.Web.Client.Services.User
+@using XFoodBlazor.Web.Client.Services.User.GetList
+@using XFoodBlazor.Web.Client.Services.Check_List
+@using XFoodBlazor.Web.Client.Services.Check_List.Create
+@inject IUserService UserService
+@inject IPizzeriaService PizzeriaService
+@inject ICheckService CheckService
+<style>
+    .result-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f8f8f8;
+        position: relative;
+    }
+
+        .result-container p {
+            margin: 10px 0;
+        }
+</style>
+
+<h3 class="text-center">Назначение проверки</h3>
+
+<div class="result-container">
+    <form @onsubmit="AssignCheckList">
+        <div class="form-group">
+            <label for="pizzeria">Выберите пиццерию:</label>
+            <select class="form-control" id="pizzeria" @bind="@currentPizzeria">
+                @if (pizzeriaResponse?.List != null)
+                {
+                    @foreach (var pizzeria in pizzeriaResponse.List)
+                    {
+                        <option value="@pizzeria.Name">@pizzeria.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="manager">Выберите менеджера:</label>
+            <select class="form-control" id="manager" @bind="@managerId">
+                @if (currentPizzeria != null && pizzeriaResponse?.List != null)
+                {
+                    var selectedPizzeria = pizzeriaResponse.List.FirstOrDefault(p => p.Name == currentPizzeria);
+                    if (selectedPizzeria?.Managers != null)
+                    {
+                        @foreach (var manager in selectedPizzeria.Managers)
+                        {
+                            <option value="@manager.Id">@manager.FirstName @manager.LastName</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="expert">Выберите эксперта:</label>
+            <select class="form-control" id="expert" @bind="@expertId">
+                @if (userResponse?.Users != null)
+                {
+                    @foreach (var expert in userResponse.Users)
+                    {
+                        <option value="@expert.Id">@expert.UserName</option>
+                    }
+                }
+            </select>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary mt-3">Назначить</button>
+    </form>
+
+    @if (IsSuccess)
+    {
+        <p class="text-success">Проверка успешно назначена!</p>
+    }
+</div>
 
 @code {
+    GetListPizzeriaResponse pizzeriaResponse;
+    GetUserListResponse userResponse;
+    CreateCheckListRequest checkListRequest = new CreateCheckListRequest();
+    CreateCheckListResponse checkListResponse;
 
+    string currentPizzeria = "Москва-13-2";
+    int managerId = 1;
+    int expertId = 2;
+    bool IsSuccess;
+    PizzeriaView pizzeria;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pizzeriaResponse = await PizzeriaService.GetListPizzeria(new GetListPizzeriaRequest());
+        userResponse = await UserService.GetList(new GetUserListRequest());
+    }
+
+    private async Task AssignCheckList()
+    {
+        IsSuccess = false;
+        Console.WriteLine($"{managerId}, {expertId}");
+        checkListRequest.ManagerId = managerId;
+        checkListRequest.UserId = expertId;
+        checkListResponse = await CheckService.Create(checkListRequest);
+        if (checkListResponse.IsSuccess)
+            IsSuccess = true;
+    }
 }
