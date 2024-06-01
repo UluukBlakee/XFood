@@ -1,6 +1,6 @@
-﻿using XFood.API.Check_List.Queries;
+﻿using XFood.API.Models;
 
 namespace XFood.API.Manager.Queries.GetManagersList
 {
-    public record GetManagersListResponse(List<ManagerView> List);
+    public record GetManagersListResponse(List<ManagerView> List) : ListResponse;
 }

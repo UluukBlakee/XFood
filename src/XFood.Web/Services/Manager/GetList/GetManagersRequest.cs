@@ -1,6 +1,9 @@
-﻿namespace XFoodBlazor.Web.Client.Services.Manager.GetList
+﻿using XFoodBlazor.Web.Client.Services.Models;
+
+namespace XFoodBlazor.Web.Client.Services.Manager.GetList
 {
-    public class GetManagersRequest
+    public record GetManagersRequest : ListRequest
     {
+        public string SearchTerm { get; set; } = "";
     }
 }
